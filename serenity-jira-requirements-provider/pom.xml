@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>thucydides</artifactId>
+        <groupId>net.thucydides</groupId>
+        <version>0.9.268</version>
+    </parent>
+    <groupId>net.thucydides.plugins.jira</groupId>
+    <artifactId>thucydides-jira-requirements-provider</artifactId>
+    <version>0.9.269-SNAPSHOT</version>
+    <name>thucydides-jira-requirements-provider</name>
+    <packaging>jar</packaging>
+
+    <description>Read Thucydides requirements from JIRA Story and Epic cards</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <thucydides.version>0.9.268</thucydides.version>
+        <thucydides.jira.version>0.9.268</thucydides.jira.version>
+    </properties>
+
+    <scm>
+        <connection>scm:git:git@github.com:thucydides-webtests/thucydides-jira-requirements-provider.git</connection>
+        <developerConnection>scm:git:git@github.com:thucydides-webtests/thucydides-jira-requirements-provider.git
+        </developerConnection>
+        <url>scm:git:git@github.com:thucydides-webtests/thucydides-jira-requirements-provider.git</url>
+    </scm>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>net.thucydides</groupId>
+            <artifactId>thucydides-core</artifactId>
+            <version>${thucydides.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.thucydides.plugins.jira</groupId>
+            <artifactId>thucydides-jira-plugin</artifactId>
+            <version>${thucydides.jira.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.googlecode.lambdaj</groupId>
+            <artifactId>lambdaj</artifactId>
+            <version>2.3.3</version>
+        </dependency>
+        <dependency>
+            <groupId>net.thucydides</groupId>
+            <artifactId>thucydides-test-utils</artifactId>
+            <version>0.9.262</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.spockframework</groupId>
+            <artifactId>spock-core</artifactId>
+            <version>0.7-groovy-2.0</version>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>groovy-all</artifactId>
+                    <groupId>org.codehaus.groovy</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>junit-dep</artifactId>
+                    <groupId>junit</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9</version>
+            </plugin>
+            <plugin>
+                <groupId>net.thucydides.maven.plugins</groupId>
+                <artifactId>maven-thucydides-plugin</artifactId>
+                <version>${thucydides.version}</version>
+                <executions>
+                    <execution>
+                        <id>thucydides-reports</id>
+                        <phase>post-integration-test</phase>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

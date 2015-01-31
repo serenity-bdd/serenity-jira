@@ -1,1 +1,1 @@
-include 'serenity-jira-plugin'
+include 'serenity-jira-plugin', 'serenity-jira-requirements-provider'

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="net.serenitybdd.plugins.jira.workflow.WhenUsingTheDefaultJiraWorkflow" tests="1" skipped="0" failures="0" errors="0" timestamp="2015-01-31T00:36:16" hostname="CPE-124-184-104-82.lns14.cht.bigpond.net.au" time="0.573">
-  <properties/>
-  <testcase name="should load the default workflow if none is specified" classname="net.serenitybdd.plugins.jira.workflow.WhenUsingTheDefaultJiraWorkflow" time="0.573"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

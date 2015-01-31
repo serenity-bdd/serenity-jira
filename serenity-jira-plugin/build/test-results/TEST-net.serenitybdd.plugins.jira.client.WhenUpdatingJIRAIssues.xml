@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="net.serenitybdd.plugins.jira.client.WhenUpdatingJIRAIssues" tests="2" skipped="0" failures="0" errors="0" timestamp="2015-01-31T00:35:35" hostname="CPE-124-184-104-82.lns14.cht.bigpond.net.au" time="39.992">
-  <properties/>
-  <testcase name="should be able to add a comment to an issue" classname="net.serenitybdd.plugins.jira.client.WhenUpdatingJIRAIssues" time="19.992"/>
-  <testcase name="should be able to update a comment" classname="net.serenitybdd.plugins.jira.client.WhenUpdatingJIRAIssues" time="20.0"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

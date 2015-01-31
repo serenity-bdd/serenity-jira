@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="net.serenitybdd.plugins.jira.client.WhenQueryingJIRAIssues" tests="2" skipped="0" failures="0" errors="0" timestamp="2015-01-31T00:35:35" hostname="CPE-124-184-104-82.lns14.cht.bigpond.net.au" time="12.424">
-  <properties/>
-  <testcase name="should be able to read the status of an issue" classname="net.serenitybdd.plugins.jira.client.WhenQueryingJIRAIssues" time="7.895"/>
-  <testcase name="should be able to read the comments of an issue" classname="net.serenitybdd.plugins.jira.client.WhenQueryingJIRAIssues" time="4.529"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

@@ -131,7 +131,9 @@ allprojects {
         compile "com.google.guava:guava:18.0"
         compile "org.slf4j:slf4j-api:1.6.4"
         compile "org.codehaus.groovy:groovy-all:2.3.6"
+
         testCompile "ch.qos.logback:logback-classic:1.0.13"
+        testCompile "net.serenity-bdd:serenity-test-utils:$serenityCoreVersion"
 
         testCompile "junit:junit:4.11"
         testCompile("org.spockframework:spock-core:0.7-groovy-2.0") {
