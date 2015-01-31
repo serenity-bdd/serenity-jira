@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="net.serenitybdd.plugins.jira.model.IssueSummarySpec" tests="2" skipped="0" failures="0" errors="0" timestamp="2015-01-31T00:37:15" hostname="CPE-124-184-104-82.lns14.cht.bigpond.net.au" time="0.005">
+  <properties/>
+  <testcase name="should store rendered field descriptions" classname="net.serenitybdd.plugins.jira.model.IssueSummarySpec" time="0.004"/>
+  <testcase name="should know when rendered fields are unavailable" classname="net.serenitybdd.plugins.jira.model.IssueSummarySpec" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

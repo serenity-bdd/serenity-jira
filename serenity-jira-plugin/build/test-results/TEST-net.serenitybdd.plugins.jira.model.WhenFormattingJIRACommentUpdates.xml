@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="net.serenitybdd.plugins.jira.model.WhenFormattingJIRACommentUpdates" tests="12" skipped="0" failures="0" errors="0" timestamp="2015-01-31T00:36:22" hostname="CPE-124-184-104-82.lns14.cht.bigpond.net.au" time="0.097">
+  <properties/>
+  <testcase name="should_be_able_to_obtain_the_recorded_test_results_for_each_test" classname="net.serenitybdd.plugins.jira.model.WhenFormattingJIRACommentUpdates" time="0.074"/>
+  <testcase name="should_be_able_to_write_a_new_comment_using_the_existing_comments_data" classname="net.serenitybdd.plugins.jira.model.WhenFormattingJIRACommentUpdates" time="0.002"/>
+  <testcase name="should_include_test_result_title" classname="net.serenitybdd.plugins.jira.model.WhenFormattingJIRACommentUpdates" time="0.003"/>
+  <testcase name="should_include_the_latest_build_job_number" classname="net.serenitybdd.plugins.jira.model.WhenFormattingJIRACommentUpdates" time="0.002"/>
+  <testcase name="should_include_identifiable_title_in_comment_heading" classname="net.serenitybdd.plugins.jira.model.WhenFormattingJIRACommentUpdates" time="0.002"/>
+  <testcase name="should_include_the_result_for_each_test" classname="net.serenitybdd.plugins.jira.model.WhenFormattingJIRACommentUpdates" time="0.001"/>
+  <testcase name="should_be_able_to_obtain_the_overall_test_result_from_tests_in_a_comment" classname="net.serenitybdd.plugins.jira.model.WhenFormattingJIRACommentUpdates" time="0.002"/>
+  <testcase name="should_be_able_to_add_or_update_test_results_in_the_existing_comments_data" classname="net.serenitybdd.plugins.jira.model.WhenFormattingJIRACommentUpdates" time="0.003"/>
+  <testcase name="should_include_link_to_test_report" classname="net.serenitybdd.plugins.jira.model.WhenFormattingJIRACommentUpdates" time="0.002"/>
+  <testcase name="should_be_able_to_obtain_the_latest_report_url_from_a_comment" classname="net.serenitybdd.plugins.jira.model.WhenFormattingJIRACommentUpdates" time="0.001"/>
+  <testcase name="should_be_able_to_obtain_the_latest_build_job_number_from_a_comment" classname="net.serenitybdd.plugins.jira.model.WhenFormattingJIRACommentUpdates" time="0.001"/>
+  <testcase name="should_be_able_to_fix_invalid_comments" classname="net.serenitybdd.plugins.jira.model.WhenFormattingJIRACommentUpdates" time="0.002"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

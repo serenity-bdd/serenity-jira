@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="net.serenitybdd.plugins.jira.workflow.WhenSpecifyingWorkflows" tests="6" skipped="0" failures="0" errors="0" timestamp="2015-01-31T00:37:15" hostname="CPE-124-184-104-82.lns14.cht.bigpond.net.au" time="0.048">
+  <properties/>
+  <testcase name="creating an empty builder" classname="net.serenitybdd.plugins.jira.workflow.WhenSpecifyingWorkflows" time="0.011"/>
+  <testcase name="reading a non-specified transition" classname="net.serenitybdd.plugins.jira.workflow.WhenSpecifyingWorkflows" time="0.024"/>
+  <testcase name="reading a non-specified outcome result" classname="net.serenitybdd.plugins.jira.workflow.WhenSpecifyingWorkflows" time="0.002"/>
+  <testcase name="creating rules with multiple transitions" classname="net.serenitybdd.plugins.jira.workflow.WhenSpecifyingWorkflows" time="0.003"/>
+  <testcase name="creating rules with multiple transitions using verbose syntax" classname="net.serenitybdd.plugins.jira.workflow.WhenSpecifyingWorkflows" time="0.002"/>
+  <testcase name="creating rules with multiple scenarios" classname="net.serenitybdd.plugins.jira.workflow.WhenSpecifyingWorkflows" time="0.004"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

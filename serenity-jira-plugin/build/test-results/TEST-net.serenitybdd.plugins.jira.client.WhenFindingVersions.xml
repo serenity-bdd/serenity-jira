@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="net.serenitybdd.plugins.jira.client.WhenFindingVersions" tests="1" skipped="0" failures="0" errors="0" timestamp="2015-01-31T00:35:31" hostname="CPE-124-184-104-82.lns14.cht.bigpond.net.au" time="3.74">
+  <properties/>
+  <testcase name="should load all known versions for a given project" classname="net.serenitybdd.plugins.jira.client.WhenFindingVersions" time="3.74"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

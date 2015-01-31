@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="net.serenitybdd.plugins.jira.workflow.WhenLoadingTheWorkflow" tests="12" skipped="0" failures="0" errors="0" timestamp="2015-01-31T00:36:15" hostname="CPE-124-184-104-82.lns14.cht.bigpond.net.au" time="1.074">
+  <properties/>
+  <testcase name="should look for the jira-workflow.groovy configuration file by default" classname="net.serenitybdd.plugins.jira.workflow.WhenLoadingTheWorkflow" time="0.455"/>
+  <testcase name="should try to load the system-defined workflow configuration if provided" classname="net.serenitybdd.plugins.jira.workflow.WhenLoadingTheWorkflow" time="0.344"/>
+  <testcase name="should load the default workflow if available and no system property is set" classname="net.serenitybdd.plugins.jira.workflow.WhenLoadingTheWorkflow" time="0.032"/>
+  <testcase name="the workflow specified by the system property should override the default workflow" classname="net.serenitybdd.plugins.jira.workflow.WhenLoadingTheWorkflow" time="0.026"/>
+  <testcase name="when the system-specified workflow does not exist default to the convention-based workflow" classname="net.serenitybdd.plugins.jira.workflow.WhenLoadingTheWorkflow" time="0.022"/>
+  <testcase name="when the system-specified and the convention-based workflows do not exist default to the bundledworkflow" classname="net.serenitybdd.plugins.jira.workflow.WhenLoadingTheWorkflow" time="0.036"/>
+  <testcase name="should use the default workflow if no jira-workflow.groovy file is found" classname="net.serenitybdd.plugins.jira.workflow.WhenLoadingTheWorkflow" time="0.035"/>
+  <testcase name="should activate workflow updates if the workflow is defined by the system property and exists" classname="net.serenitybdd.plugins.jira.workflow.WhenLoadingTheWorkflow" time="0.022"/>
+  <testcase name="should not activate workflow updates if the workflow is defined by the system property but does not exist" classname="net.serenitybdd.plugins.jira.workflow.WhenLoadingTheWorkflow" time="0.024"/>
+  <testcase name="should activate workflow updates if the convention-based workflow file exists" classname="net.serenitybdd.plugins.jira.workflow.WhenLoadingTheWorkflow" time="0.019"/>
+  <testcase name="should not activate workflow updates if the convention-based workflow file does not exist" classname="net.serenitybdd.plugins.jira.workflow.WhenLoadingTheWorkflow" time="0.029"/>
+  <testcase name="should activate default workflow if the corresponding system property is set" classname="net.serenitybdd.plugins.jira.workflow.WhenLoadingTheWorkflow" time="0.029"/>
+  <system-out><![CDATA[11:36:15.578 [Test worker] INFO  n.t.c.u.PropertiesFileLocalPreferences - LOADING LOCAL PROPERTIES FROM /Users/john/thucydides.properties 
+11:36:15.581 [Test worker] INFO  n.t.c.u.PropertiesFileLocalPreferences - phantomjs.binary.path=/opt/phantomjs/phantomjs
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

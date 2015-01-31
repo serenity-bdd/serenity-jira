@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="net.serenitybdd.plugins.jira.WhenTrackingTestResultsForAnIssue" tests="4" skipped="0" failures="0" errors="0" timestamp="2015-01-31T00:35:30" hostname="CPE-124-184-104-82.lns14.cht.bigpond.net.au" time="1.766">
+  <properties/>
+  <testcase name="should_list_test_outcomes_for_an_issue" classname="net.serenitybdd.plugins.jira.WhenTrackingTestResultsForAnIssue" time="0.671"/>
+  <testcase name="should_record_the_overall_result_for_a_given_test" classname="net.serenitybdd.plugins.jira.WhenTrackingTestResultsForAnIssue" time="0.047"/>
+  <testcase name="should_list_tallied_issues" classname="net.serenitybdd.plugins.jira.WhenTrackingTestResultsForAnIssue" time="0.003"/>
+  <testcase name="should_record_the_result_for_a_given_test" classname="net.serenitybdd.plugins.jira.WhenTrackingTestResultsForAnIssue" time="1.042"/>
+  <system-out><![CDATA[11:35:31.805 [Test worker] INFO  n.t.c.u.PropertiesFileLocalPreferences - LOADING LOCAL PROPERTIES FROM /Users/john/thucydides.properties 
+11:35:31.842 [Test worker] INFO  n.t.c.u.PropertiesFileLocalPreferences - phantomjs.binary.path=/opt/phantomjs/phantomjs
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

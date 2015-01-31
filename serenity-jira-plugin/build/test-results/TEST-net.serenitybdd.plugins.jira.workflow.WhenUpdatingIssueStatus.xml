@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="net.serenitybdd.plugins.jira.workflow.WhenUpdatingIssueStatus" tests="11" skipped="0" failures="0" errors="0" timestamp="2015-01-31T00:36:22" hostname="CPE-124-184-104-82.lns14.cht.bigpond.net.au" time="1.193">
+  <properties/>
+  <testcase name="a_failing_test_should_leave_an_open_issue_open" classname="net.serenitybdd.plugins.jira.workflow.WhenUpdatingIssueStatus" time="0.364"/>
+  <testcase name="a_successful_test_should_not_update_status_if_workflow_update_status_is_not_specified" classname="net.serenitybdd.plugins.jira.workflow.WhenUpdatingIssueStatus" time="0.086"/>
+  <testcase name="a_successful_test_should_not_affect_a_resolved_issue" classname="net.serenitybdd.plugins.jira.workflow.WhenUpdatingIssueStatus" time="0.086"/>
+  <testcase name="a_failing_test_should_leave_a_reopened_issue_reopened" classname="net.serenitybdd.plugins.jira.workflow.WhenUpdatingIssueStatus" time="0.089"/>
+  <testcase name="a_failing_test_should_open_a_closed_issue" classname="net.serenitybdd.plugins.jira.workflow.WhenUpdatingIssueStatus" time="0.087"/>
+  <testcase name="a_successful_test_should_resolve_an_open_issue" classname="net.serenitybdd.plugins.jira.workflow.WhenUpdatingIssueStatus" time="0.081"/>
+  <testcase name="a_successful_test_should_not_update_status_if_workflow_is_not_activated" classname="net.serenitybdd.plugins.jira.workflow.WhenUpdatingIssueStatus" time="0.082"/>
+  <testcase name="a_failing_test_should_leave_in_progress_issue_in_progress" classname="net.serenitybdd.plugins.jira.workflow.WhenUpdatingIssueStatus" time="0.081"/>
+  <testcase name="a_failing_test_should_open_a_resolved_issue" classname="net.serenitybdd.plugins.jira.workflow.WhenUpdatingIssueStatus" time="0.081"/>
+  <testcase name="a_successful_test_should_resolve_a_reopened_issue" classname="net.serenitybdd.plugins.jira.workflow.WhenUpdatingIssueStatus" time="0.077"/>
+  <testcase name="a_successful_test_should_resolve_an_in_progress_issue" classname="net.serenitybdd.plugins.jira.workflow.WhenUpdatingIssueStatus" time="0.078"/>
+  <system-out><![CDATA[11:36:23.028 [Test worker] INFO  n.t.c.u.PropertiesFileLocalPreferences - LOADING LOCAL PROPERTIES FROM /Users/john/thucydides.properties 
+11:36:23.331 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA LISTENER STATUS
+11:36:23.331 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA URL: http://my.jira.server 
+11:36:23.331 [Test worker] DEBUG n.s.plugins.jira.JiraListener - REPORT URL: http://my.server/myproject/thucydides 
+11:36:23.331 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW ACTIVE: true 
+11:36:23.333 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:23.338 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:23.339 [Test worker] INFO  n.s.plugins.jira.JiraListener - Updating JIRA issue: MYPROJECT-123
+11:36:23.340 [Test worker] INFO  n.s.plugins.jira.JiraListener - JIRA server: issueTracker
+11:36:23.340 [Test worker] INFO  n.s.plugins.jira.JiraListener - Updating comments for issue MYPROJECT-123
+11:36:23.340 [Test worker] INFO  n.s.plugins.jira.JiraListener - WIKI Rendering activated: true
+11:36:23.345 [Test worker] INFO  n.s.plugins.jira.JiraListener - Updating status for issue MYPROJECT-123 with test result FAILURE
+11:36:23.346 [Test worker] INFO  n.s.plugins.jira.JiraListener - Issue MYPROJECT-123 currently has status 'Open'
+11:36:23.346 [Test worker] INFO  n.s.plugins.jira.JiraListener - Found transitions [] for issue MYPROJECT-123
+11:36:23.352 [Test worker] INFO  n.t.c.u.PropertiesFileLocalPreferences - LOADING LOCAL PROPERTIES FROM /Users/john/thucydides.properties 
+11:36:23.381 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA LISTENER STATUS
+11:36:23.382 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA URL: http://my.jira.server 
+11:36:23.382 [Test worker] DEBUG n.s.plugins.jira.JiraListener - REPORT URL: http://my.server/myproject/thucydides 
+11:36:23.382 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW ACTIVE: true 
+11:36:23.382 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:23.382 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:23.383 [pool-18-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating JIRA issue: MYPROJECT-123
+11:36:23.384 [pool-18-thread-1] INFO  n.s.plugins.jira.JiraListener - JIRA server: issueTracker
+11:36:23.384 [pool-18-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating comments for issue MYPROJECT-123
+11:36:23.384 [pool-18-thread-1] INFO  n.s.plugins.jira.JiraListener - WIKI Rendering activated: true
+11:36:23.438 [Test worker] INFO  n.t.c.u.PropertiesFileLocalPreferences - LOADING LOCAL PROPERTIES FROM /Users/john/thucydides.properties 
+11:36:23.467 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA LISTENER STATUS
+11:36:23.467 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA URL: http://my.jira.server 
+11:36:23.467 [Test worker] DEBUG n.s.plugins.jira.JiraListener - REPORT URL: http://my.server/myproject/thucydides 
+11:36:23.467 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW ACTIVE: true 
+11:36:23.467 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:23.468 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:23.468 [pool-19-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating JIRA issue: MYPROJECT-123
+11:36:23.469 [pool-19-thread-1] INFO  n.s.plugins.jira.JiraListener - JIRA server: issueTracker
+11:36:23.469 [pool-19-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating comments for issue MYPROJECT-123
+11:36:23.469 [pool-19-thread-1] INFO  n.s.plugins.jira.JiraListener - WIKI Rendering activated: true
+11:36:23.470 [pool-19-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating status for issue MYPROJECT-123 with test result SUCCESS
+11:36:23.470 [pool-19-thread-1] INFO  n.s.plugins.jira.JiraListener - Issue MYPROJECT-123 currently has status 'Resolved'
+11:36:23.470 [pool-19-thread-1] INFO  n.s.plugins.jira.JiraListener - Found transitions [] for issue MYPROJECT-123
+11:36:23.525 [Test worker] INFO  n.t.c.u.PropertiesFileLocalPreferences - LOADING LOCAL PROPERTIES FROM /Users/john/thucydides.properties 
+11:36:23.556 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA LISTENER STATUS
+11:36:23.556 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA URL: http://my.jira.server 
+11:36:23.556 [Test worker] DEBUG n.s.plugins.jira.JiraListener - REPORT URL: http://my.server/myproject/thucydides 
+11:36:23.556 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW ACTIVE: true 
+11:36:23.556 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:23.557 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:23.557 [pool-20-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating JIRA issue: MYPROJECT-123
+11:36:23.558 [pool-20-thread-1] INFO  n.s.plugins.jira.JiraListener - JIRA server: issueTracker
+11:36:23.558 [pool-20-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating comments for issue MYPROJECT-123
+11:36:23.558 [pool-20-thread-1] INFO  n.s.plugins.jira.JiraListener - WIKI Rendering activated: true
+11:36:23.559 [pool-20-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating status for issue MYPROJECT-123 with test result FAILURE
+11:36:23.559 [pool-20-thread-1] INFO  n.s.plugins.jira.JiraListener - Issue MYPROJECT-123 currently has status 'Reopen'
+11:36:23.559 [pool-20-thread-1] INFO  n.s.plugins.jira.JiraListener - Found transitions [] for issue MYPROJECT-123
+11:36:23.613 [Test worker] INFO  n.t.c.u.PropertiesFileLocalPreferences - LOADING LOCAL PROPERTIES FROM /Users/john/thucydides.properties 
+11:36:23.642 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA LISTENER STATUS
+11:36:23.642 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA URL: http://my.jira.server 
+11:36:23.642 [Test worker] DEBUG n.s.plugins.jira.JiraListener - REPORT URL: http://my.server/myproject/thucydides 
+11:36:23.642 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW ACTIVE: true 
+11:36:23.643 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:23.643 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:23.644 [pool-21-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating JIRA issue: MYPROJECT-123
+11:36:23.644 [pool-21-thread-1] INFO  n.s.plugins.jira.JiraListener - JIRA server: issueTracker
+11:36:23.645 [pool-21-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating comments for issue MYPROJECT-123
+11:36:23.645 [pool-21-thread-1] INFO  n.s.plugins.jira.JiraListener - WIKI Rendering activated: true
+11:36:23.645 [pool-21-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating status for issue MYPROJECT-123 with test result FAILURE
+11:36:23.646 [pool-21-thread-1] INFO  n.s.plugins.jira.JiraListener - Issue MYPROJECT-123 currently has status 'Closed'
+11:36:23.646 [pool-21-thread-1] INFO  n.s.plugins.jira.JiraListener - Found transitions [Reopen Issue] for issue MYPROJECT-123
+11:36:23.700 [Test worker] INFO  n.t.c.u.PropertiesFileLocalPreferences - LOADING LOCAL PROPERTIES FROM /Users/john/thucydides.properties 
+11:36:23.724 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA LISTENER STATUS
+11:36:23.724 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA URL: http://my.jira.server 
+11:36:23.724 [Test worker] DEBUG n.s.plugins.jira.JiraListener - REPORT URL: http://my.server/myproject/thucydides 
+11:36:23.724 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW ACTIVE: true 
+11:36:23.724 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:23.725 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:23.725 [pool-22-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating JIRA issue: MYPROJECT-123
+11:36:23.726 [pool-22-thread-1] INFO  n.s.plugins.jira.JiraListener - JIRA server: issueTracker
+11:36:23.726 [pool-22-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating comments for issue MYPROJECT-123
+11:36:23.726 [pool-22-thread-1] INFO  n.s.plugins.jira.JiraListener - WIKI Rendering activated: true
+11:36:23.727 [pool-22-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating status for issue MYPROJECT-123 with test result SUCCESS
+11:36:23.727 [pool-22-thread-1] INFO  n.s.plugins.jira.JiraListener - Issue MYPROJECT-123 currently has status 'Open'
+11:36:23.727 [pool-22-thread-1] INFO  n.s.plugins.jira.JiraListener - Found transitions [Resolve Issue] for issue MYPROJECT-123
+11:36:23.782 [Test worker] INFO  n.t.c.u.PropertiesFileLocalPreferences - LOADING LOCAL PROPERTIES FROM /Users/john/thucydides.properties 
+11:36:23.808 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA LISTENER STATUS
+11:36:23.808 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA URL: http://my.jira.server 
+11:36:23.808 [Test worker] DEBUG n.s.plugins.jira.JiraListener - REPORT URL: http://my.server/myproject/thucydides 
+11:36:23.808 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW ACTIVE: true 
+11:36:23.808 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:23.809 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:23.809 [pool-23-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating JIRA issue: MYPROJECT-123
+11:36:23.810 [pool-23-thread-1] INFO  n.s.plugins.jira.JiraListener - JIRA server: issueTracker
+11:36:23.810 [pool-23-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating comments for issue MYPROJECT-123
+11:36:23.810 [pool-23-thread-1] INFO  n.s.plugins.jira.JiraListener - WIKI Rendering activated: true
+11:36:23.864 [Test worker] INFO  n.t.c.u.PropertiesFileLocalPreferences - LOADING LOCAL PROPERTIES FROM /Users/john/thucydides.properties 
+11:36:23.888 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA LISTENER STATUS
+11:36:23.888 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA URL: http://my.jira.server 
+11:36:23.888 [Test worker] DEBUG n.s.plugins.jira.JiraListener - REPORT URL: http://my.server/myproject/thucydides 
+11:36:23.888 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW ACTIVE: true 
+11:36:23.888 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:23.889 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:23.889 [pool-24-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating JIRA issue: MYPROJECT-123
+11:36:23.890 [pool-24-thread-1] INFO  n.s.plugins.jira.JiraListener - JIRA server: issueTracker
+11:36:23.890 [pool-24-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating comments for issue MYPROJECT-123
+11:36:23.890 [pool-24-thread-1] INFO  n.s.plugins.jira.JiraListener - WIKI Rendering activated: true
+11:36:23.891 [pool-24-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating status for issue MYPROJECT-123 with test result FAILURE
+11:36:23.891 [pool-24-thread-1] INFO  n.s.plugins.jira.JiraListener - Issue MYPROJECT-123 currently has status 'In Progress'
+11:36:23.891 [pool-24-thread-1] INFO  n.s.plugins.jira.JiraListener - Found transitions [] for issue MYPROJECT-123
+11:36:23.945 [Test worker] INFO  n.t.c.u.PropertiesFileLocalPreferences - LOADING LOCAL PROPERTIES FROM /Users/john/thucydides.properties 
+11:36:23.969 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA LISTENER STATUS
+11:36:23.970 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA URL: http://my.jira.server 
+11:36:23.970 [Test worker] DEBUG n.s.plugins.jira.JiraListener - REPORT URL: http://my.server/myproject/thucydides 
+11:36:23.970 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW ACTIVE: true 
+11:36:23.970 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:23.970 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:23.971 [pool-25-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating JIRA issue: MYPROJECT-123
+11:36:23.971 [pool-25-thread-1] INFO  n.s.plugins.jira.JiraListener - JIRA server: issueTracker
+11:36:23.972 [pool-25-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating comments for issue MYPROJECT-123
+11:36:23.972 [pool-25-thread-1] INFO  n.s.plugins.jira.JiraListener - WIKI Rendering activated: true
+11:36:23.972 [pool-25-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating status for issue MYPROJECT-123 with test result FAILURE
+11:36:23.972 [pool-25-thread-1] INFO  n.s.plugins.jira.JiraListener - Issue MYPROJECT-123 currently has status 'Resolved'
+11:36:23.973 [pool-25-thread-1] INFO  n.s.plugins.jira.JiraListener - Found transitions [Reopen Issue] for issue MYPROJECT-123
+11:36:24.026 [Test worker] INFO  n.t.c.u.PropertiesFileLocalPreferences - LOADING LOCAL PROPERTIES FROM /Users/john/thucydides.properties 
+11:36:24.047 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA LISTENER STATUS
+11:36:24.047 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA URL: http://my.jira.server 
+11:36:24.047 [Test worker] DEBUG n.s.plugins.jira.JiraListener - REPORT URL: http://my.server/myproject/thucydides 
+11:36:24.047 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW ACTIVE: true 
+11:36:24.047 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:24.048 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:24.048 [pool-26-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating JIRA issue: MYPROJECT-123
+11:36:24.049 [pool-26-thread-1] INFO  n.s.plugins.jira.JiraListener - JIRA server: issueTracker
+11:36:24.049 [pool-26-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating comments for issue MYPROJECT-123
+11:36:24.049 [pool-26-thread-1] INFO  n.s.plugins.jira.JiraListener - WIKI Rendering activated: true
+11:36:24.050 [pool-26-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating status for issue MYPROJECT-123 with test result SUCCESS
+11:36:24.050 [pool-26-thread-1] INFO  n.s.plugins.jira.JiraListener - Issue MYPROJECT-123 currently has status 'Reopened'
+11:36:24.050 [pool-26-thread-1] INFO  n.s.plugins.jira.JiraListener - Found transitions [Resolve Issue] for issue MYPROJECT-123
+11:36:24.103 [Test worker] INFO  n.t.c.u.PropertiesFileLocalPreferences - LOADING LOCAL PROPERTIES FROM /Users/john/thucydides.properties 
+11:36:24.122 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA LISTENER STATUS
+11:36:24.122 [Test worker] DEBUG n.s.plugins.jira.JiraListener - JIRA URL: http://my.jira.server 
+11:36:24.122 [Test worker] DEBUG n.s.plugins.jira.JiraListener - REPORT URL: http://my.server/myproject/thucydides 
+11:36:24.122 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW ACTIVE: true 
+11:36:24.122 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:24.123 [Test worker] DEBUG n.s.plugins.jira.JiraListener - WORKFLOW TRANSITIONS: [SUCCESS:[Reopened:[Resolve Issue], In Progress:[Stop Progress, Resolve Issue], Open:[Resolve Issue]], FAILURE:[Closed:[Reopen Issue], Resolved:[Reopen Issue]]]
+11:36:24.124 [pool-27-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating JIRA issue: MYPROJECT-123
+11:36:24.125 [pool-27-thread-1] INFO  n.s.plugins.jira.JiraListener - JIRA server: issueTracker
+11:36:24.125 [pool-27-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating comments for issue MYPROJECT-123
+11:36:24.125 [pool-27-thread-1] INFO  n.s.plugins.jira.JiraListener - WIKI Rendering activated: true
+11:36:24.126 [pool-27-thread-1] INFO  n.s.plugins.jira.JiraListener - Updating status for issue MYPROJECT-123 with test result SUCCESS
+11:36:24.126 [pool-27-thread-1] INFO  n.s.plugins.jira.JiraListener - Issue MYPROJECT-123 currently has status 'In Progress'
+11:36:24.126 [pool-27-thread-1] INFO  n.s.plugins.jira.JiraListener - Found transitions [Stop Progress, Resolve Issue] for issue MYPROJECT-123
+]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

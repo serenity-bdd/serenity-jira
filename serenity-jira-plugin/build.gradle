@@ -1,0 +1,14 @@
+ext {
+    bintrayPackage = 'serenity-jira-plugin'
+    projectDescription = 'Serenity JIRA Plugin'
+}
+dependencies {
+    compile 'org.glassfish.jersey.core:jersey-client:2.3.1'
+    compile 'javax.ws.rs:javax.ws.rs-api:2.0.1'
+    compile 'org.json:json:20090211'
+    testCompile 'org.mockito:mockito-all:1.10.8'
+    testCompile  'org.assertj:assertj-core:1.7.0'
+}
+
+sourceSets.main.java.srcDirs = []
+sourceSets.main.groovy.srcDirs += ["src/main/java"]

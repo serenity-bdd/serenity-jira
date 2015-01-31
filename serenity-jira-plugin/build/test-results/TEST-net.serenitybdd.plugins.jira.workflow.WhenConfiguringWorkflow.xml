@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="net.serenitybdd.plugins.jira.workflow.WhenConfiguringWorkflow" tests="3" skipped="0" failures="0" errors="0" timestamp="2015-01-31T00:35:47" hostname="CPE-124-184-104-82.lns14.cht.bigpond.net.au" time="0.111">
+  <properties/>
+  <testcase name="should_be_able_to_load_a_workflow_configuration" classname="net.serenitybdd.plugins.jira.workflow.WhenConfiguringWorkflow" time="0.074"/>
+  <testcase name="should_be_able_to_configure_multiple_transitions" classname="net.serenitybdd.plugins.jira.workflow.WhenConfiguringWorkflow" time="0.02"/>
+  <testcase name="should_be_able_to_configure_a_simple_transition" classname="net.serenitybdd.plugins.jira.workflow.WhenConfiguringWorkflow" time="0.016"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

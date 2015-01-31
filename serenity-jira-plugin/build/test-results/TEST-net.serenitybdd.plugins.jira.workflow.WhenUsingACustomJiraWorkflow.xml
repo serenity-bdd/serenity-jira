@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="net.serenitybdd.plugins.jira.workflow.WhenUsingACustomJiraWorkflow" tests="1" skipped="0" failures="0" errors="0" timestamp="2015-01-31T00:35:47" hostname="CPE-124-184-104-82.lns14.cht.bigpond.net.au" time="0.031">
+  <properties/>
+  <testcase name="should load a custom workflow defined in the thucydides.jira.workflow system property" classname="net.serenitybdd.plugins.jira.workflow.WhenUsingACustomJiraWorkflow" time="0.031"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
