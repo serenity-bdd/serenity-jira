@@ -1,11 +1,11 @@
 ext {
     bintrayPackage = 'serenity-jira-requirements-provider'
-    projectDescription = 'Serenity JIRA Requirements ProviderPlugin'
+    projectDescription = 'Serenity JIRA Requirements Provider'
 }
 dependencies {
     compile project(':serenity-jira-plugin')
     compile 'com.googlecode.lambdaj:lambdaj:2.3.3'
 }
 
-sourceSets.main.java.srcDirs = []
-sourceSets.main.groovy.srcDirs += ["src/main/java"]
+//sourceSets.main.java.srcDirs = []
+//sourceSets.main.groovy.srcDirs += ["src/main/java"]

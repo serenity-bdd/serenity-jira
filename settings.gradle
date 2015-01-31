@@ -1,1 +1,1 @@
-include 'serenity-jira-plugin', 'serenity-jira-requirements-provider'
+include 'serenity-jira-plugin', 'serenity-jira-requirements-provider','serenity-jira-customfield-requirements-provider','serenity-jira-zephyr-adaptor'

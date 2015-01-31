@@ -68,6 +68,7 @@ allprojects {
     test {
         exclude '**/*$*'
         exclude '**/integration/**'
+        exclude '**/localhost/**'
         exclude '**/samples/**'
         exclude '**/*Sample*'
         minHeapSize = "128m"
@@ -80,6 +81,7 @@ allprojects {
         exclude '**/samples/**'
         exclude '**/*Sample*'
         exclude '**/integration/browsers**'
+        exclude '**/localhost/**'
         include '**/integration/**'
         reports.junitXml.destination = "${buildDir}/reports/integration-tests"
         reports.html.destination = "${buildDir}/reports/integration-tests"

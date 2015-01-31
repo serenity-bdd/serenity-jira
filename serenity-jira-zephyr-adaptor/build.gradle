@@ -1,0 +1,8 @@
+ext {
+    bintrayPackage = 'serenity-jira-zephyr-adaptor'
+    projectDescription = 'Serenity JIRA Zephyr Adaptor'
+}
+dependencies {
+    compile project(':serenity-jira-plugin')
+    compile 'com.googlecode.lambdaj:lambdaj:2.3.3'
+}
