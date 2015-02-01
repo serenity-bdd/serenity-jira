@@ -370,22 +370,5 @@ public class WhenUpdatingCommentsInJIRA {
 
         verify(issueTracker).doTransition("MYPROJECT-123", "Reopen Issue");
     }
-
-    @Test
-    public void a_failing_and_a_passing_test_should_open_a_closed_issue() {
-
-        when(issueTracker.getStatusFor("MYPROJECT-123")).thenReturn("Closed","Open");
-
-        JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
-        listener.testSuiteStarted(SampleTestSuite.class);
-        listener.testStarted("issue_123_should_be_fixed_now");
-        listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE));
-        listener.testStarted("issue_123_and_456_should_be_fixed_now");
-        listener.testFinished(newTestOutcome("issue_123_and_456_should_be_fixed_now", TestResult.SUCCESS));
-        listener.testSuiteFinished();
-
-        verify(issueTracker).doTransition("MYPROJECT-123", "Reopen Issue");
-        verify(issueTracker, never()).doTransition("MYPROJECT-123", "Resolve Issue");
-    }
-
+    
 }
