@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>thucydides</artifactId>
+        <groupId>net.thucydides</groupId>
+        <version>0.9.268</version>
+    </parent>
+    <groupId>net.thucydides.plugins.jira</groupId>
+    <artifactId>thucydides-jira-customfields-requirements-provider</artifactId>
+    <version>0.9.269-SNAPSHOT</version>
+    <name>thucydides-jira-customfields-requirements-provider</name>
+    <packaging>jar</packaging>
+
+    <description>Read Thucydides requirements from JIRA Story and Epic cards</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <thucydides.version>0.9.268</thucydides.version>
+        <thucydides.jira.version>0.9.268</thucydides.jira.version>
+    </properties>
+
+    <scm>
+        <connection>scm:git:git@github.com:thucydides-webtests/thucydides-jira-customfield-requirements-provider.git</connection>
+        <developerConnection>scm:git:git@github.com:thucydides-webtests/thucydides-jira-customfield-requirements-provider.git</developerConnection>
+        <url>scm:git:git@github.com:thucydides-webtests/thucydides-jira-customfield-requirements-provider.git</url>
+    </scm>
+
+
+    <dependencies>
+        <dependency>
+            <groupId>net.thucydides</groupId>
+            <artifactId>thucydides-core</artifactId>
+            <version>${thucydides.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.thucydides.plugins.jira</groupId>
+            <artifactId>thucydides-jira-plugin</artifactId>
+            <version>${thucydides.jira.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.thucydides</groupId>
+            <artifactId>thucydides-test-utils</artifactId>
+            <version>${thucydides.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-simple</artifactId>
+            <version>1.6.1</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <source>1.7</source>
+                    <target>1.7</target>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+            </plugin>
+        </plugins>
+    </build>
+</project>
