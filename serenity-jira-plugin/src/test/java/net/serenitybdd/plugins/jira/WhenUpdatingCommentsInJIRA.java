@@ -370,5 +370,5 @@ public class WhenUpdatingCommentsInJIRA {
 
         verify(issueTracker).doTransition("MYPROJECT-123", "Reopen Issue");
     }
-    
+
 }

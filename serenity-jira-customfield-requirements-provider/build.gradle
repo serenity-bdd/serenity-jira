@@ -1,0 +1,10 @@
+ext {
+    bintrayPackage = 'serenity-jira-customfield-requirements-provider'
+    projectDescription = 'Serenity JIRA CustomFields Requirements Provider'
+}
+dependencies {
+    compile project(':serenity-jira-plugin')
+}
+
+//sourceSets.main.java.srcDirs = []
+//sourceSets.main.groovy.srcDirs += ["src/main/java"]
