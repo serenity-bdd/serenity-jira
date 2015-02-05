@@ -20,10 +20,10 @@ class WhenReadingZephyrTestsFromJira extends Specification {
     def outcomes
 
     def setup() {
-        environmentVariables.setProperty('jira.url','http://54.253.114.157:8082')
-        environmentVariables.setProperty('jira.username','john.smart')
-        environmentVariables.setProperty('jira.password','arv-uf-gis-bo-gl')
-        environmentVariables.setProperty('jira.project','PAV')
+        environmentVariables.setProperty('jira.url','http://192.168.0.128:8080')
+        environmentVariables.setProperty('jira.username','bruce')
+        environmentVariables.setProperty('jira.password','batm0bile')
+        environmentVariables.setProperty('jira.project','FH')
 
         configuration = new SystemPropertiesJIRAConfiguration(environmentVariables)
 
