@@ -28,7 +28,7 @@ allprojects {
 
 
     ext {
-        serenityCoreVersion = "1.0.26"
+        serenityCoreVersion = "1.0.30"
         bintrayBaseUrl = 'https://api.bintray.com/maven'
         bintrayRepository = 'maven'
         bintrayPackage = 'serenity-jira'
