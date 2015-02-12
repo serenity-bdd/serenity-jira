@@ -1,2 +1,1 @@
 include 'serenity-jira-plugin', 'serenity-jira-requirements-provider','serenity-jira-customfield-requirements-provider'
-git

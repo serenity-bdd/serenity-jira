@@ -3,6 +3,9 @@ import net.serenitybdd.builds.ProjectVersionCounter
 buildscript {
     repositories {
         jcenter()
+        maven {
+            url 'https://geonet.artifactoryonline.com/geonet/public-releases'
+        }
     }
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.6'
@@ -43,6 +46,10 @@ allprojects {
     }
     group = 'net.serenity-bdd'
     version = versionCounter.nextVersion
+
+    group = 'net.serenity-bdd'
+    version = versionCounter.nextVersion
+
 
     task createNewVersionTag(type: Exec) {
         executable "sh"
