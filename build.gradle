@@ -31,7 +31,7 @@ allprojects {
 
 
     ext {
-        serenityCoreVersion = "1.0.30"
+        serenityCoreVersion = "1.0.39"
         bintrayBaseUrl = 'https://api.bintray.com/maven'
         bintrayRepository = 'maven'
         bintrayPackage = 'serenity-jira'
@@ -117,7 +117,7 @@ allprojects {
         include '**/integration/browsers/**'
     }
 
-    task javadoc(type: Javadoc, overwrite:true) {
+    task javadoc(type: Javadoc, overwrite: true) {
         source = sourceSets.main.allJava
         options.memberLevel = JavadocMemberLevel.PUBLIC
         options.addStringOption('views')
@@ -153,23 +153,6 @@ allprojects {
         }
     }
 
-    bintray {
-        user = bintrayUsername //this usually comes form gradle.properties file in ~/.gradle
-        key = bintrayApiKey //this usually comes form gradle.properties file in ~/.gradle
-        publications = ['mavenJava'] // see publications closure
-        pkg {
-            repo = 'maven'
-            userOrg = 'serenity'
-            name = 'serenity-jira'
-            desc = 'Serenity JIRA libraries'
-            licenses = ['Apache-2.0']
-            labels = ['serenity','bdd','jira']
-        }
-    }
-
-    task release() {
-        dependsOn bintrayUpload
-    }
 
 }
 
@@ -186,6 +169,19 @@ subprojects {
 
     artifacts {
         archives sourcesJar, javadocJar
+    }
+
+
+
+    tasks.withType(JavaCompile) {
+        options.compilerArgs << "-Xlint:-options"
+    }
+    if (JavaVersion.current().isJava8Compatible()) {
+        allprojects {
+            tasks.withType(Javadoc) {
+                options.addStringOption('Xdoclint:none', '-quiet')
+            }
+        }
     }
 
     publishing {
@@ -244,14 +240,21 @@ subprojects {
         }
     }
 
-    tasks.withType(JavaCompile) {
-        options.compilerArgs << "-Xlint:-options"
+}
+bintray {
+    user = bintrayUsername //this usually comes form gradle.properties file in ~/.gradle
+    key = bintrayApiKey //this usually comes form gradle.properties file in ~/.gradle
+    publications = ['mavenJava'] // see publications closure
+    pkg {
+        repo = 'maven'
+        userOrg = 'serenity'
+        name = 'serenity-jira'
+        desc = 'Serenity JIRA libraries'
+        licenses = ['Apache-2.0']
+        labels = ['serenity', 'bdd', 'jira']
     }
-    if (JavaVersion.current().isJava8Compatible()) {
-        allprojects {
-            tasks.withType(Javadoc) {
-                options.addStringOption('Xdoclint:none', '-quiet')
-            }
-        }
-    }
+}
+
+task release() {
+    dependsOn bintrayUpload
 }
