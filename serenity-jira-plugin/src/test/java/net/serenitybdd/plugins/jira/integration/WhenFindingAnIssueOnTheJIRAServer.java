@@ -1,128 +1,110 @@
 package net.serenitybdd.plugins.jira.integration;
 
+import net.serenitybdd.plugins.jira.client.JerseyJiraClient;
+import net.serenitybdd.plugins.jira.domain.IssueComment;
+import net.serenitybdd.plugins.jira.domain.IssueSummary;
+import net.serenitybdd.plugins.jira.domain.Project;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.List;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.Assert.assertThat;
+
 public class WhenFindingAnIssueOnTheJIRAServer {
 
-    private static final String JIRA_WEBSERVICE_URL = "https://wakaleo.atlassian.net/rpc/soap/jirasoapservice-v2";
+    //private static final String JIRA_WEBSERVICE_URL = "https://wakaleo.atlassian.net/rpc/soap/jirasoapservice-v2";
 
     private String issueKey;
 
     private IssueHarness testIssueHarness;
 
+    private JerseyJiraClient jiraClient = new JerseyJiraClient("https://wakaleo.atlassian.net","bruce","batm0bile","DEMO") ;
+
     @Before
     public void createTestIssue() throws Exception {
 
-        testIssueHarness = new IssueHarness(JIRA_WEBSERVICE_URL);
-//        issueKey = testIssueHarness.createTestIssue();
+        testIssueHarness = new IssueHarness("https://wakaleo.atlassian.net","bruce","batm0bile","DEMO");
+        issueKey = testIssueHarness.createTestIssue();
     }
 
     @After
     public void deleteTestIssue() throws Exception {
-//        testIssueHarness.deleteTestIssues();
+        testIssueHarness.deleteTestIssues();
     }
+
 
     @Test
     public void should_be_able_to_find_a_project_by_key() throws Exception {
-//        SOAPSession session = SOAPSession.openConnectionTo(new URL(JIRA_WEBSERVICE_URL))
-//                .usingCredentials("bruce", "batm0bile");
-//
-//        String token = session.getAuthenticationToken();
-//
-//        RemoteProject project = session.getJiraSoapService().getProjectByKey(token, "DEMO");
-//        assertThat(project, is(not(nullValue())));
+        Project project = jiraClient.getProjectByKey("DEMO");
+        assertThat(project, is(not(nullValue())));
     }
-
     @Test
     public void should_be_able_to_find_an_issue_by_id() throws Exception {
-//        SOAPSession session = SOAPSession.openConnectionTo(new URL(JIRA_WEBSERVICE_URL))
-//                .usingCredentials("bruce", "batm0bile");
-//
-//        String token = session.getAuthenticationToken();
-//
-//        RemoteIssue issue = session.getJiraSoapService().getIssue(token, issueKey);
-//        assertThat(issue, is(not(nullValue())));
+        IssueSummary issue = jiraClient.getIssue(issueKey);
+        assertThat(issue, is(not(nullValue())));
     }
 
 
     @Test
     public void should_be_able_to_find_an_issue_by_jql() throws Exception {
-//        SOAPSession session = SOAPSession.openConnectionTo(new URL(JIRA_WEBSERVICE_URL))
-//                .usingCredentials("bruce", "batm0bile");
-//
-//        String token = session.getAuthenticationToken();
-//
-//        RemoteIssue[] issues = session.getJiraSoapService().getIssuesFromJqlSearch(token, "key=" + issueKey, 1000);
-//        assertThat(issues.length, is(1));
+
+        List<IssueSummary> issues = jiraClient.findByJQL("key=" + issueKey);
+        assertThat(issues.size(), is(1));
     }
 
     @Test
     public void should_be_able_to_list_the_comments_in_an_issue() throws Exception {
-//        SOAPSession session = SOAPSession.openConnectionTo(new URL(JIRA_WEBSERVICE_URL))
-//                .usingCredentials("bruce", "batm0bile");
-//
-//        String token = session.getAuthenticationToken();
-//
-//        RemoteComment newComment = new RemoteComment();
-//        newComment.setBody("A new comment");
-//        newComment.setAuthor("bruce");
-//        session.getJiraSoapService().addComment(token, issueKey, newComment);
-//
-//        RemoteComment[] comments = session.getJiraSoapService().getComments(token, issueKey);
-//        assertThat(comments.length, is(1));
+
+        IssueComment newComment = new IssueComment();
+        newComment.setBody("A new comment");
+        newComment.setAuthor("bruce");
+        jiraClient.addComment(issueKey, newComment);
+
+        List<IssueComment> comments = jiraClient.getComments(issueKey);
+        assertThat(comments.size(), is(1));
     }
 
     @Test
     public void should_be_able_to_add_a_new_comment_to_an_issue() throws Exception {
-//        SOAPSession session = SOAPSession.openConnectionTo(new URL(JIRA_WEBSERVICE_URL))
-//                .usingCredentials("bruce", "batm0bile");
-//
-//        String token = session.getAuthenticationToken();
-//
-//        RemoteComment newComment = new RemoteComment();
-//        newComment.setBody("A new comment");
-//        newComment.setAuthor("bruce");
-//        session.getJiraSoapService().addComment(token, issueKey, newComment);
-//
-//        RemoteComment[] comments = session.getJiraSoapService().getComments(token, issueKey);
-//        assertThat(comments.length, is(1));
+        IssueComment newComment = new IssueComment();
+        newComment.setBody("A new comment");
+        newComment.setAuthor("bruce");
+        jiraClient.addComment(issueKey, newComment);
+
+        List<IssueComment> comments = jiraClient.getComments(issueKey);
+        assertThat(comments.size(), is(1));
     }
 
     @Test
     public void should_be_able_to_read_the_existing_comments_on_an_issue() throws Exception {
 
-//        SOAPSession session = SOAPSession.openConnectionTo(new URL(JIRA_WEBSERVICE_URL))
-//                .usingCredentials("bruce", "batm0bile");
-//
-//        String token = session.getAuthenticationToken();
-//
-//        RemoteComment newComment = new RemoteComment();
-//        newComment.setBody("A new comment");
-//        newComment.setAuthor("bruce");
-//        session.getJiraSoapService().addComment(token, issueKey, newComment);
-//
-//        RemoteComment newComment2 = new RemoteComment();
-//        newComment2.setBody("Another new comment");
-//        newComment2.setAuthor("bruce");
-//        session.getJiraSoapService().addComment(token, issueKey, newComment2);
-//
-//
-//        RemoteComment[] comments = session.getJiraSoapService().getComments(token, issueKey);
-//        assertThat(comments.length, is(2));
+        IssueComment newComment = new IssueComment();
+        newComment.setBody("A new comment");
+        newComment.setAuthor("bruce");
+        jiraClient.addComment(issueKey, newComment);
+
+        IssueComment newComment2 = new IssueComment();
+        newComment2.setBody("Another new comment");
+        newComment2.setAuthor("bruce");
+        jiraClient.addComment( issueKey, newComment2);
+
+        List<IssueComment> comments = jiraClient.getComments(issueKey);
+        assertThat(comments.size(), is(2));
     }
 
     @Test
     public void should_be_able_to_read_the_status_of_an_issue() throws Exception {
 
-//        SOAPSession session = SOAPSession.openConnectionTo(new URL(JIRA_WEBSERVICE_URL))
-//                .usingCredentials("bruce", "batm0bile");
-//
-//        String token = session.getAuthenticationToken();
-//        String status = session.getJiraSoapService().getIssue(token, issueKey).getStatus();
-//
-//        assertThat(status, is("1"));
+        /*SOAPSession session = SOAPSession.openConnectionTo(new URL(JIRA_WEBSERVICE_URL))
+                .usingCredentials("bruce", "batm0bile");
+
+        String token = session.getAuthenticationToken();
+        String status = session.getJiraSoapService().getIssue(token, issueKey).getStatus();
+
+        assertThat(status, is("1"));*/
     }
 
 }

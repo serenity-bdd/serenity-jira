@@ -1,9 +1,9 @@
 package net.serenitybdd.plugins.jira.integration;
 
 import net.serenitybdd.plugins.jira.domain.IssueComment;
-import net.serenitybdd.plugins.jira.service.JiraIssueTracker;
 import net.serenitybdd.plugins.jira.model.IssueTracker;
 import net.serenitybdd.plugins.jira.service.JIRAConfiguration;
+import net.serenitybdd.plugins.jira.service.JiraIssueTracker;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,8 +46,8 @@ public class WhenUpdateingIssuesUsingTheJiraTracker {
         when(configuration.getJiraPassword()).thenReturn("batm0bile");
         when(configuration.getJiraWebserviceUrl()).thenReturn(JIRA_WEBSERVICE_URL);
 
-        testIssueHarness = new IssueHarness(JIRA_WEBSERVICE_URL);
-//        issueKey = testIssueHarness.createTestIssue();
+        testIssueHarness = new IssueHarness("https://wakaleo.atlassian.net","bruce","batm0bile","DEMO");
+        issueKey = testIssueHarness.createTestIssue();
 
         tracker = new JiraIssueTracker(logger, configuration);
     }
@@ -55,7 +55,7 @@ public class WhenUpdateingIssuesUsingTheJiraTracker {
 
     @After
     public void deleteTestIssue() throws Exception {
-//        testIssueHarness.deleteTestIssues();
+        testIssueHarness.deleteTestIssues();
     }
 
     @Test
@@ -80,7 +80,7 @@ public class WhenUpdateingIssuesUsingTheJiraTracker {
 
         comments = tracker.getCommentsFor(CLOSED_ISSUE);
         assertThat(comments.size(), greaterThan(0));
-        assertThat(comments.get(comments.size() - 1).getText(), is(comment));
+        assertThat(comments.get(comments.size() - 1).getBody(), is(comment));
     }
 
 
@@ -98,7 +98,7 @@ public class WhenUpdateingIssuesUsingTheJiraTracker {
         tracker.updateComment(updatedComment);
 
         comments = tracker.getCommentsFor(issueKey);
-        assertThat(comments.get(0).getText(), is("Integration test comment 4"));
+        assertThat(comments.get(0).getBody(), is("Integration test comment 4"));
     }
 
     @Test

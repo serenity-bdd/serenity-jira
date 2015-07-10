@@ -1,61 +1,37 @@
 package net.serenitybdd.plugins.jira.integration;
 
+import net.serenitybdd.plugins.jira.client.JerseyJiraClient;
+import net.serenitybdd.plugins.jira.domain.IssueSummary;
+
 import java.util.ArrayList;
 import java.util.List;
 
 class IssueHarness {
 
-    private final String jiraUrl;
-    private List<String> testIssueKeys = new ArrayList<String>();
 
-    public IssueHarness(final String jiraUrl) {
-        this.jiraUrl = jiraUrl;
+    private JerseyJiraClient jiraClient;
+    private List<IssueSummary> testIssues = new ArrayList<IssueSummary>();
+
+    public IssueHarness(String url, String username, String password, String project) {
+        jiraClient = new JerseyJiraClient(url,username,password,project) ;
     }
 
     public String createTestIssue() throws Exception {
-//
-//        RemoteIssue issue = new RemoteIssue();
-//        issue.setProject("DEMO");
-//        issue.setDescription("A test issue");
-//        issue.setReporter("bruce");
-//        issue.setType("1");
-//        issue.setSummary("A test issue");
-//        RemoteIssue createdIssue = session.getJiraSoapService().createIssue(token, issue);
-//
-//        testIssueKeys.add(createdIssue.getKey());
-//
-//        return createdIssue.getKey();
-        return null;
+        IssueSummary issue =  new IssueSummary();
+        issue.setProject("DEMO");
+        issue.setDescription("A new test issue");
+        issue.setReporter("bruce");
+        issue.setType("1");
+        issue.setSummary("A test issue");
+        issue.setKey("DEMO-1");
+        IssueSummary createdIssue =  jiraClient.createIssue(issue);
+        testIssues.add(createdIssue);
+        return createdIssue.getKey();
     }
-//
-//    public String createTestIssue() throws Exception {
-//        SOAPSession session = SOAPSession.openConnectionTo(new URL(jiraUrl))
-//                                         .usingCredentials("bruce", "batm0bile");
-//
-//        String token = session.getAuthenticationToken();
-//
-//        RemoteIssue issue = new RemoteIssue();
-//        issue.setProject("DEMO");
-//        issue.setDescription("A test issue");
-//        issue.setReporter("bruce");
-//        issue.setType("1");
-//        issue.setSummary("A test issue");
-//        RemoteIssue createdIssue = session.getJiraSoapService().createIssue(token, issue);
-//
-//        testIssueKeys.add(createdIssue.getKey());
-//
-//        return createdIssue.getKey();
-//    }
-//
-//    public void deleteTestIssues() throws Exception {
-//        SOAPSession session = SOAPSession.openConnectionTo(new URL(jiraUrl))
-//                                         .usingCredentials("bruce", "batm0bile");
-//
-//        String token = session.getAuthenticationToken();
-//
-//        for(String issueKey : testIssueKeys) {
-//            session.getJiraSoapService().deleteIssue(token, issueKey);
-//        }
-//    }
 
+    public void deleteTestIssues() throws Exception {
+        for(IssueSummary issue : testIssues) {
+            jiraClient.deleteIssue(issue);
+        }
+    }
 }
