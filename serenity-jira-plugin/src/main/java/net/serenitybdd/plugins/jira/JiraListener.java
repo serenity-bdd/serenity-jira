@@ -6,29 +6,27 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.Inject;
 import net.serenitybdd.plugins.jira.domain.IssueComment;
+import net.serenitybdd.plugins.jira.guice.Injectors;
 import net.serenitybdd.plugins.jira.model.IssueTracker;
 import net.serenitybdd.plugins.jira.model.TestResultComment;
 import net.serenitybdd.plugins.jira.service.JIRAConfiguration;
+import net.serenitybdd.plugins.jira.service.NoSuchIssueException;
 import net.serenitybdd.plugins.jira.workflow.ClasspathWorkflowLoader;
 import net.serenitybdd.plugins.jira.workflow.Workflow;
+import net.serenitybdd.plugins.jira.workflow.WorkflowLoader;
 import net.thucydides.core.ThucydidesSystemProperty;
-import net.thucydides.core.model.DataTable;
-import net.thucydides.core.model.Stories;
-import net.thucydides.core.model.Story;
-import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestResult;
+import net.thucydides.core.model.*;
 import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.util.EnvironmentVariables;
-import net.serenitybdd.plugins.jira.guice.Injectors;
-import net.serenitybdd.plugins.jira.service.NoSuchIssueException;
-import net.serenitybdd.plugins.jira.workflow.WorkflowLoader;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -246,7 +244,7 @@ public class JiraListener implements StepListener {
 
             issueTracker.addComment(issueId, testResultComment.asText());
         } else {
-            testResultComment = TestResultComment.fromText(existingComment.getText())
+            testResultComment = TestResultComment.fromText(existingComment.getBody())
                                                          .withWikiRendering(isWikiRenderedActive())
                                                          .withUpdatedTestResults(testOutcomes)
                                                          .withUpdatedReportUrl(linkToReport(testOutcomes))
@@ -261,7 +259,7 @@ public class JiraListener implements StepListener {
 
     private IssueComment findExistingSerenityCommentIn(List<IssueComment> comments) {
         for (IssueComment comment : comments) {
-            if (comment.getText().contains("Thucydides Test Results")) {
+            if (comment.getBody().contains("Thucydides Test Results")) {
                 return comment;
             }
         }

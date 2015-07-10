@@ -3,8 +3,11 @@ package net.serenitybdd.plugins.jira.domain;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,25 +15,51 @@ import java.util.Map;
 
 public class IssueSummary {
 
-    private final URI self;
-    private final Long id;
-    private final String key;
-    private final String summary;
-    private final String description;
-    private final String type;
-    private final String status;
-    private final List<String> labels;
-    private final List<String> fixVersions;
-    private final Map<String, Object> customFieldValues;
-    private final Map<String, String> renderedFieldValues;
+    public static final String PROJECT_KEY = "project";
+    public static final String TYPE_ID_KEY = "id";
+    public static final String TYPE_KEY = "issuetype";
+    public static final String SUMMARY_KEY = "summary";
+    public static final String DESCRIPTION_KEY = "description";
+    public static final String FIELDS_KEY = "fields";
+    public static final String COMMENTS_KEY = "comments";
 
-    private final List<IssueComment> comments;
+    private URI self;
+    private Long id;
+    private String key;
+    private String summary;
+    private String description;
+    private String type;
+    private String status;
+    private List<String> labels;
+    private List<String> fixVersions;
+    private Map<String, Object> customFieldValues;
+    private Map<String, String> renderedFieldValues;
+    private String project;
+    private String reporter;
 
-    private final static List<IssueComment> NO_COMMENTS = ImmutableList.of();
+    private List<IssueComment> comments;
 
-    public IssueSummary(URI self, Long id, String key, String summary, String description, Map<String, String> renderedFieldValues, String type, String status) {
-        this(self, id, key, summary, description, renderedFieldValues, type, status,
-                new ArrayList<String>(), new ArrayList<String>(), new HashMap<String, Object>(), NO_COMMENTS);
+    public IssueSummary(){
+
+    }
+
+    public IssueSummary(URI self, Long id, String key, String summary, String description, Map<String, String> renderedFieldValues, String type) {
+        this(self, id, key, summary, description, renderedFieldValues, type,
+                new ArrayList<String>(), new ArrayList<String>(), new HashMap<String, Object>());
+    }
+
+    public IssueSummary(URI self, Long id, String key, String summary, String description, Map<String, String> renderedFieldValues,
+                        String type, List<String> labels, List<String> fixVersions, Map<String, Object> customFields) {
+        this.self = self;
+        this.id = id;
+        this.key = key;
+        this.summary = summary;
+        this.description = description;
+        this.renderedFieldValues = renderedFieldValues;
+        this.type = type;
+        this.labels = ImmutableList.copyOf(labels);
+        this.fixVersions = ImmutableList.copyOf(fixVersions);
+        this.customFieldValues = ImmutableMap.copyOf(customFields);
     }
 
     public IssueSummary(URI self, Long id, String key, String summary, String description, Map<String, String> renderedFieldValues,
@@ -58,36 +87,60 @@ public class IssueSummary {
         return id;
     }
 
-    public String getKey() {
-        return key;
-    }
-
-    public String getSummary() {
-        return summary;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public List<IssueComment> getComments() {
-        return comments;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
     public List<String> getLabels() {
         return labels;
     }
 
     public List<String> getFixVersions() {
         return fixVersions;
+    }
+
+    public String getProject() {
+        return project;
+    }
+
+    public void setProject(String project) {
+        this.project = project;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getReporter() {
+        return reporter;
+    }
+
+    public void setReporter(String reporter) {
+        this.reporter = reporter;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public void setKey(String key) {
+        this.key = key;
     }
 
     @Override
@@ -108,6 +161,20 @@ public class IssueSummary {
 
     public RenderedView getRendered() {
         return new RenderedView(renderedFieldValues);
+    }
+
+    public static IssueSummary fromJsonString(String jsonIssueRepresentation) {
+        JsonParser parser = new JsonParser();
+        JsonObject jsonObject = parser.parse(jsonIssueRepresentation).getAsJsonObject();
+        Long id = jsonObject.getAsJsonPrimitive("id").getAsLong();
+        String key = jsonObject.getAsJsonPrimitive("key").getAsString();
+        URI self = null;
+        try {
+            self = new URI(jsonObject.getAsJsonPrimitive("self").getAsString());
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return new IssueSummary(self,id, key, null, null, null, null);
     }
 
 }

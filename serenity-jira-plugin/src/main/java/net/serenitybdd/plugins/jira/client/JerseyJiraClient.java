@@ -7,8 +7,13 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
 import net.serenitybdd.plugins.jira.domain.IssueComment;
 import net.serenitybdd.plugins.jira.domain.IssueSummary;
+import net.serenitybdd.plugins.jira.domain.Project;
 import net.serenitybdd.plugins.jira.domain.Version;
 import net.serenitybdd.plugins.jira.model.CascadingSelectOption;
 import net.serenitybdd.plugins.jira.model.CustomField;
@@ -26,6 +31,8 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -39,10 +46,13 @@ import static java.util.Collections.EMPTY_LIST;
 @SuppressWarnings("unchecked")
 public class JerseyJiraClient {
 
-    private static final String REST_SEARCH = "rest/api/latest/search";
-    private static final String VERSIONS_SEARCH = "rest/api/latest/project/%s/versions";
     private static final String ADD_COMMENT = "rest/api/latest/issue/%s/comment";
     private static final String UPDATE_COMMENT = "rest/api/latest/issue/%s/comment/%s";
+    private static final String REST_SEARCH = "rest/api/latest/search";
+    private static final String VERSIONS_SEARCH = "rest/api/latest/project/%s/versions";
+    private static final String ISSUE = "rest/api/latest/issue";
+    private static final String PROJECT = "rest/api/latest/project";
+
     private static final int REDIRECT_REQUEST = 302;
     private static final String DEFAULT_ISSUE_TYPE = "Bug";
     private final String url;
@@ -61,6 +71,9 @@ public class JerseyJiraClient {
 
     private final static int DEFAULT_BATCH_SIZE = 100;
     private final static int OK = 200;
+    private final static int CREATE_ISSUE_OK = 201;
+    private final static int DELETE_ISSUE_OK = 204;
+
 
     public JerseyJiraClient(String url, String username, String password, String project) {
         this(url, username, password, DEFAULT_BATCH_SIZE, project);
@@ -508,7 +521,7 @@ public class JerseyJiraClient {
 
     public void checkValid(Response response) throws JSONException {
         int status = response.getStatus();
-        if (status != OK) {
+        if (status != OK && (status != CREATE_ISSUE_OK) && (status != DELETE_ISSUE_OK) ){
             switch(status) {
                 case 401 : handleAuthenticationError("Authentication error (401) for user " + this.username);
                 case 403 : handleAuthenticationError("Forbidden error (403) for user " + this.username);
@@ -637,14 +650,58 @@ public class JerseyJiraClient {
         return options;
     }
 
-    public void addComment(String key, String comment) {
-        String url = String.format(ADD_COMMENT, key);
+
+
+    public IssueSummary createIssue(IssueSummary issue) throws JSONException {
+        WebTarget target = restClient().target(url).path(ISSUE);
+        JsonObject fields = new JsonObject();
+
+        JsonObject project = new JsonObject();
+        project.add(Project.KEY_KEY,new JsonPrimitive(issue.getProject()));
+        fields.add(IssueSummary.PROJECT_KEY, project);
+
+        JsonObject issueType = new JsonObject();
+        issueType.add(IssueSummary.TYPE_ID_KEY, new JsonPrimitive(issue.getType()));
+        fields.add(IssueSummary.TYPE_KEY, issueType);
+
+        fields.add(IssueSummary.SUMMARY_KEY, new JsonPrimitive(issue.getSummary()));
+        fields.add(IssueSummary.DESCRIPTION_KEY,new JsonPrimitive("Lorem ipsum..."));
+
+        JsonObject jsonIssue = new JsonObject();
+        jsonIssue.add(IssueSummary.FIELDS_KEY, fields);
+
+        Response response = target.request().post(Entity.json(jsonIssue.toString()));
+        checkValid(response);
+        return IssueSummary.fromJsonString(response.readEntity(String.class));
+    }
+
+    public void deleteIssue(IssueSummary issue) throws Exception {
+        WebTarget target = restClient().target(issue.getSelf());
+        checkValid(target.request().delete());
+    }
+
+    public Project getProjectByKey(String projectKey) throws JSONException {
+        WebTarget target = restClient().target(url).path(PROJECT + "/"  + projectKey);
+        Response response = target.request().get();
+        checkValid(response);
+        return Project.fromJsonString(response.readEntity(String.class));
+    }
+
+    public IssueSummary getIssue(String issueKey) throws JSONException {
+        WebTarget target = restClient().target(url).path(ISSUE + "/" + issueKey);
+        Response response = target.request().get();
+        checkValid(response);
+        return IssueSummary.fromJsonString(response.readEntity(String.class));
+    }
+
+    public void addComment(String issueKey, IssueComment newComment) throws JSONException {
+        String url = String.format(ADD_COMMENT, issueKey);
         WebTarget target = buildWebTargetFor(url);
-
-        target.request(MediaType.APPLICATION_JSON_TYPE)
-                .post(Entity.entity("{\"body\":\"" + comment + "\"}", MediaType.APPLICATION_JSON));
-
-        issueSummaryCache.invalidate(key);
+        JsonObject jsonComment = new JsonObject();
+        jsonComment.add(IssueComment.BODY_KEY, new JsonPrimitive(newComment.getBody()));
+        Response response = target.request().post(Entity.json(jsonComment.toString()));
+        checkValid(response);
+        issueSummaryCache.invalidate(issueKey);
     }
 
     public void updateComment(String key, IssueComment updatedComment) throws JSONException {
@@ -653,9 +710,27 @@ public class JerseyJiraClient {
         Response response = target.request(MediaType.APPLICATION_JSON_TYPE).get();
 
         JSONObject jsonComment = new JSONObject(response.readEntity(String.class));
-        jsonComment.put("body", updatedComment.getText());
+        jsonComment.put("body", updatedComment.getBody());
 
         target.request(MediaType.APPLICATION_JSON_TYPE).put(Entity.entity(jsonComment.toString(), MediaType.APPLICATION_JSON));
         issueSummaryCache.invalidate(key);
     }
+
+    public List<IssueComment> getComments(String issueKey) throws JSONException,ParseException {
+        WebTarget target = restClient().target(url).path(ISSUE + "/" + issueKey + "/comment");
+        Response response = target.request().get();
+        checkValid(response);
+        String jsonIssueRepresentation = response.readEntity(String.class);
+        JsonParser parser = new JsonParser();
+        JsonObject jsonObject = parser.parse(jsonIssueRepresentation).getAsJsonObject();
+        JsonArray commentsArray = jsonObject.getAsJsonArray(IssueSummary.COMMENTS_KEY);
+        List<IssueComment> comments = new ArrayList<IssueComment>();
+        for(int i = 0; i < commentsArray.size() ;i++)
+        {
+            JsonObject currentCommentJson = commentsArray.get(i).getAsJsonObject();
+            comments.add(IssueComment.fromJsonString(currentCommentJson.toString()));
+        }
+        return comments;
+    }
+
 }
