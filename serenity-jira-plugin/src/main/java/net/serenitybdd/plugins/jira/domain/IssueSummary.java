@@ -22,6 +22,10 @@ public class IssueSummary {
     public static final String DESCRIPTION_KEY = "description";
     public static final String FIELDS_KEY = "fields";
     public static final String COMMENTS_KEY = "comments";
+    public static final String TRANSITIONS_KEY = "transitions";
+    public static final String STATE_OPEN = "Open";
+    public static final String STATE_RESOLVED = "Resolved";
+    public static final String STATE_CLOSED = "Closed";
 
     private URI self;
     private Long id;
@@ -141,6 +145,14 @@ public class IssueSummary {
 
     public void setKey(String key) {
         this.key = key;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     @Override

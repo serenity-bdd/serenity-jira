@@ -1,5 +1,8 @@
 package net.serenitybdd.plugins.jira.integration;
 
+import net.serenitybdd.plugins.jira.client.JIRAConfigurationError;
+import net.serenitybdd.plugins.jira.domain.IssueSummary;
+import net.serenitybdd.plugins.jira.domain.IssueTransition;
 import net.serenitybdd.plugins.jira.domain.IssueComment;
 import net.serenitybdd.plugins.jira.model.IssueTracker;
 import net.serenitybdd.plugins.jira.service.JIRAConfiguration;
@@ -24,7 +27,7 @@ public class WhenUpdateingIssuesUsingTheJiraTracker {
 
     IssueTracker tracker;
 
-    private static final String JIRA_WEBSERVICE_URL = "https://wakaleo.atlassian.net/rpc/soap/jirasoapservice-v2";
+    private static final String JIRA_WEBSERVICE_URL = "https://wakaleo.atlassian.net/";
 
     private String issueKey;
 
@@ -45,10 +48,11 @@ public class WhenUpdateingIssuesUsingTheJiraTracker {
         when(configuration.getJiraUser()).thenReturn("bruce");
         when(configuration.getJiraPassword()).thenReturn("batm0bile");
         when(configuration.getJiraWebserviceUrl()).thenReturn(JIRA_WEBSERVICE_URL);
+        when(configuration.getProject()).thenReturn("DEMO");
+
 
         testIssueHarness = new IssueHarness("https://wakaleo.atlassian.net","bruce","batm0bile","DEMO");
         issueKey = testIssueHarness.createTestIssue();
-
         tracker = new JiraIssueTracker(logger, configuration);
     }
 
@@ -93,9 +97,9 @@ public class WhenUpdateingIssuesUsingTheJiraTracker {
         List<IssueComment> comments = tracker.getCommentsFor(issueKey);
 
         IssueComment oldComment = comments.get(0);
-        IssueComment updatedComment = new IssueComment(null, oldComment.getId(), "Integration test comment 4", oldComment.getAuthor());
+        IssueComment updatedComment = new IssueComment(oldComment.getSelf(), oldComment.getId(), "Integration test comment 4", oldComment.getAuthor());
 
-        tracker.updateComment(updatedComment);
+        tracker.updateComment(issueKey,updatedComment);
 
         comments = tracker.getCommentsFor(issueKey);
         assertThat(comments.get(0).getBody(), is("Integration test comment 4"));
@@ -103,52 +107,54 @@ public class WhenUpdateingIssuesUsingTheJiraTracker {
 
     @Test
     public void should_not_be_able_to_update_a_comment_from_an_issue_that_does_not_exist() throws Exception {
-        tracker.addComment("#ISSUE-DOES-NOT-EXIST", "Integration test comment 1");
 
-        verify(logger).error("No JIRA issue found with key {}","#ISSUE-DOES-NOT-EXIST");
+        try {
+            tracker.addComment("#ISSUE-DOES-NOT-EXIST", "Integration test comment 1");
+        } catch (JIRAConfigurationError err) {
+            assertThat(err.getMessage(), is("Service not found (404) - try checking the JIRA URL?")) ;
+        }
+        //verify(logger).error("No JIRA issue found with key {}","#ISSUE-DOES-NOT-EXIST");
     }
 
     @Test
     public void should_be_able_to_read_the_status_of_an_issue_in_human_readable_form() throws Exception {
 
         String status = tracker.getStatusFor(issueKey);
-
-        assertThat(status, is("Open"));
+        assertThat(status, is(IssueSummary.STATE_OPEN));
     }
 
     @Test
     public void should_not_be_able_to_update_the_status_of_a_closed_issue() throws Exception {
-        tracker.doTransition(CLOSED_ISSUE, "Resolve Issue");
+        tracker.doTransition(CLOSED_ISSUE, IssueTransition.RESOLVE_ISSUE);
         String newStatus = tracker.getStatusFor(CLOSED_ISSUE);
-        assertThat(newStatus, is("Closed"));
+        assertThat(newStatus, is(IssueSummary.STATE_CLOSED));
     }
 
     @Test
     public void should_be_able_to_update_the_status_of_an_issue() throws Exception {
         String status = tracker.getStatusFor(issueKey);
-        assertThat(status, is("Open"));
+        assertThat(status, is(IssueSummary.STATE_OPEN));
 
-        tracker.doTransition(issueKey, "Resolve Issue");
+        tracker.doTransition(issueKey, IssueTransition.RESOLVE_ISSUE);
 
         String newStatus = tracker.getStatusFor(issueKey);
-        assertThat(newStatus, is("Resolved"));
+        assertThat(newStatus, is(IssueSummary.STATE_RESOLVED));
     }
 
     @Test
     public void should_not_be_able_to_update_the_status_of_an_issue_if_transition_is_not_allowed() throws Exception {
         String status = tracker.getStatusFor(issueKey);
-        assertThat(status, is("Open"));
+        assertThat(status, is(IssueSummary.STATE_OPEN));
 
-        tracker.doTransition(issueKey, "Reopen Issue");
+        tracker.doTransition(issueKey, IssueTransition.REOPEN_ISSUE);
 
         String newStatus = tracker.getStatusFor(issueKey);
-        assertThat(newStatus, is("Open"));
+        assertThat(newStatus, is(IssueSummary.STATE_OPEN));
     }
 
     @Test
     public void should_not_be_able_to_update_the_status_for_an_issue_that_does_not_exist() throws Exception {
-        tracker.doTransition("#ISSUE-DOES-NOT-EXIST", "Resolve Issue");
-
+        tracker.doTransition("#ISSUE-DOES-NOT-EXIST", IssueTransition.RESOLVE_ISSUE);
         verify(logger).error("No JIRA issue found with key {}","#ISSUE-DOES-NOT-EXIST");
     }
 

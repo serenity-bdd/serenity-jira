@@ -40,6 +40,11 @@ public class IssueComment {
     public IssueComment() {
     }
 
+    public IssueComment(String body) {
+        this.body = body;
+    }
+
+
     public IssueComment(String self, Long id, String body, String author) {
         this.self = self;
         this.id = id;
@@ -48,6 +53,7 @@ public class IssueComment {
     }
 
     public IssueComment(
+            String self,
             String author,
             String body,
             Calendar created,
@@ -56,6 +62,7 @@ public class IssueComment {
             String roleLevel,
             String updateAuthor,
             Calendar updated) {
+        this.self = self;
         this.author = author;
         this.body = body;
         this.created = created;
@@ -233,6 +240,7 @@ public class IssueComment {
         JsonObject currentComment = parser.parse(jsonCommentRepresentation).getAsJsonObject();
         JsonObject authorJsonObject = currentComment.getAsJsonObject(AUTHOR_KEY);
         Author author = Author.fromJsonString(authorJsonObject.toString());
+        String self = currentComment.getAsJsonPrimitive(SELF_KEY).getAsString();
         String body = currentComment.getAsJsonPrimitive(BODY_KEY).getAsString();
         JsonObject updateAuthorJsonObject = currentComment.getAsJsonObject(UPDATE_AUTHOR_KEY);
         Author updateAuthor = Author.fromJsonString(updateAuthorJsonObject.toString());
@@ -243,6 +251,6 @@ public class IssueComment {
         createdCalendar.setTime(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").parse(createdDate));
         Calendar updatedCalendar =  GregorianCalendar.getInstance();
         updatedCalendar.setTime(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").parse(updatedDate));
-        return new IssueComment(author.getName(),body,createdCalendar , "", 0L,"",updateAuthor.getName(),updatedCalendar);
+        return new IssueComment(self, author.getName(),body,createdCalendar , "", 0L,"",updateAuthor.getName(),updatedCalendar);
     }
 }

@@ -19,7 +19,7 @@ public interface IssueTracker {
 
     List<IssueComment> getCommentsFor(final String issueKey) throws IssueTrackerUpdateException;
 
-    void updateComment(final IssueComment issueComment);
+    void updateComment(final String issueKey,final IssueComment issueComment);
 
     public String getStatusFor(final String issueKey) throws IssueTrackerUpdateException;
 
