@@ -47,13 +47,13 @@ public class IssueSummary {
 
     }
 
-    public IssueSummary(URI self, Long id, String key, String summary, String description, Map<String, String> renderedFieldValues, String type) {
-        this(self, id, key, summary, description, renderedFieldValues, type,
+    public IssueSummary(URI self, Long id, String key, String summary, String description, Map<String, String> renderedFieldValues, String type, String status) {
+        this(self, id, key, summary, description, renderedFieldValues, type, status,
                 new ArrayList<String>(), new ArrayList<String>(), new HashMap<String, Object>());
     }
 
     public IssueSummary(URI self, Long id, String key, String summary, String description, Map<String, String> renderedFieldValues,
-                        String type, List<String> labels, List<String> fixVersions, Map<String, Object> customFields) {
+                        String type, String status, List<String> labels, List<String> fixVersions, Map<String, Object> customFields) {
         this.self = self;
         this.id = id;
         this.key = key;
@@ -61,6 +61,7 @@ public class IssueSummary {
         this.description = description;
         this.renderedFieldValues = renderedFieldValues;
         this.type = type;
+        this.status = status;
         this.labels = ImmutableList.copyOf(labels);
         this.fixVersions = ImmutableList.copyOf(fixVersions);
         this.customFieldValues = ImmutableMap.copyOf(customFields);
@@ -186,7 +187,7 @@ public class IssueSummary {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-        return new IssueSummary(self,id, key, null, null, null, null);
+        return new IssueSummary(self,id, key, null,null, null, null, null);
     }
 
 }
