@@ -5,6 +5,7 @@ import net.serenitybdd.plugins.jira.domain.IssueSummary;
 import net.serenitybdd.plugins.jira.domain.IssueTransition;
 import net.serenitybdd.plugins.jira.domain.IssueComment;
 import net.serenitybdd.plugins.jira.model.IssueTracker;
+import net.serenitybdd.plugins.jira.model.IssueTrackerUpdateException;
 import net.serenitybdd.plugins.jira.service.JIRAConfiguration;
 import net.serenitybdd.plugins.jira.service.JiraIssueTracker;
 import org.junit.After;
@@ -152,7 +153,7 @@ public class WhenUpdateingIssuesUsingTheJiraTracker {
         assertThat(newStatus, is(IssueSummary.STATE_OPEN));
     }
 
-    @Test
+    @Test(expected = IssueTrackerUpdateException.class)
     public void should_not_be_able_to_update_the_status_for_an_issue_that_does_not_exist() throws Exception {
         tracker.doTransition("#ISSUE-DOES-NOT-EXIST", IssueTransition.RESOLVE_ISSUE);
         verify(logger).error("No JIRA issue found with key {}","#ISSUE-DOES-NOT-EXIST");

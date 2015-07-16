@@ -117,7 +117,12 @@ public class JiraIssueTracker implements IssueTracker {
     public String getStatusFor(final String issueKey) throws IssueTrackerUpdateException {
         try {
             Optional<IssueSummary> issue = jiraConnection.getRestJiraClient().loadByKey(issueKey);
-            return issue.get().getStatus();
+            if(issue.isPresent()) {
+                return issue.get().getStatus();
+            } else {
+                logJiraIssueNotFound(issueKey);
+                throw new IssueTrackerUpdateException("Issue not found " + issueKey, new NoSuchIssueException(issueKey));
+            }
         } catch (JSONException e) {
             throw new IssueTrackerUpdateException(e.getMessage(),e);
         }
@@ -133,6 +138,7 @@ public class JiraIssueTracker implements IssueTracker {
                 }
             } else {
                 logJiraIssueNotFound(issueKey);
+                throw new IssueTrackerUpdateException("Issue not found " + issueKey, new NoSuchIssueException(issueKey));
             }
         } catch (JSONException e) {
             throw new IssueTrackerUpdateException(e.getMessage(),e);
