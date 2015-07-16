@@ -1,17 +1,22 @@
 package net.serenitybdd.plugins.jira.service;
 
 
+import com.google.common.base.Optional;
 import com.google.inject.Inject;
-import net.thucydides.core.annotations.NotImplementedException;
+import net.serenitybdd.plugins.jira.domain.IssueTransition;
+import net.serenitybdd.plugins.jira.domain.IssueSummary;
 import net.serenitybdd.plugins.jira.domain.IssueComment;
 import net.serenitybdd.plugins.jira.model.IssueTracker;
 import net.serenitybdd.plugins.jira.model.IssueTrackerUpdateException;
+import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
 import org.slf4j.MarkerFactory;
 
 import java.io.IOException;
+import java.text.ParseException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -52,16 +57,16 @@ public class JiraIssueTracker implements IssueTracker {
      * @throws IssueTrackerUpdateException
      */
     public void addComment(final String issueKey, final String commentText) throws IssueTrackerUpdateException {
+        try {
+            jiraConnection.getRestJiraClient().addComment(issueKey,new IssueComment(commentText));
+        } catch (JSONException e) {
+            throw new IssueTrackerUpdateException(e.getMessage(),e);
+        }
+    }
 
-        throw new NotImplementedException("TODO");
-//        try {
-//            String token = jiraConnection.getAuthenticationToken();
-//            RemoteComment comment = newCommentWithText(commentText);
-//            jiraConnection.getJiraSoapService().addComment(token, issueKey, comment);
-//        } catch (IOException exception) {
-//            processJiraException(issueKey, exception);
-//        }
 
+    private void logJiraIssueNotFound(String issueKey) {
+        logger.error("No JIRA issue found with key {}", issueKey);
     }
 
     private void processJiraException(String issueKey, IOException exception) {
@@ -85,33 +90,21 @@ public class JiraIssueTracker implements IssueTracker {
      * @throws IssueTrackerUpdateException
      */
     public List<IssueComment> getCommentsFor(String issueKey) throws IssueTrackerUpdateException {
-        throw new NotImplementedException("TODO");
-//
-//        List<IssueComment> results = Collections.emptyList();
-//        try {
-//            String token = jiraConnection.getAuthenticationToken();
-//            RemoteComment[] comments = jiraConnection.getJiraSoapService().getComments(token, issueKey);
-//            results = convert(comments, new CommentConverter());
-//
-//        } catch (IOException e) {
-//            processJiraException(issueKey, e);
-//        }
-//        return results;
+        try {
+            return jiraConnection.getRestJiraClient().getComments(issueKey);
+        } catch (JSONException e) {
+            throw new IssueTrackerUpdateException(e.getMessage(),e);
+        } catch (ParseException pe) {
+            throw new IssueTrackerUpdateException(pe.getMessage(),pe);
+        }
     }
 
-    public void updateComment(IssueComment issueComment) {
-        throw new NotImplementedException("TODO");
-//        try {
-//            String token = jiraConnection.getAuthenticationToken();
-//
-//            RemoteComment updatedComment = jiraConnection.getJiraSoapService().getComment(token, issueComment.getId());
-//            updatedComment.setBody(issueComment.getText());
-//
-//            jiraConnection.getJiraSoapService().editComment(token, updatedComment);
-//        } catch (IOException e) {
-//            throw new IssueTrackerUpdateException("Could not update JIRA using URL ("
-//                                                  + jiraConnection.getJiraWebserviceUrl() + ")", e);
-//        }
+    public void updateComment(String issuekey,IssueComment issueComment) {
+        try {
+            jiraConnection.getRestJiraClient().updateComment(issuekey,issueComment);
+        } catch (JSONException e) {
+            throw new IssueTrackerUpdateException(e.getMessage(),e);
+        }
     }
 
     /**
@@ -122,58 +115,46 @@ public class JiraIssueTracker implements IssueTracker {
      * @throws IssueTrackerUpdateException
      */
     public String getStatusFor(final String issueKey) throws IssueTrackerUpdateException {
-        throw new NotImplementedException("TODO");
-//        String status = null;
-//        try {
-//            String token = jiraConnection.getAuthenticationToken();
-//
-//            RemoteIssue issue = jiraConnection.getJiraSoapService().getIssue(token, issueKey);
-//            checkThatIssueExists(issue, issueKey);
-//            status = getStatusLabel(issue);
-//
-//        } catch (IOException e) {
-//            processJiraException(issueKey, e);
-//        }
-//        return status;
+        try {
+            Optional<IssueSummary> issue = jiraConnection.getRestJiraClient().loadByKey(issueKey);
+            if(issue.isPresent()) {
+                return issue.get().getStatus();
+            } else {
+                logJiraIssueNotFound(issueKey);
+                throw new IssueTrackerUpdateException("Issue not found " + issueKey, new NoSuchIssueException(issueKey));
+            }
+        } catch (JSONException e) {
+            throw new IssueTrackerUpdateException(e.getMessage(),e);
+        }
     }
 
     public void doTransition(final String issueKey, final String workflowAction) throws IssueTrackerUpdateException {
-//        try {
-//            String token = jiraConnection.getAuthenticationToken();
-//            RemoteIssue issue = jiraConnection.getJiraSoapService().getIssue(token, issueKey);
-//            checkThatIssueExists(issue, issueKey);
-//
-//            String actionId = getAvailableActions(issueKey).get(workflowAction);
-//            if (actionId != null) {
-//                jiraConnection.getJiraSoapService().progressWorkflowAction(token, issueKey, actionId, null);
-//            }
-//
-//        } catch (IOException e) {
-//            processJiraException(issueKey, e);
-//        }
-        throw new NotImplementedException("TODO");
+        try {
+            Optional<IssueSummary> issue = jiraConnection.getRestJiraClient().loadByKey(issueKey);
+            if(issue.isPresent()) {
+                String actionId = getAvailableActions(issueKey).get(workflowAction);
+                if (actionId != null) {
+                    jiraConnection.getRestJiraClient().progressWorkflowTransition(issueKey, actionId);
+                }
+            } else {
+                logJiraIssueNotFound(issueKey);
+                throw new IssueTrackerUpdateException("Issue not found " + issueKey, new NoSuchIssueException(issueKey));
+            }
+        } catch (JSONException e) {
+            throw new IssueTrackerUpdateException(e.getMessage(),e);
+        } catch (ParseException pe) {
+            throw new IssueTrackerUpdateException(pe.getMessage(),pe);
+        }
     }
 
-//    private String getStatusLabel(final RemoteIssue issue) {
-//        return getStatusCodeMap().get(issue.getStatus());
-//    }
 
-    private Map<String, String> getAvailableActions(final String issueKey) {
-        throw new NotImplementedException("TODO");
-//        Map<String, String> availableActionMap = null;
-//        if (availableActionMap == null) {
-//            availableActionMap = new HashMap<String, String>();
-//            try {
-//                String token = jiraConnection.getAuthenticationToken();
-//                RemoteNamedObject[] actions = jiraConnection.getJiraSoapService().getAvailableActions(token, issueKey);
-//                for(RemoteNamedObject action : actions) {
-//                    availableActionMap.put(action.getName(), action.getId());
-//                }
-//            } catch (IOException e) {
-//                processJiraException(issueKey, e);
-//            }
-//        }
-//        return availableActionMap;
+    private Map<String, String> getAvailableActions(final String issueKey) throws JSONException, ParseException {
+        Map<String, String> availableActionMap = new HashMap<String, String>();
+        List<IssueTransition> actions = jiraConnection.getRestJiraClient().getAvailableTransitions(issueKey);
+        for(IssueTransition action : actions) {
+            availableActionMap.put(action.getName(), action.getId());
+        }
+        return availableActionMap;
     }
 
     private Map<String, String> statusCodeMap = null;

@@ -1,5 +1,6 @@
 package net.serenitybdd.plugins.jira.integration;
 
+import com.google.common.base.Optional;
 import net.serenitybdd.plugins.jira.client.JerseyJiraClient;
 import net.serenitybdd.plugins.jira.domain.IssueComment;
 import net.serenitybdd.plugins.jira.domain.IssueSummary;
@@ -98,13 +99,8 @@ public class WhenFindingAnIssueOnTheJIRAServer {
     @Test
     public void should_be_able_to_read_the_status_of_an_issue() throws Exception {
 
-        /*SOAPSession session = SOAPSession.openConnectionTo(new URL(JIRA_WEBSERVICE_URL))
-                .usingCredentials("bruce", "batm0bile");
-
-        String token = session.getAuthenticationToken();
-        String status = session.getJiraSoapService().getIssue(token, issueKey).getStatus();
-
-        assertThat(status, is("1"));*/
+        Optional<IssueSummary> issueSummary = jiraClient.loadByKey(issueKey);
+        assertThat(issueSummary.get().getStatus(), is("Open"));
     }
 
 }

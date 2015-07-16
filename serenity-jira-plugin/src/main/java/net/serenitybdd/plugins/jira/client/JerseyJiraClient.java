@@ -11,10 +11,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonPrimitive;
-import net.serenitybdd.plugins.jira.domain.IssueComment;
-import net.serenitybdd.plugins.jira.domain.IssueSummary;
-import net.serenitybdd.plugins.jira.domain.Project;
-import net.serenitybdd.plugins.jira.domain.Version;
+import net.serenitybdd.plugins.jira.domain.*;
 import net.serenitybdd.plugins.jira.model.CascadingSelectOption;
 import net.serenitybdd.plugins.jira.model.CustomField;
 import org.glassfish.jersey.client.filter.HttpBasicAuthFilter;
@@ -50,8 +47,9 @@ public class JerseyJiraClient {
     private static final String UPDATE_COMMENT = "rest/api/latest/issue/%s/comment/%s";
     private static final String REST_SEARCH = "rest/api/latest/search";
     private static final String VERSIONS_SEARCH = "rest/api/latest/project/%s/versions";
-    private static final String ISSUE = "rest/api/latest/issue";
+    private static final String ISSUE = "rest/api/latest/issue/";
     private static final String PROJECT = "rest/api/latest/project";
+    private static final String GET_TRANSITIONS = "rest/api/latest/issue/%s/transitions";
 
     private static final int REDIRECT_REQUEST = 302;
     private static final String DEFAULT_ISSUE_TYPE = "Bug";
@@ -221,8 +219,7 @@ public class JerseyJiraClient {
 
     public Optional<IssueSummary> loadByKey(String key) throws JSONException {
 
-        Optional<String> jsonResponse = readFieldValues(url, "rest/api/2/issue/" + key);
-
+        Optional<String> jsonResponse = readFieldValues(url, ISSUE  + key);
         if (jsonResponse.isPresent()) {
             JSONObject responseObject = new JSONObject(jsonResponse.get());
             return Optional.of(convertToIssueSummary(responseObject));
@@ -687,12 +684,20 @@ public class JerseyJiraClient {
         return Project.fromJsonString(response.readEntity(String.class));
     }
 
-    public IssueSummary getIssue(String issueKey) throws JSONException {
+    /*public IssueSummary getIssue(String issueKey) throws JSONException {
         WebTarget target = restClient().target(url).path(ISSUE + "/" + issueKey);
         Response response = target.request().get();
         checkValid(response);
         return IssueSummary.fromJsonString(response.readEntity(String.class));
+    } */
+
+    public IssueSummary getIssue(String issueKey) throws JSONException {
+        WebTarget target = restClient().target(url).path(ISSUE  + issueKey);
+        Response response = target.request().get();
+        checkValid(response);
+        return IssueSummary.fromJsonString(response.readEntity(String.class));
     }
+
 
     public void addComment(String issueKey, IssueComment newComment) throws JSONException {
         String url = String.format(ADD_COMMENT, issueKey);
@@ -717,7 +722,7 @@ public class JerseyJiraClient {
     }
 
     public List<IssueComment> getComments(String issueKey) throws JSONException,ParseException {
-        WebTarget target = restClient().target(url).path(ISSUE + "/" + issueKey + "/comment");
+        WebTarget target = restClient().target(url).path(ISSUE  + issueKey + "/comment");
         Response response = target.request().get();
         checkValid(response);
         String jsonIssueRepresentation = response.readEntity(String.class);
@@ -733,4 +738,28 @@ public class JerseyJiraClient {
         return comments;
     }
 
+    public List<IssueTransition> getAvailableTransitions(String issueKey) throws JSONException,ParseException {
+        List<IssueTransition> availableActions = new ArrayList<IssueTransition>();
+        WebTarget target = buildWebTargetFor(String.format(GET_TRANSITIONS, issueKey));
+        Response response = target.request().get();
+        checkValid(response);
+        String jsonIssueRepresentation = response.readEntity(String.class);
+        JsonParser parser = new JsonParser();
+        JsonObject jsonObject = parser.parse(jsonIssueRepresentation).getAsJsonObject();
+        JsonArray transitionsArray = jsonObject.getAsJsonArray(IssueSummary.TRANSITIONS_KEY);
+        for(int i = 0; i < transitionsArray.size() ;i++)
+        {
+            JsonObject currentTransitionJson = transitionsArray.get(i).getAsJsonObject();
+            availableActions.add(IssueTransition.fromJsonString(currentTransitionJson.toString()));
+        }
+        return availableActions;
+    }
+
+    public void progressWorkflowTransition(String issueKey, String transitionId) throws JSONException,ParseException{
+        WebTarget target = buildWebTargetFor(String.format(GET_TRANSITIONS, issueKey));
+        JsonObject jsonTransition = new JsonObject();
+        jsonTransition.add(IssueTransition.TRANSITION_KEY, new JsonPrimitive(transitionId));
+        Response response = target.request().post(Entity.json(jsonTransition.toString()));
+        checkValid(response);
+    }
 }

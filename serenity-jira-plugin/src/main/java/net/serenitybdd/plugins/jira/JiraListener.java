@@ -251,7 +251,7 @@ public class JiraListener implements StepListener {
                                                          .withUpdatedTestRunNumber(testRunNumber);
 
             IssueComment updatedComment = existingComment.withText(testResultComment.asText());
-            issueTracker.updateComment(updatedComment);
+            issueTracker.updateComment(issueId,updatedComment);
             
         }
         return testResultComment;

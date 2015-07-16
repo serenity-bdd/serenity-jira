@@ -22,6 +22,10 @@ public class IssueSummary {
     public static final String DESCRIPTION_KEY = "description";
     public static final String FIELDS_KEY = "fields";
     public static final String COMMENTS_KEY = "comments";
+    public static final String TRANSITIONS_KEY = "transitions";
+    public static final String STATE_OPEN = "Open";
+    public static final String STATE_RESOLVED = "Resolved";
+    public static final String STATE_CLOSED = "Closed";
 
     private URI self;
     private Long id;
@@ -43,13 +47,13 @@ public class IssueSummary {
 
     }
 
-    public IssueSummary(URI self, Long id, String key, String summary, String description, Map<String, String> renderedFieldValues, String type) {
-        this(self, id, key, summary, description, renderedFieldValues, type,
+    public IssueSummary(URI self, Long id, String key, String summary, String description, Map<String, String> renderedFieldValues, String type, String status) {
+        this(self, id, key, summary, description, renderedFieldValues, type, status,
                 new ArrayList<String>(), new ArrayList<String>(), new HashMap<String, Object>());
     }
 
     public IssueSummary(URI self, Long id, String key, String summary, String description, Map<String, String> renderedFieldValues,
-                        String type, List<String> labels, List<String> fixVersions, Map<String, Object> customFields) {
+                        String type, String status, List<String> labels, List<String> fixVersions, Map<String, Object> customFields) {
         this.self = self;
         this.id = id;
         this.key = key;
@@ -57,6 +61,7 @@ public class IssueSummary {
         this.description = description;
         this.renderedFieldValues = renderedFieldValues;
         this.type = type;
+        this.status = status;
         this.labels = ImmutableList.copyOf(labels);
         this.fixVersions = ImmutableList.copyOf(fixVersions);
         this.customFieldValues = ImmutableMap.copyOf(customFields);
@@ -143,6 +148,14 @@ public class IssueSummary {
         this.key = key;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "IssueSummary{" +
@@ -174,7 +187,7 @@ public class IssueSummary {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-        return new IssueSummary(self,id, key, null, null, null, null);
+        return new IssueSummary(self,id, key, null,null, null, null, null);
     }
 
 }

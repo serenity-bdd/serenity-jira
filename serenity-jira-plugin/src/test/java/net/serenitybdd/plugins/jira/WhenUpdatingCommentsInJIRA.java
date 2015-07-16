@@ -275,7 +275,7 @@ public class WhenUpdatingCommentsInJIRA {
         listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE));
         listener.testSuiteFinished();
 
-        verify(issueTracker).updateComment(any(IssueComment.class));
+        verify(issueTracker).updateComment(eq("MYPROJECT-123"),any(IssueComment.class));
     }
 
 

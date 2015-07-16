@@ -26,7 +26,7 @@ class WhenQueryingJIRAIssues extends Specification {
         then:
             issue.get().comments
         and:
-            issue.get().comments[0].text == "Integration test comment"
+            issue.get().comments[0].body == "Integration test comment"
     }
 
 }

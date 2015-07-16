@@ -13,7 +13,8 @@ class WhenUpdatingJIRAIssues extends Specification {
             IssueSummary issue = jiraClient.findByKey("DEMO-2").get()
             int commentCount = issue.comments.size()
         when:
-            jiraClient.addComment("DEMO-2", "Integration test comment");
+            def issueComment = new IssueComment().withText("Integration test comment");
+            jiraClient.addComment("DEMO-2", issueComment);
         then:
             Optional<IssueSummary> reloadedIssue = jiraClient.findByKey("DEMO-2")
             reloadedIssue.get().comments.size() == commentCount + 1
@@ -28,7 +29,7 @@ class WhenUpdatingJIRAIssues extends Specification {
             jiraClient.updateComment("DEMO-2", updatedComment);
         then:
             Optional<IssueSummary> reloadedIssue = jiraClient.findByKey("DEMO-2")
-            reloadedIssue.get().comments[0].text == "Updated integration test comment"
+            reloadedIssue.get().comments[0].body == "Updated integration test comment"
     }
 
 
