@@ -7,17 +7,12 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.*;
 import net.serenitybdd.plugins.jira.domain.*;
 import net.serenitybdd.plugins.jira.model.CascadingSelectOption;
 import net.serenitybdd.plugins.jira.model.CustomField;
+import net.serenitybdd.plugins.jira.model.JQLException;
 import org.glassfish.jersey.client.filter.HttpBasicAuthFilter;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
@@ -29,10 +24,7 @@ import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 
 import static java.util.Collections.EMPTY_LIST;
@@ -119,50 +111,44 @@ public class JerseyJiraClient {
      * @param query A valid JQL query
      * @return a list of JIRA issue keys
      */
-    public List<IssueSummary> findByJQL(String query) throws JSONException {
+    public List<IssueSummary> findByJQL(String query) throws JQLException {
         try {
             Preconditions.checkNotNull(query,"JIRA key cannot be null");
             return issueQueryCache.get(query);
         } catch (ExecutionException e) {
-            throw new JSONException(e.getCause());
+            throw new JQLException(e.getCause());
         } catch (RuntimeException runtimeException) {
-            throw new JSONException(runtimeException.getCause());
+            throw new JQLException(runtimeException.getCause());
         }
     }
 
-    protected List<IssueSummary> loadByJQL(String query) throws JSONException {
-
+    protected List<IssueSummary> loadByJQL(String query)  {
         int total = countByJQL(query);
-
         List<IssueSummary> issues = Lists.newArrayList();
         int startAt = 0;
         while(issues.size() < total) {
-
             String jsonResponse = getJSONResponse(query, startAt);
-
-            JSONObject responseObject = new JSONObject(jsonResponse);
-            JSONArray issueEntries = (JSONArray) responseObject.get("issues");
-            for (int i = 0; i < issueEntries.length(); i++) {
-                JSONObject issueObject = issueEntries.getJSONObject(i);
+            JsonObject responseObject = new JsonParser().parse(jsonResponse).getAsJsonObject();
+            JsonArray issueEntries = (JsonArray) responseObject.get("issues");
+            for (int i = 0; i < issueEntries.size(); i++) {
+                JsonObject issueObject = issueEntries.get(i).getAsJsonObject();
                 issues.add(convertToIssueSummary(issueObject));
             }
             startAt = startAt + getBatchSize();
         }
-
         return issues;
     }
 
-    public List<Version> findVersionsForProject(String projectName) throws JSONException {
+    public List<Version> findVersionsForProject(String projectName) {
         String versionData = getJSONProjectVersions(projectName);
         return convertJSONVersions(versionData);
     }
 
-    private List<Version> convertJSONVersions(String versionData) throws JSONException {
+    private List<Version> convertJSONVersions(String versionData)  {
         List<Version> versions = Lists.newArrayList();
-
-        JSONArray versionEntries = new JSONArray(versionData);
-        for (int i = 0; i < versionEntries.length(); i++) {
-            JSONObject issueObject = versionEntries.getJSONObject(i);
+        JsonArray versionEntries = new JsonParser().parse(versionData).getAsJsonArray();
+        for (int i = 0; i < versionEntries.size(); i++) {
+            JsonObject issueObject = versionEntries.get(i).getAsJsonObject();
             versions.add(convertToVersion(issueObject));
         }
         return versions;
@@ -172,7 +158,7 @@ public class JerseyJiraClient {
         return restClient().target(url).path(path);
     }
 
-    private String getJSONResponse(String query, int startAt) throws JSONException{
+    private String getJSONResponse(String query, int startAt) {
 
         String fields = "key,status,summary,description,comment,issuetype,labels,fixVersions";
         fields = addCustomFieldsTo(fields);
@@ -188,7 +174,7 @@ public class JerseyJiraClient {
         return response.readEntity(String.class);
     }
 
-    private String addCustomFieldsTo(String fields) throws JSONException {
+    private String addCustomFieldsTo(String fields)  {
 
         for(String customField : customFields) {
             if (getCustomFieldsIndex().containsKey(customField)) {
@@ -198,7 +184,7 @@ public class JerseyJiraClient {
         return fields;
     }
 
-    private String getJSONProjectVersions(String projectName) throws JSONException{
+    private String getJSONProjectVersions(String projectName) {
         String url = String.format(VERSIONS_SEARCH,projectName);
         WebTarget target = buildWebTargetFor(url);
         Response response = target.request().get();
@@ -206,104 +192,103 @@ public class JerseyJiraClient {
         return response.readEntity(String.class);
     }
 
-    public Optional<IssueSummary> findByKey(String key) throws JSONException {
+    public Optional<IssueSummary> findByKey(String key) throws JQLException{
         try {
             Preconditions.checkNotNull(key,"JIRA key cannot be null");
             return issueSummaryCache.get(key);
         } catch (ExecutionException e) {
-            throw new JSONException(e.getCause());
+            throw new JQLException(e.getCause());
         } catch (RuntimeException runtimeException) {
-            throw new JSONException(runtimeException.getCause());
+            throw new JQLException(runtimeException.getCause());
         }
     }
 
-    public Optional<IssueSummary> loadByKey(String key) throws JSONException {
+    public Optional<IssueSummary> loadByKey(String key)  {
 
         Optional<String> jsonResponse = readFieldValues(url, ISSUE  + key);
         if (jsonResponse.isPresent()) {
-            JSONObject responseObject = new JSONObject(jsonResponse.get());
+            JsonObject responseObject = new JsonParser().parse(jsonResponse.get()).getAsJsonObject();
             return Optional.of(convertToIssueSummary(responseObject));
         }
         return Optional.absent();
     }
 
-    private Version convertToVersion(JSONObject issueObject) throws JSONException {
-        try {
-            return new Version(uriFrom(issueObject),
-                    issueObject.getLong("id"),
-                    stringValueOf(issueObject.get("name")),
-                    booleanValueOf(issueObject.get("archived")),
-                    booleanValueOf(issueObject.get("released")));
-        } catch (JSONException e) {
-            logger.error("Could not load issue from JSON",e);
-            logger.error("JSON:" + issueObject.toString(4));
-            throw e;
-        }
+    private Version convertToVersion(JsonObject issueObject) {
+        return new Version(uriFrom(issueObject),
+                issueObject.getAsJsonPrimitive("id").getAsLong(),
+                stringValueOf(issueObject.get("name")),
+                booleanValueOf(issueObject.get("archived")),
+                booleanValueOf(issueObject.get("released")));
     }
 
-    private IssueSummary convertToIssueSummary(JSONObject issueObject) throws JSONException {
+    private IssueSummary convertToIssueSummary(JsonObject issueObject)  {
 
-        JSONObject fields = (JSONObject) issueObject.get("fields");
-        JSONObject renderedFields = (JSONObject) issueObject.get("renderedFields");
-        JSONObject issueType = (JSONObject) fields.get("issuetype");
-        JSONObject issueStatus = (JSONObject) fields.get("status");
-        JSONObject comments = (JSONObject) fields.get("comment");
-        try {
-            Map<String, String> renderedFieldValues = renderedFieldValuesFrom(renderedFields);
-            return new IssueSummary(uriFrom(issueObject),
-                    issueObject.getLong("id"),
-                    stringValueOf(issueObject.get("key")),
-                    stringValueOf(fields.get("summary")),
-                    stringValueOf(optional(fields,"description")),
-                    renderedFieldValues,
-                    stringValueOf(issueType.get("name")),
-                    stringValueOf(issueStatus.get("name")),
-                    toList((JSONArray) fields.get("labels")),
-                    toListOfVersions((JSONArray) fields.get("fixVersions")),
-                    customFieldValuesIn(fields,renderedFields),
-                    commentsIn(comments));
-        } catch (JSONException e) {
-            logger.error("Could not load issue from JSON",e);
-            logger.error("JSON:" + issueObject.toString(4));
-            throw e;
-        }
+        JsonObject fields = (JsonObject) issueObject.get("fields");
+        JsonObject renderedFields = (JsonObject) issueObject.get("renderedFields");
+        JsonObject issueType = (JsonObject) fields.get("issuetype");
+        JsonObject issueStatus = (JsonObject) fields.get("status");
+        JsonObject comments = (JsonObject) fields.get("comment");
+        Map<String, String> renderedFieldValues = renderedFieldValuesFrom(renderedFields);
+        return new IssueSummary(uriFrom(issueObject),
+                issueObject.getAsJsonPrimitive("id").getAsLong(),
+                stringValueOf(issueObject.get("key")),
+                stringValueOf(fields.get("summary")),
+                stringValueOf(optional(fields,"description")),
+                renderedFieldValues,
+                stringValueOf(issueType.get("name")),
+                stringValueOf(issueStatus.get("name")),
+                toList((JsonArray) fields.get("labels")),
+                toListOfVersions((JsonArray) fields.get("fixVersions")),
+                customFieldValuesIn(fields,renderedFields),
+                commentsIn(comments));
+
     }
 
-    private List<IssueComment> commentsIn(JSONObject comments) throws JSONException {
+    private List<IssueComment> commentsIn(JsonObject comments){
         List<IssueComment> issueComments = Lists.newArrayList();
 
-        JSONArray commentList = comments.getJSONArray("comments");
+        JsonArray commentList = comments.getAsJsonArray("comments");
 
-        for (int i = 0; i < commentList.length(); i++) {
-            JSONObject fieldObject = commentList.getJSONObject(i);
+        for (int i = 0; i < commentList.size(); i++) {
+            JsonObject fieldObject = commentList.get(i).getAsJsonObject();
             issueComments.add(convertToComment(fieldObject));
         }
 
         return issueComments;
     }
 
-    private IssueComment convertToComment(JSONObject fieldObject) throws JSONException {
-        return new IssueComment(fieldObject.getString("self"),
-                                fieldObject.getLong("id"),
-                                fieldObject.getString("body"),
-                                fieldObject.getJSONObject("author").getString("name"));
+    private IssueComment convertToComment(JsonObject fieldObject)  {
+        return new IssueComment(fieldObject.getAsJsonPrimitive("self").getAsString(),
+                                fieldObject.getAsJsonPrimitive("id").getAsLong(),
+                                fieldObject.getAsJsonPrimitive("body").getAsString(),
+                                fieldObject.getAsJsonObject("author").getAsJsonPrimitive("name").getAsString());
     }
 
-    private Map<String, String> renderedFieldValuesFrom(JSONObject renderedFields) throws JSONException {
+    private Map<String, String> renderedFieldValuesFrom(JsonObject renderedFields) {
         Map<String,String> renderedFieldMap = Maps.newHashMap();
-        for(Object key : Lists.newArrayList(renderedFields.sortedKeys())) {
-            String fieldName = (String) key;
-            String renderedValue = renderedFields.getString(fieldName);
-            if (getCustomFieldNameIndex().containsKey(fieldName)) {
-                fieldName = getCustomFieldNameIndex().get(key);
+        Set<Map.Entry<String, JsonElement>> entries = renderedFields.entrySet();
+        for(Map.Entry<String,JsonElement>  currentEntry : entries) {
+        //for(Object key : Lists.newArrayList(entries)) {
+            String fieldName = currentEntry.getKey();
+            JsonElement element = currentEntry.getValue();
+            if (!(element.isJsonNull())) {
+                String renderedValue = "";
+                if (element.isJsonPrimitive()) {
+                    renderedValue = element.getAsJsonPrimitive().getAsString();
+                }
+                else if(element.isJsonObject()) {
+                    renderedValue = element.toString();
+                }
+                if (getCustomFieldNameIndex().containsKey(fieldName)) {
+                    fieldName = getCustomFieldNameIndex().get(currentEntry.getKey());
+                }
+                renderedFieldMap.put(fieldName, renderedValue);
             }
-            renderedFieldMap.put(fieldName, renderedValue);
-
         }
         return renderedFieldMap;
     }
 
-    private Map<String, Object> customFieldValuesIn(JSONObject fields, JSONObject renderedFields) throws JSONException {
+    private Map<String, Object> customFieldValuesIn(JsonObject fields, JsonObject renderedFields)  {
         Map<String, Object> customFieldValues = Maps.newHashMap();
         for (String customFieldName : customFields) {
             CustomField customField = getCustomFieldsIndex().get(customFieldName);
@@ -315,7 +300,7 @@ public class JerseyJiraClient {
         return customFieldValues;
     }
 
-    private boolean customFieldDefined(JSONObject fields, JSONObject renderedFields, CustomField customField) throws JSONException {
+    private boolean customFieldDefined(JsonObject fields, JsonObject renderedFields, CustomField customField) {
         if (customField != null) {
             return (hasCustomFieldValue(fields, customField) || hasCustomFieldValue(renderedFields, customField));
         } else {
@@ -323,20 +308,27 @@ public class JerseyJiraClient {
         }
     }
 
-    private boolean hasCustomFieldValue(JSONObject fields, CustomField customField) throws JSONException {
+    private boolean hasCustomFieldValue(JsonObject fields, CustomField customField)  {
         return (fields.has(customField.getId())) && (!fields.get(customField.getId()).equals(null));
     }
 
-    private Object readFieldValue(JSONObject fields, CustomField customField) throws JSONException {
+    private Object readFieldValue(JsonObject fields, CustomField customField)  {
 
         String fieldId = customField.getId();
-        String fieldValue = fieldIsDefined(fields, fieldId) ? fields.getString(fieldId) : "";
+        String fieldValue = "";
+        if(fieldIsDefined(fields, fieldId)) {
+            if(fields.get(fieldId).isJsonPrimitive()) {
+                fieldValue = fields.getAsJsonPrimitive(fieldId).getAsString();
+            } else if(fields.get(fieldId).isJsonObject()) {
+                fieldValue = fields.getAsJsonObject(fieldId).toString();
+            }
+        }
 
         if (isJSON(fieldValue)) {
-            JSONObject field = new JSONObject(fieldValue);
+            JsonObject field = new JsonParser().parse(fieldValue).getAsJsonObject();
 
             if (customField.getType().equals("string")) {
-                return (field == JSONObject.NULL) ? "" : field.getString("value");
+                return field.equals(JsonNull.INSTANCE) ? "" : field.getAsJsonPrimitive("value").getAsString();
             } else if (customField.getType().equals("array")) {
                 return readListFrom(field);
             }
@@ -344,79 +336,79 @@ public class JerseyJiraClient {
         return fieldValue;
     }
 
-    private boolean fieldIsDefined(JSONObject fields, String fieldId) throws JSONException {
-        return (fields.has(fieldId) && (fields.get(fieldId) != JSONObject.NULL));
+    private boolean fieldIsDefined(JsonObject fields, String fieldId)  {
+        return (fields.has(fieldId) && (! fields.get(fieldId).isJsonNull()));
     }
 
     private boolean isJSON(String fieldValue) {
         return fieldValue.trim().startsWith("{");
     }
 
-    private List<String> readListFrom(JSONObject jsonField) throws JSONException {
+    private List<String> readListFrom(JsonObject jsonField)  {
         List<String> values = Lists.newArrayList();
-        values.add(jsonField.getString("value"));
+        values.add(jsonField.getAsJsonPrimitive("value").getAsString());
         if (jsonField.has("child")) {
-            values.addAll(readListFrom(jsonField.getJSONObject("child")));
+            values.addAll(readListFrom(jsonField.getAsJsonObject("child")));
         }
         return values;
     }
 
-    private List<CustomField> convertToCustomFields(JSONArray customFieldsList) throws JSONException {
+    private List<CustomField> convertToCustomFields(JsonArray customFieldsList)  {
 
         List<CustomField> customFields = Lists.newArrayList();
 
-        for (int i = 0; i < customFieldsList.length(); i++) {
-            JSONObject fieldObject = customFieldsList.getJSONObject(i);
+        for (int i = 0; i < customFieldsList.size(); i++) {
+            JsonObject fieldObject = customFieldsList.get(i).getAsJsonObject();
             customFields.add(convertToCustomField(fieldObject));
         }
         return customFields;
 
     }
 
-    private CustomField convertToCustomField(JSONObject fieldObject) throws JSONException {
-        return new CustomField(fieldObject.getString("id"),
-                fieldObject.getString("name"),
+    private CustomField convertToCustomField(JsonObject fieldObject)  {
+        return new CustomField(fieldObject.getAsJsonPrimitive("id").getAsString(),
+                fieldObject.getAsJsonPrimitive("name").getAsString(),
                 fieldTypeOf(fieldObject));
     }
 
-    private String fieldTypeOf(JSONObject fieldObject) throws JSONException {
+    private String fieldTypeOf(JsonObject fieldObject) {
         if (fieldObject.has("schema")) {
-            return fieldObject.getJSONObject("schema").getString("type");
+            return fieldObject.getAsJsonObject("schema").getAsJsonPrimitive("type").getAsString();
         } else {
             return "string";
         }
     }
 
-    private Object optional(JSONObject fields, String fieldName) throws JSONException {
+    private JsonElement optional(JsonObject fields, String fieldName)  {
         return (fields.has(fieldName) ? fields.get(fieldName) : null);
     }
 
-    private List<String> toList(JSONArray array) throws JSONException {
+    private List<String> toList(JsonArray array)  {
         List<String> list = Lists.newArrayList();
-        for (int i = 0; i < array.length(); i++) {
+        for (int i = 0; i < array.size(); i++) {
             list.add(stringValueOf(array.get(i)));
         }
         return list;
     }
 
-    private List<String> toListOfVersions(JSONArray array) throws JSONException {
+    private List<String> toListOfVersions(JsonArray array)  {
         List<String> list = Lists.newArrayList();
-        for (int i = 0; i < array.length(); i++) {
-            JSONObject versionObject = (JSONObject) array.get(i);
-            list.add(versionObject.getString("name"));
+        for (int i = 0; i < array.size(); i++) {
+            JsonObject versionObject = (JsonObject) array.get(i);
+            list.add(versionObject.getAsJsonPrimitive("name").getAsString());
         }
         return list;
     }
 
-    private URI uriFrom(JSONObject issueObject) throws JSONException {
+    private URI uriFrom(JsonObject issueObject)  {
         try {
-            return new URI((String) issueObject.get("self"));
+            return new URI(issueObject.getAsJsonPrimitive("self").getAsString());
         } catch (URISyntaxException e) {
             throw new IllegalArgumentException("Self field not a valid URL");
         }
     }
 
-    public Integer countByJQL(String query) throws JSONException{
+    public Integer countByJQL(String query) {
         return loadCountByJQL(query);
 //        try {
 //            return issueCountCache.get(query);
@@ -425,7 +417,7 @@ public class JerseyJiraClient {
 //        }
     }
 
-    protected Integer loadCountByJQL(String query) throws JSONException{
+    protected Integer loadCountByJQL(String query) {
         WebTarget target = buildWebTargetFor(REST_SEARCH).queryParam("jql", query);
         Response response = target.request().get();
 
@@ -438,16 +430,13 @@ public class JerseyJiraClient {
         String jsonResponse = response.readEntity(String.class);
 
         int total;
-        try {
-            JSONObject responseObject = new JSONObject(jsonResponse);
-            total = (Integer) responseObject.get("total");
-        } catch (JSONException e) {
-            throw new IllegalArgumentException("Invalid JQL query: " + query);
-        }
+
+        JsonObject responseObject = new JsonParser().parse(jsonResponse).getAsJsonObject();
+        total = responseObject.getAsJsonPrimitive("total").getAsInt();
         return total;
     }
 
-    private Optional<String> readFieldValues(String url, String path) throws JSONException {
+    private Optional<String> readFieldValues(String url, String path)  {
         WebTarget target = restClient().target(url)
                                        .path(path)
                                        .queryParam("expand", "renderedFields");
@@ -466,7 +455,7 @@ public class JerseyJiraClient {
         }
     }
 
-    private Optional<String> readFieldMetadata(String url, String path) throws JSONException {
+    private Optional<String> readFieldMetadata(String url, String path)  {
         WebTarget target = restClient().target(url)
                 .path(path)
                 .queryParam("expand", "renderedFields")
@@ -492,15 +481,20 @@ public class JerseyJiraClient {
         return ClientBuilder.newBuilder().register(new HttpBasicAuthFilter(username, password)).build();
     }
 
-    private String stringValueOf(Object field) {
+    private String stringValueOf(JsonElement field) {
         if (field != null) {
+            if(field.isJsonPrimitive()) {
+              return field.getAsJsonPrimitive().getAsString();
+            } else if (field.isJsonObject()) {
+                return field.getAsJsonObject().toString();
+            }
             return field.toString();
         } else {
             return null;
         }
     }
 
-    private boolean booleanValueOf(Object field) {
+    private boolean booleanValueOf(JsonElement field) {
         if (field != null) {
             return Boolean.valueOf(field.toString());
         } else {
@@ -516,7 +510,7 @@ public class JerseyJiraClient {
         return response.getStatus() == 400;
     }
 
-    public void checkValid(Response response) throws JSONException {
+    public void checkValid(Response response)  {
         int status = response.getStatus();
         if (status != OK && (status != CREATE_ISSUE_OK) && (status != DELETE_ISSUE_OK) ){
             switch(status) {
@@ -525,7 +519,7 @@ public class JerseyJiraClient {
                 case 404 : handleConfigurationError("Service not found (404) - try checking the JIRA URL?");
                 case 407 : handleConfigurationError("Proxy authentication required (407)");
                 default:
-                    throw new JSONException("JIRA query failed: error " + status);
+                    throw new JQLException("JIRA query failed: error " + status);
             }
         }
     }
@@ -543,14 +537,14 @@ public class JerseyJiraClient {
         return batchSize;
     }
 
-    private Map<String, CustomField> getCustomFieldsIndex() throws JSONException {
+    private Map<String, CustomField> getCustomFieldsIndex()  {
         if (customFieldsIndex == null) {
              customFieldsIndex = indexCustomFields();
         }
         return customFieldsIndex;
     }
 
-    private Map<String, String> getCustomFieldNameIndex() throws JSONException {
+    private Map<String, String> getCustomFieldNameIndex()  {
         if (customFieldNameIndex == null) {
             customFieldNameIndex = indexCustomFieldNames();
         }
@@ -559,7 +553,7 @@ public class JerseyJiraClient {
 
 
 
-    private Map<String, String> indexCustomFieldNames() throws JSONException {
+    private Map<String, String> indexCustomFieldNames()  {
         Map<String, String> index = Maps.newHashMap();
         for(CustomField field : getExistingCustomFields()) {
             index.put(field.getId(), field.getName());
@@ -568,7 +562,7 @@ public class JerseyJiraClient {
     }
 
 
-    private Map<String, CustomField> indexCustomFields() throws JSONException {
+    private Map<String, CustomField> indexCustomFields()  {
         Map<String, CustomField> index = Maps.newHashMap();
         for(CustomField field : getExistingCustomFields()) {
             index.put(field.getName(), field);
@@ -576,18 +570,18 @@ public class JerseyJiraClient {
         return index;
     }
 
-    private List<CustomField> getExistingCustomFields() throws JSONException {
+    private List<CustomField> getExistingCustomFields()  {
 
         Optional<String> jsonResponse = readFieldValues(url, "rest/api/2/field");
 
         if (jsonResponse.isPresent()) {
-            JSONArray responseObject = new JSONArray(jsonResponse.get());
+            JsonArray responseObject = new JsonParser().parse(jsonResponse.get()).getAsJsonArray();
             return convertToCustomFields(responseObject);
         }
         return EMPTY_LIST;
     }
 
-    List<CustomField> getCustomFields() throws JSONException {
+    List<CustomField> getCustomFields()  {
         List<CustomField> registeredCustomFields = Lists.newArrayList();
         for(String fieldName : customFields) {
             registeredCustomFields.add(getCustomFieldsIndex().get(fieldName));
@@ -596,50 +590,44 @@ public class JerseyJiraClient {
     }
 
     public List<CascadingSelectOption> findOptionsForCascadingSelect(String fieldName) {
-        JSONObject responseObject = null;
-        try {
-            Optional<String> jsonResponse = readFieldMetadata(url, "rest/api/2/issue/createmeta");
-            if (jsonResponse.isPresent()) {
-                responseObject = new JSONObject(jsonResponse.get());
+        JsonObject responseObject = null;
+        Optional<String> jsonResponse = readFieldMetadata(url, "rest/api/2/issue/createmeta");
+        if (jsonResponse.isPresent()) {
+            responseObject = new JsonParser().parse(jsonResponse.get()).getAsJsonObject();
 
-                JSONObject fields = responseObject.getJSONArray("projects")
-                        .getJSONObject(0)
-                        .getJSONArray("issuetypes")
-                        .getJSONObject(0).getJSONObject("fields");
+            JsonObject fields = responseObject.getAsJsonArray("projects")
+                    .get(0).getAsJsonObject()
+                    .getAsJsonArray("issuetypes")
+                    .get(0).getAsJsonObject().getAsJsonObject("fields");
 
-                Iterator fieldKeys = fields.keys();
-
-                while(fieldKeys.hasNext()) {
-                    String entryFieldName = (String) fieldKeys.next();
-                    JSONObject entry = fields.getJSONObject(entryFieldName);
-                    if (entry.getString("name").equalsIgnoreCase(fieldName)) {
-                        return convertToCascadingSelectOptions(entry.getJSONArray("allowedValues"));
-                    }
+            Set<Map.Entry<String, JsonElement>> entries = fields.entrySet();
+            Iterator<Map.Entry<String, JsonElement>> fieldKeys = fields.entrySet().iterator();
+            while(fieldKeys.hasNext()) {
+                String entryFieldName = fieldKeys.next().getKey();
+                JsonObject entry = fields.getAsJsonObject(entryFieldName);
+                if (entry.getAsJsonPrimitive("name").getAsString().equalsIgnoreCase(fieldName)) {
+                    return convertToCascadingSelectOptions(entry.getAsJsonArray("allowedValues"));
                 }
             }
-        } catch (JSONException e) {
-            logger.error("Could not read cascading select options", e);
-            logger.info("responseObject = " + responseObject);
-
         }
         return EMPTY_LIST;
     }
 
-    private List<CascadingSelectOption> convertToCascadingSelectOptions(JSONArray allowedValues) throws JSONException {
+    private List<CascadingSelectOption> convertToCascadingSelectOptions(JsonArray allowedValues)  {
         return convertToCascadingSelectOptions(allowedValues, null);
     }
 
-    private List<CascadingSelectOption> convertToCascadingSelectOptions(JSONArray allowedValues,
-                CascadingSelectOption parentOption) throws JSONException {
+    private List<CascadingSelectOption> convertToCascadingSelectOptions(JsonArray allowedValues,
+                CascadingSelectOption parentOption)  {
         List<CascadingSelectOption> options = Lists.newArrayList();
-        for(int i = 0; i < allowedValues.length(); i++) {
-            JSONObject entry = (JSONObject) allowedValues.get(i);
-            String value = entry.getString("value");
+        for(int i = 0; i < allowedValues.size(); i++) {
+            JsonObject entry = (JsonObject) allowedValues.get(i);
+            String value = entry.getAsJsonPrimitive("value").getAsString();
 
             CascadingSelectOption option = new CascadingSelectOption(value, parentOption);
             List<CascadingSelectOption> children = Lists.newArrayList();
             if (entry.has("children")) {
-                children = convertToCascadingSelectOptions(entry.getJSONArray("children"), option);
+                children = convertToCascadingSelectOptions(entry.getAsJsonArray("children"), option);
             }
             option.addChildren(children);
             options.add(option);
@@ -649,7 +637,7 @@ public class JerseyJiraClient {
 
 
 
-    public IssueSummary createIssue(IssueSummary issue) throws JSONException {
+    public IssueSummary createIssue(IssueSummary issue)  {
         WebTarget target = restClient().target(url).path(ISSUE);
         JsonObject fields = new JsonObject();
 
@@ -677,21 +665,21 @@ public class JerseyJiraClient {
         checkValid(target.request().delete());
     }
 
-    public Project getProjectByKey(String projectKey) throws JSONException {
+    public Project getProjectByKey(String projectKey)  {
         WebTarget target = restClient().target(url).path(PROJECT + "/"  + projectKey);
         Response response = target.request().get();
         checkValid(response);
         return Project.fromJsonString(response.readEntity(String.class));
     }
 
-    /*public IssueSummary getIssue(String issueKey) throws JSONException {
+    /*public IssueSummary getIssue(String issueKey)  {
         WebTarget target = restClient().target(url).path(ISSUE + "/" + issueKey);
         Response response = target.request().get();
         checkValid(response);
         return IssueSummary.fromJsonString(response.readEntity(String.class));
     } */
 
-    public IssueSummary getIssue(String issueKey) throws JSONException {
+    public IssueSummary getIssue(String issueKey)  {
         WebTarget target = restClient().target(url).path(ISSUE  + issueKey);
         Response response = target.request().get();
         checkValid(response);
@@ -699,7 +687,7 @@ public class JerseyJiraClient {
     }
 
 
-    public void addComment(String issueKey, IssueComment newComment) throws JSONException {
+    public void addComment(String issueKey, IssueComment newComment)  {
         String url = String.format(ADD_COMMENT, issueKey);
         WebTarget target = buildWebTargetFor(url);
         JsonObject jsonComment = new JsonObject();
@@ -709,19 +697,19 @@ public class JerseyJiraClient {
         issueSummaryCache.invalidate(issueKey);
     }
 
-    public void updateComment(String key, IssueComment updatedComment) throws JSONException {
+    public void updateComment(String key, IssueComment updatedComment)  {
         WebTarget target = restClient().target(updatedComment.getSelf());
 
         Response response = target.request(MediaType.APPLICATION_JSON_TYPE).get();
 
-        JSONObject jsonComment = new JSONObject(response.readEntity(String.class));
-        jsonComment.put("body", updatedComment.getBody());
+        JsonObject jsonComment = new JsonParser().parse(response.readEntity(String.class)).getAsJsonObject();
+        jsonComment.addProperty("body", updatedComment.getBody());
 
         target.request(MediaType.APPLICATION_JSON_TYPE).put(Entity.entity(jsonComment.toString(), MediaType.APPLICATION_JSON));
         issueSummaryCache.invalidate(key);
     }
 
-    public List<IssueComment> getComments(String issueKey) throws JSONException,ParseException {
+    public List<IssueComment> getComments(String issueKey) throws ParseException {
         WebTarget target = restClient().target(url).path(ISSUE  + issueKey + "/comment");
         Response response = target.request().get();
         checkValid(response);
@@ -738,7 +726,7 @@ public class JerseyJiraClient {
         return comments;
     }
 
-    public List<IssueTransition> getAvailableTransitions(String issueKey) throws JSONException,ParseException {
+    public List<IssueTransition> getAvailableTransitions(String issueKey) throws ParseException {
         List<IssueTransition> availableActions = new ArrayList<IssueTransition>();
         WebTarget target = buildWebTargetFor(String.format(GET_TRANSITIONS, issueKey));
         Response response = target.request().get();
@@ -755,7 +743,7 @@ public class JerseyJiraClient {
         return availableActions;
     }
 
-    public void progressWorkflowTransition(String issueKey, String transitionId) throws JSONException,ParseException{
+    public void progressWorkflowTransition(String issueKey, String transitionId) throws ParseException{
         WebTarget target = buildWebTargetFor(String.format(GET_TRANSITIONS, issueKey));
         JsonObject jsonTransition = new JsonObject();
         jsonTransition.add(IssueTransition.TRANSITION_KEY, new JsonPrimitive(transitionId));
