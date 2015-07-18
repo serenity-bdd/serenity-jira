@@ -3,12 +3,12 @@ package net.serenitybdd.plugins.jira.requirements;
 import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import net.serenitybdd.plugins.jira.model.JQLException;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.requirements.model.Requirement;
 import net.serenitybdd.plugins.jira.client.JerseyJiraClient;
 import net.serenitybdd.plugins.jira.domain.IssueSummary;
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
@@ -35,7 +35,7 @@ public class IssueTagReader {
             if (issue.isPresent()) {
                 addVersionTags(issue.get().getFixVersions());
             }
-        } catch (JSONException e) {
+        } catch (JQLException e) {
             logger.warn("Could not read versions for issue " + decodedIssueKey, e);
         }
         return this;
@@ -62,7 +62,7 @@ public class IssueTagReader {
         Optional<IssueSummary> behaviourIssue = Optional.absent();
         try {
             behaviourIssue = jiraClient.findByKey(decodedIssueKey);
-        } catch (JSONException e) {
+        } catch (JQLException e) {
             logger.warn("Could not read tags for issue " + decodedIssueKey, e);
         }
         if (behaviourIssue.isPresent()) {
