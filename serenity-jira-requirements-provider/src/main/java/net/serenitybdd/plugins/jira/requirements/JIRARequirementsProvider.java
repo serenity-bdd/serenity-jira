@@ -9,6 +9,7 @@ import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
+import net.serenitybdd.plugins.jira.model.JQLException;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
@@ -20,7 +21,6 @@ import net.serenitybdd.plugins.jira.domain.IssueSummary;
 import net.serenitybdd.plugins.jira.service.JIRAConfiguration;
 import net.serenitybdd.plugins.jira.service.SystemPropertiesJIRAConfiguration;
 import org.apache.commons.lang3.StringUtils;
-import org.json.JSONException;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
@@ -126,7 +126,7 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
             logger.info("Loading root requirements: " + rootRequirementsJQL());
             try {
                 rootRequirementIssues = jiraClient.findByJQL(rootRequirementsJQL());
-            } catch (JSONException e) {
+            } catch (JQLException e) {
                 logger.info("No root requirements found (JQL = " + rootRequirementsJQL(), e);
                 rootRequirementIssues = Lists.newArrayList();
             }
@@ -135,39 +135,12 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
             requirements = Collections.synchronizedList(new ArrayList<Requirement>());
 
             for (final IssueSummary issueSummary : rootRequirementIssues) {
-                final ListenableFuture<IssueSummary> future = executorService.submit(new Callable<IssueSummary>() {
-                    @Override
-                    public IssueSummary call() throws Exception {
-                        return issueSummary;
-                    }
-                });
-                future.addListener(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            queueSize.incrementAndGet();
-                            Requirement requirement = requirementFrom(future.get());
-                            List<Requirement> childRequirements = findChildrenFor(requirement, 0);
-                            requirements.add(requirement.withChildren(childRequirements));
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, MoreExecutors.sameThreadExecutor());
-                future.addListener(new Runnable() {
-                    @Override
-                    public void run() {
-                        queueSize.decrementAndGet();
-                    }
-                }, executorService);
-
+                Requirement requirement = requirementFrom(issueSummary);
+                List<Requirement> childRequirements = findChildrenFor(requirement, 0);
+                requirements.add(requirement.withChildren(childRequirements));
             }
-            waitTillEmpty(queueSize);
             requirements = addParentsTo(requirements);
             persist(requirements);
-
         }
         return requirements;
     }
@@ -247,7 +220,7 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
             children = jiraClient.findByJQL(childIssuesJQL(parent, level));
 
             logger.info("Loading child requirements for " + parent.getName() + " done: " + children.size());
-        } catch (JSONException e) {
+        } catch (JQLException e) {
             logger.warn("No children found for requirement " + parent, e);
             return NO_REQUIREMENTS;
         }
@@ -264,8 +237,8 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
         return childRequirements;
     }
 
-    private void waitTillEmpty(AtomicInteger counter) {
-        while (counter.get() > 0) {
+    private void waitTillFull(AtomicInteger counter, int size) {
+        while (counter.get() != size) {
             try {
                 Thread.sleep(50);
             } catch (InterruptedException e) {
@@ -309,7 +282,7 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
                 } else {
                     return Optional.absent();
                 }
-            } catch (JSONException e) {
+            } catch (JQLException e) {
                 if (noSuchIssue(e)) {
                     return Optional.absent();
                 } else {
@@ -321,7 +294,7 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
         }
     }
 
-    private boolean noSuchIssue(JSONException e) {
+    private boolean noSuchIssue(JQLException e) {
         return e.getMessage().contains("error 400");
     }
 

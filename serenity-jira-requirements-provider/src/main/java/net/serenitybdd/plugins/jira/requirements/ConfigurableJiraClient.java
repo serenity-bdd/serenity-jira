@@ -2,13 +2,13 @@ package net.serenitybdd.plugins.jira.requirements;
 
 import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
+import net.serenitybdd.plugins.jira.model.JQLException;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.serenitybdd.plugins.jira.client.JIRAAuthenticationError;
 import net.serenitybdd.plugins.jira.client.JIRAConfigurationError;
 import net.serenitybdd.plugins.jira.client.JerseyJiraClient;
 import net.serenitybdd.plugins.jira.domain.IssueSummary;
-import org.json.JSONException;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
@@ -32,7 +32,7 @@ public class ConfigurableJiraClient extends JerseyJiraClient {
     }
 
     @Override
-    public List<IssueSummary> findByJQL(String query) throws JSONException {
+    public List<IssueSummary> findByJQL(String query) {
         try {
             return super.findByJQL(query);
         } catch(JIRAAuthenticationError authenticationError) {
@@ -57,7 +57,7 @@ public class ConfigurableJiraClient extends JerseyJiraClient {
     }
 
     @Override
-    public Optional<IssueSummary> findByKey(String key) throws JSONException {
+    public Optional<IssueSummary> findByKey(String key) throws JQLException {
         try {
             return super.findByKey(key);
         } catch(JIRAAuthenticationError authenticationError) {

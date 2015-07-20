@@ -8,7 +8,6 @@ import net.serenitybdd.plugins.jira.domain.IssueSummary;
 import net.serenitybdd.plugins.jira.domain.IssueComment;
 import net.serenitybdd.plugins.jira.model.IssueTracker;
 import net.serenitybdd.plugins.jira.model.IssueTrackerUpdateException;
-import org.json.JSONException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.Marker;
@@ -56,12 +55,8 @@ public class JiraIssueTracker implements IssueTracker {
      * @param commentText  text of the comment.
      * @throws IssueTrackerUpdateException
      */
-    public void addComment(final String issueKey, final String commentText) throws IssueTrackerUpdateException {
-        try {
+    public void addComment(final String issueKey, final String commentText) {
             jiraConnection.getRestJiraClient().addComment(issueKey,new IssueComment(commentText));
-        } catch (JSONException e) {
-            throw new IssueTrackerUpdateException(e.getMessage(),e);
-        }
     }
 
 
@@ -92,19 +87,13 @@ public class JiraIssueTracker implements IssueTracker {
     public List<IssueComment> getCommentsFor(String issueKey) throws IssueTrackerUpdateException {
         try {
             return jiraConnection.getRestJiraClient().getComments(issueKey);
-        } catch (JSONException e) {
-            throw new IssueTrackerUpdateException(e.getMessage(),e);
         } catch (ParseException pe) {
             throw new IssueTrackerUpdateException(pe.getMessage(),pe);
         }
     }
 
     public void updateComment(String issuekey,IssueComment issueComment) {
-        try {
-            jiraConnection.getRestJiraClient().updateComment(issuekey,issueComment);
-        } catch (JSONException e) {
-            throw new IssueTrackerUpdateException(e.getMessage(),e);
-        }
+         jiraConnection.getRestJiraClient().updateComment(issuekey,issueComment);
     }
 
     /**
@@ -115,16 +104,12 @@ public class JiraIssueTracker implements IssueTracker {
      * @throws IssueTrackerUpdateException
      */
     public String getStatusFor(final String issueKey) throws IssueTrackerUpdateException {
-        try {
-            Optional<IssueSummary> issue = jiraConnection.getRestJiraClient().loadByKey(issueKey);
-            if(issue.isPresent()) {
-                return issue.get().getStatus();
-            } else {
-                logJiraIssueNotFound(issueKey);
-                throw new IssueTrackerUpdateException("Issue not found " + issueKey, new NoSuchIssueException(issueKey));
-            }
-        } catch (JSONException e) {
-            throw new IssueTrackerUpdateException(e.getMessage(),e);
+        Optional<IssueSummary> issue = jiraConnection.getRestJiraClient().loadByKey(issueKey);
+        if(issue.isPresent()) {
+            return issue.get().getStatus();
+        } else {
+            logJiraIssueNotFound(issueKey);
+            throw new IssueTrackerUpdateException("Issue not found " + issueKey, new NoSuchIssueException(issueKey));
         }
     }
 
@@ -140,15 +125,13 @@ public class JiraIssueTracker implements IssueTracker {
                 logJiraIssueNotFound(issueKey);
                 throw new IssueTrackerUpdateException("Issue not found " + issueKey, new NoSuchIssueException(issueKey));
             }
-        } catch (JSONException e) {
-            throw new IssueTrackerUpdateException(e.getMessage(),e);
         } catch (ParseException pe) {
             throw new IssueTrackerUpdateException(pe.getMessage(),pe);
         }
     }
 
 
-    private Map<String, String> getAvailableActions(final String issueKey) throws JSONException, ParseException {
+    private Map<String, String> getAvailableActions(final String issueKey) throws  ParseException {
         Map<String, String> availableActionMap = new HashMap<String, String>();
         List<IssueTransition> actions = jiraConnection.getRestJiraClient().getAvailableTransitions(issueKey);
         for(IssueTransition action : actions) {
