@@ -11,6 +11,7 @@ import com.google.common.collect.Sets;
 import net.serenitybdd.plugins.jira.client.JerseyJiraClient;
 import net.serenitybdd.plugins.jira.domain.IssueSummary;
 import net.serenitybdd.plugins.jira.model.CascadingSelectOption;
+import net.serenitybdd.plugins.jira.model.JQLException;
 import net.serenitybdd.plugins.jira.service.JIRAConfiguration;
 import net.serenitybdd.plugins.jira.service.SystemPropertiesJIRAConfiguration;
 import net.thucydides.core.guice.Injectors;
@@ -21,7 +22,6 @@ import net.thucydides.core.requirements.ReleaseProvider;
 import net.thucydides.core.requirements.RequirementsTagProvider;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.EnvironmentVariables;
-import org.json.JSONException;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
@@ -216,7 +216,7 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
                     return Optional.of(requirements.get(requirements.size() - 1));
                 }
             }
-        } catch (JSONException e) {
+        } catch (JQLException e) {
             if (noSuchIssue(e)) {
                 return Optional.absent();
             } else {
@@ -257,7 +257,7 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
         return matchingRequirements;
     }
 
-    private boolean noSuchIssue(JSONException e) {
+    private boolean noSuchIssue(JQLException e) {
         return e.getMessage().contains("error 400");
     }
 
@@ -288,7 +288,7 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
         Optional<IssueSummary> issue = Optional.absent();
         try {
             issue = jiraClient.findByKey(issueKey);
-        } catch (JSONException e) {
+        } catch (JQLException e) {
             logger.error("Could not load issue: " + issueKey, e);
         }
         if (issue.isPresent()) {
