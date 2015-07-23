@@ -7,6 +7,11 @@ import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import net.serenitybdd.plugins.jira.model.JQLException;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
@@ -19,9 +24,6 @@ import net.serenitybdd.plugins.jira.domain.IssueSummary;
 import net.serenitybdd.plugins.jira.service.JIRAConfiguration;
 import net.serenitybdd.plugins.jira.service.SystemPropertiesJIRAConfiguration;
 import org.joda.time.DateTime;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.Response;
@@ -41,7 +43,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class ZephyrAdaptor implements TestOutcomeAdaptor {
 
-    private static final String ZEPHYR_REST_API = "rest/zephyr/1.0";
+    private static final String ZEPHYR_REST_API = "rest/zapi/latest";
 
     private static final int DEFAULT_MAX_THREADS = 16;
 
@@ -86,12 +88,12 @@ public class ZephyrAdaptor implements TestOutcomeAdaptor {
         try {
             List<IssueSummary> manualTests = jiraClient.findByJQL("type=Test and project=" + jiraProject);
             return extractTestOutcomesFrom(manualTests);
-        } catch (JSONException e) {
+        } catch (JQLException e) {
             throw new IllegalArgumentException("Failed to load Zephyr manual tests", e);
         }
     }
 
-    private List<TestOutcome> extractTestOutcomesFrom(List<IssueSummary> manualTests) throws JSONException {
+    private List<TestOutcome> extractTestOutcomesFrom(List<IssueSummary> manualTests) throws JQLException {
         int threads = environmentVariables.getPropertyAsInteger("zephyr.thread.count", DEFAULT_MAX_THREADS);
 
         final List<TestOutcome> outcomes = Collections.synchronizedList(new ArrayList<TestOutcome>());
@@ -117,22 +119,30 @@ public class ZephyrAdaptor implements TestOutcomeAdaptor {
                         e.printStackTrace();
                     } catch (ExecutionException e) {
                         e.printStackTrace();
-                    } catch (JSONException e) {
+                    } catch (JQLException e) {
                         e.printStackTrace();
                     }
                 }
-            }, MoreExecutors.sameThreadExecutor());
+            }, MoreExecutors.newDirectExecutorService());
             future.addListener(new Runnable() {
                 @Override
                 public void run() {
+                    waitTillQueueNotEmpty();
                     queueSize.decrementAndGet();
                 }
             }, executorService);
         }
-
         waitTillFinished();
-
         return outcomes;
+    }
+
+    private void waitTillQueueNotEmpty() {
+        while (queueSize.get() == 0) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+            }
+        }
     }
 
     private void waitTillFinished() {
@@ -162,7 +172,7 @@ public class ZephyrAdaptor implements TestOutcomeAdaptor {
                 updateOverallTestOutcome(outcome, testExecutionRecord);
             }
             return outcome.asManualTest();
-        } catch (JSONException e) {
+        } catch (JQLException e) {
             throw new IllegalArgumentException(e);
         }
     }
@@ -178,14 +188,14 @@ public class ZephyrAdaptor implements TestOutcomeAdaptor {
         return outcome.getTestSteps().isEmpty();
     }
 
-    private void addTestStepsTo(TestOutcome outcome, TestExecutionRecord testExecutionRecord, Long id) throws JSONException {
+    private void addTestStepsTo(TestOutcome outcome, TestExecutionRecord testExecutionRecord, Long id) throws JQLException {
 
-        JSONArray stepObjects = getTestStepsForId(id);
+        JsonArray stepObjects = getTestStepsForId(id);
 
         if (hasTestSteps(stepObjects)) {
-            for (int i = 0; i < stepObjects.length(); i++) {
-                JSONObject step = stepObjects.getJSONObject(i);
-                outcome.recordStep(fromJson(step, testExecutionRecord));
+            for (int i = 0; i < stepObjects.size(); i++) {
+                JsonElement step = stepObjects.get(i);
+                outcome.recordStep(fromJson(step.getAsJsonObject(), testExecutionRecord));
                 if (testExecutionRecord.executionDate != null) {
                     outcome.setStartTime(testExecutionRecord.executionDate);
                 }
@@ -193,21 +203,20 @@ public class ZephyrAdaptor implements TestOutcomeAdaptor {
         }
     }
 
-    private JSONArray getTestStepsForId(Long id) throws JSONException {
+    private JsonArray getTestStepsForId(Long id) throws JQLException {
         WebTarget target = jiraClient.buildWebTargetFor(ZEPHYR_REST_API + "/teststep/" + id);
         Response response = target.request().get();
         jiraClient.checkValid(response);
-
         String jsonResponse = response.readEntity(String.class);
-        return new JSONArray(jsonResponse);
+        return new JsonParser().parse(jsonResponse).getAsJsonArray();
     }
 
-    private boolean hasTestSteps(JSONArray stepObjects) {
-        return stepObjects.length() > 0;
+    private boolean hasTestSteps(JsonArray stepObjects) {
+        return stepObjects.size() > 0;
     }
 
-    private TestStep fromJson(JSONObject step, TestExecutionRecord testExecutionRecord) throws JSONException {
-        String stepDescription = step.getString("htmlStep");
+    private TestStep fromJson(JsonObject step, TestExecutionRecord testExecutionRecord) throws JQLException {
+        String stepDescription = step.get("htmlStep").getAsString();
         return TestStep.forStepCalled(stepDescription).withResult(testExecutionRecord.testResult);
     }
 
@@ -223,20 +232,19 @@ public class ZephyrAdaptor implements TestOutcomeAdaptor {
         }
     }
 
-    private TestExecutionRecord getTestExecutionRecordFor(Long id) throws JSONException {
-        WebTarget target = jiraClient.buildWebTargetFor(ZEPHYR_REST_API + "/schedule").queryParam("issueId", id);
+    private TestExecutionRecord getTestExecutionRecordFor(Long id) throws JQLException {
+        WebTarget target = jiraClient.buildWebTargetFor(ZEPHYR_REST_API + "/execution").queryParam("issueId", id);
         Response response = target.request().get();
         jiraClient.checkValid(response);
-
         String jsonResponse = response.readEntity(String.class);
-        JSONObject testSchedule = new JSONObject(jsonResponse);
-        JSONArray schedules = testSchedule.getJSONArray("schedules");
-        JSONObject statusMap = testSchedule.getJSONObject("status");
+        JsonObject testSchedule = new JsonParser().parse(jsonResponse).getAsJsonObject();
+        JsonArray executions = testSchedule.get("executions").getAsJsonArray();
+        JsonObject statusMap = testSchedule.get("status").getAsJsonObject();
 
-        if (hasTestSteps(schedules)) {
-            JSONObject latestSchedule = schedules.getJSONObject(0);
-            String executionStatus = latestSchedule.getString("executionStatus");
-            DateTime executionDate = executionDateFor(latestSchedule);
+        if (hasTestSteps(executions)) {
+            JsonObject latestExecution = executions.get(0).getAsJsonObject();
+            String executionStatus = latestExecution.get("executionStatus").getAsString();
+            DateTime executionDate = executionDateFor(latestExecution);
             boolean descoped = (executionStatus.equalsIgnoreCase("descoped"));
             return new TestExecutionRecord(getTestResultFrom(executionStatus, statusMap), executionDate, descoped);
         } else {
@@ -244,9 +252,9 @@ public class ZephyrAdaptor implements TestOutcomeAdaptor {
         }
     }
 
-    private DateTime executionDateFor(JSONObject latestSchedule) throws JSONException {
+    private DateTime executionDateFor(JsonObject latestSchedule) throws JQLException {
         if (latestSchedule.has("executedOn")) {
-            return parser().parse(latestSchedule.getString("executedOn"));
+            return parser().parse(latestSchedule.get("executedOn").getAsString());
         } else {
             return null;
         }
@@ -256,10 +264,10 @@ public class ZephyrAdaptor implements TestOutcomeAdaptor {
         return new ZephyrDateParser(new DateTime());
     }
 
-    private TestResult getTestResultFrom(String executionStatus, JSONObject statusMap) throws JSONException {
-        JSONObject status = statusMap.getJSONObject(executionStatus);
+    private TestResult getTestResultFrom(String executionStatus, JsonObject statusMap) throws JQLException {
+        JsonObject status = statusMap.get(executionStatus).getAsJsonObject();
         if (status != null) {
-            String statusName = status.getString("name");
+            String statusName = status.get("name").getAsString();
             if (TEST_STATUS_MAP.containsKey(statusName)) {
                 return TEST_STATUS_MAP.get(statusName);
             }
@@ -288,7 +296,7 @@ public class ZephyrAdaptor implements TestOutcomeAdaptor {
         return Optional.absent();
     }
 
-    private List<IssueSummary> getLabelsWithMatchingIssues(IssueSummary issue) throws JSONException {
+    private List<IssueSummary> getLabelsWithMatchingIssues(IssueSummary issue) throws JQLException {
         List<IssueSummary> matchingIssues = Lists.newArrayList();
         for(String label : issue.getLabels()) {
             matchingIssues.addAll(issueWithKey(label).asSet());
@@ -298,7 +306,7 @@ public class ZephyrAdaptor implements TestOutcomeAdaptor {
 
     private Map<String, Optional<IssueSummary>> issueSummaryCache = Maps.newConcurrentMap();
 
-    private Optional<IssueSummary> issueWithKey(String key) throws JSONException {
+    private Optional<IssueSummary> issueWithKey(String key) throws JQLException {
         if (issueSummaryCache.containsKey(key)) {
             return issueSummaryCache.get(key);
         } else {
@@ -307,7 +315,6 @@ public class ZephyrAdaptor implements TestOutcomeAdaptor {
             return issueSummary;
         }
     }
-
 
     @Override
     public List<TestOutcome> loadOutcomesFrom(File file) throws IOException {

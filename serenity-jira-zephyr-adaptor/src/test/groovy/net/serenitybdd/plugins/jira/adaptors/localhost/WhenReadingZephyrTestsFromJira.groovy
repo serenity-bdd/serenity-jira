@@ -20,10 +20,12 @@ class WhenReadingZephyrTestsFromJira extends Specification {
     def outcomes
 
     def setup() {
-        environmentVariables.setProperty('jira.url','http://192.168.0.128:8080')
+        //environmentVariables.setProperty('jira.url','https://wakaleo.atlassian.net')
+        environmentVariables.setProperty('jira.url','http://localhost:8080')
         environmentVariables.setProperty('jira.username','bruce')
         environmentVariables.setProperty('jira.password','batm0bile')
-        environmentVariables.setProperty('jira.project','FH')
+        environmentVariables.setProperty('jira.project','DEMO')
+        //environmentVariables.setProperty('jira.project','FH')
 
         configuration = new SystemPropertiesJIRAConfiguration(environmentVariables)
 
@@ -85,7 +87,7 @@ class WhenReadingZephyrTestsFromJira extends Specification {
         when:
             TestOutcome sampleTest = outcomes.find { it.title.contains 'Testing some stuff'}
         then:
-            sampleTest.startTime == timeAt("28/Aug/13 11:03 AM")
+            sampleTest.startTime == timeAt("22/Jul/15 09:23 PM")
     }
 
     def "should read test result for a test with no steps when a successful execution has been recorded"() {
@@ -123,11 +125,11 @@ class WhenReadingZephyrTestsFromJira extends Specification {
             "26/Jul/13 4:03 PM" | new DateTime(2013,7,26,16,3)
             "Today 9:13 AM"     | new DateTime(2013,1,1,9,13)
             "Yesterday 9:13 AM" | new DateTime(2012,12,31,9,13)
-            "Sunday 9:13 AM"    | new DateTime(2012,12,30,9,13)
-            "Saturday 9:13 AM"  | new DateTime(2012,12,29,9,13)
-            "Friday 9:13 AM"    | new DateTime(2012,12,28,9,13)
-            "Thursday 9:13 AM"  | new DateTime(2012,12,27,9,13)
-            "Wednesday 9:13 AM"  | new DateTime(2012,12,26,9,13)
+            "Sunday 9:13 AM"    | new DateTime(2013,1,6,9,13)
+            "Saturday 9:13 AM"  | new DateTime(2013,1,5,9,13)
+            "Friday 9:13 AM"    | new DateTime(2013,1,4,9,13)
+            "Thursday 9:13 AM"  | new DateTime(2013,1,3,9,13)
+            "Wednesday 9:13 AM"  | new DateTime(2013,1,2,9,13)
     }
 
     DateTime timeAt(String date) {
