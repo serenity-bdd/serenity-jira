@@ -50,7 +50,7 @@ allprojects {
     configurations.all {
         resolutionStrategy {
             // fail fast on dependency convergence problems
-            failOnVersionConflict()
+            //failOnVersionConflict()
         }
     }
 }
@@ -80,6 +80,34 @@ subprojects {
         jcenter()
     }
 
+
+    task sourcesJar(type: Jar, dependsOn: classes) {
+        classifier = 'sources'
+        from sourceSets.main.allSource
+    }
+
+    task javadocJar(type: Jar, dependsOn: javadoc) {
+        classifier = 'javadoc'
+        from javadoc.destinationDir
+    }
+
+    artifacts {
+        archives sourcesJar, javadocJar
+    }
+
+    bintray {
+        user = bintrayUsername //this usually comes form gradle.properties file in ~/.gradle
+        key = bintrayApiKey //this usually comes form gradle.properties file in ~/.gradle
+        publications = ['mavenJava'] // see publications closure
+        pkg {
+            repo = 'maven'
+            userOrg = 'serenity'
+            name = 'serenity-jira'
+            desc = 'Serenity JIRA libraries'
+            licenses = ['Apache-2.0']
+            labels = ['serenity', 'bdd']
+        }
+    }
 
     tasks.withType(GroovyCompile) {
         options.encoding = "UTF-8" // for Java compilation
