@@ -1,4 +1,6 @@
 import net.serenitybdd.builds.ProjectVersionCounter
+import org.ajoberstar.gradle.git.release.opinion.Strategies
+import org.ajoberstar.grgit.Grgit
 
 buildscript {
     repositories {
@@ -8,9 +10,19 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:0.6'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.2'
+        classpath 'org.ajoberstar:gradle-git:1.2.0'
+        classpath 'org.pegdown:pegdown:1.4.1'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.11.3'
     }
 }
+
+apply plugin: 'org.ajoberstar.release-opinion'
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.8'
+}
+
 
 allprojects {
     apply plugin: 'java'
@@ -20,6 +32,9 @@ allprojects {
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
     apply plugin: 'com.jfrog.bintray'
+
+    apply plugin: 'project-report'
+    apply plugin: 'com.github.ben-manes.versions'
 
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
@@ -31,7 +46,7 @@ allprojects {
 
 
     ext {
-        serenityCoreVersion = "1.0.39"
+        serenityCoreVersion = "1.1.17-rc.3"
         bintrayBaseUrl = 'https://api.bintray.com/maven'
         bintrayRepository = 'maven'
         bintrayPackage = 'serenity-jira'
@@ -67,10 +82,6 @@ allprojects {
 
     sourceSets.main.java.srcDirs = []
     sourceSets.main.groovy.srcDirs += ["src/main/java"]
-
-    task wrapper(type: Wrapper) {
-        gradleVersion = '2.1'
-    }
 
     test {
         exclude '**/*$*'
@@ -135,11 +146,11 @@ allprojects {
 
     dependencies {
 //        compile localGroovy()
-        compile "net.serenity-bdd:core:$serenityCoreVersion"
+        compile "net.serenity-bdd:serenity-core:$serenityCoreVersion"
         compile "com.google.inject:guice:3.0"
         compile "com.google.guava:guava:18.0"
-        compile "org.slf4j:slf4j-api:1.6.4"
-        compile "org.codehaus.groovy:groovy-all:2.3.6"
+        compile "org.slf4j:slf4j-api:1.7.7"
+        compile "org.codehaus.groovy:groovy-all:2.3.10"
 
         testCompile "ch.qos.logback:logback-classic:1.0.13"
         testCompile "net.serenity-bdd:serenity-test-utils:$serenityCoreVersion"
@@ -239,8 +250,16 @@ subprojects {
             }
         }
     }
-
 }
+
+release {
+    grgit = Grgit.open(project.file('.'))
+    // versionStrategy Strategies.FINAL
+    // versionStrategy Strategies.PRE_RELEASE
+    defaultVersionStrategy Strategies.SNAPSHOT
+}
+
+
 bintray {
     user = bintrayUsername //this usually comes form gradle.properties file in ~/.gradle
     key = bintrayApiKey //this usually comes form gradle.properties file in ~/.gradle
@@ -253,8 +272,4 @@ bintray {
         licenses = ['Apache-2.0']
         labels = ['serenity', 'bdd', 'jira']
     }
-}
-
-task release() {
-    dependsOn bintrayUpload
 }

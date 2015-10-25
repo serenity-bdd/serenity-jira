@@ -390,6 +390,11 @@ public class JiraListener implements StepListener {
 
     }
 
+    @Override
+    public void testIsManual() {
+
+    }
+
     public void notifyScreenChange() {
     }
 
