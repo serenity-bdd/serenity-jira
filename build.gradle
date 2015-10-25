@@ -1,7 +1,3 @@
-import net.serenitybdd.builds.ProjectVersionCounter
-import org.ajoberstar.gradle.git.release.opinion.Strategies
-import org.ajoberstar.grgit.Grgit
-
 buildscript {
     repositories {
         jcenter()
@@ -19,12 +15,55 @@ buildscript {
 
 apply plugin: 'org.ajoberstar.release-opinion'
 
+import org.ajoberstar.grgit.Grgit
+import org.ajoberstar.gradle.git.release.opinion.Strategies
+
 task wrapper(type: Wrapper) {
     gradleVersion = '2.8'
 }
 
+subprojects {
+    task allDeps(type: DependencyReportTask) {}
+}
+
+ext {
+    serenityCoreVersion = "1.1.17-rc.3"
+
+    // Bintray configuration
+    bintrayBaseUrl = 'https://api.bintray.com/maven'
+    bintrayRepository = 'maven'
+    bintrayPackage = 'serenity-jira'
+    projectDescription = 'Serenity JIRA Integration'
+
+    if (!project.hasProperty("bintrayUsername")) {
+        bintrayUsername = 'wakaleo'
+    }
+    if (!project.hasProperty("bintrayApiKey")) {
+        bintrayApiKey = ''
+    }
+}
 
 allprojects {
+    apply plugin: 'project-report'
+    apply plugin: 'com.github.ben-manes.versions'
+
+    configurations.all {
+        resolutionStrategy {
+            // fail fast on dependency convergence problems
+            failOnVersionConflict()
+        }
+    }
+}
+
+release {
+    grgit = Grgit.open(project.file('.'))
+
+    versionStrategy Strategies.FINAL
+    versionStrategy Strategies.PRE_RELEASE
+    defaultVersionStrategy Strategies.SNAPSHOT
+}
+
+subprojects {
     apply plugin: 'java'
     apply plugin: 'groovy'
     apply plugin: 'eclipse'
@@ -32,9 +71,6 @@ allprojects {
     apply plugin: 'maven'
     apply plugin: 'maven-publish'
     apply plugin: 'com.jfrog.bintray'
-
-    apply plugin: 'project-report'
-    apply plugin: 'com.github.ben-manes.versions'
 
     sourceCompatibility = 1.7
     targetCompatibility = 1.7
@@ -45,147 +81,14 @@ allprojects {
     }
 
 
-    ext {
-        serenityCoreVersion = "1.1.17-rc.3"
-        bintrayBaseUrl = 'https://api.bintray.com/maven'
-        bintrayRepository = 'maven'
-        bintrayPackage = 'serenity-jira'
-        projectDescription = 'Serenity jira libraries'
-        if (!project.hasProperty("bintrayUsername")) {
-            bintrayUsername = 'wakaleo'
-        }
-        if (!project.hasProperty("bintrayApiKey")) {
-            bintrayApiKey = ''
-        }
-        versionCounter = new ProjectVersionCounter(isRelease: project.hasProperty("releaseBuild"))
+    tasks.withType(GroovyCompile) {
+        options.encoding = "UTF-8" // for Java compilation
+        groovyOptions.encoding = "UTF-8" // for Groovy compilation
     }
-    group = 'net.serenity-bdd'
-    version = versionCounter.nextVersion
-
-    group = 'net.serenity-bdd'
-    version = versionCounter.nextVersion
-
-
-    task createNewVersionTag(type: Exec) {
-        executable "sh"
-        args "-c", "git tag -f -a v$version -m'release tag'"
-    }
-
-    task pushVersionTag(type: Exec, dependsOn: 'createNewVersionTag') {
-        executable "sh"
-        args "-c", "git push -f origin v$version"
-    }
-
-    task tagNewVersion() {
-        dependsOn pushVersionTag
-    }
-
-    sourceSets.main.java.srcDirs = []
-    sourceSets.main.groovy.srcDirs += ["src/main/java"]
-
-    test {
-        exclude '**/*$*'
-        exclude '**/integration/**'
-        exclude '**/localhost/**'
-        exclude '**/samples/**'
-        exclude '**/*Sample*'
-        minHeapSize = "128m"
-        maxHeapSize = "512m"
-        maxParallelForks = 4
-    }
-
-    task integrationTests(type: Test) {
-        exclude '**/*$*'
-        exclude '**/samples/**'
-        exclude '**/*Sample*'
-        exclude '**/integration/browsers**'
-        exclude '**/localhost/**'
-        include '**/integration/**'
-        reports.junitXml.destination = "${buildDir}/reports/integration-tests"
-        reports.html.destination = "${buildDir}/reports/integration-tests"
-        minHeapSize = "128m"
-        maxHeapSize = "2048m"
-        jvmArgs '-XX:MaxPermSize=256m'
-    }
-
-    test {
-        testLogging {
-            exceptionFormat = 'full'
-        }
-    }
-
-    integrationTests {
-        testLogging {
-            exceptionFormat = 'full'
-        }
-    }
-
-    task browserTests(type: Test) {
-        exclude '**/*$*'
-        exclude '**/samples/**'
-        exclude '**/*Sample*'
-        exclude '**/*Base'
-        include '**/integration/browsers/**'
-    }
-
-    task javadoc(type: Javadoc, overwrite: true) {
-        source = sourceSets.main.allJava
-        options.memberLevel = JavadocMemberLevel.PUBLIC
-        options.addStringOption('views')
-        options.addStringOption('all')
-        options.addStringOption('quiet')
-        options.addStringOption('qualify')
-        options.addStringOption('Xdoclint:none')
-        options.encoding = 'UTF-8'
-        classpath = configurations.compile
-    }
-
-//    integrationTests.dependsOn test
-    check.dependsOn -= integrationTests
-
-
-    dependencies {
-//        compile localGroovy()
-        compile "net.serenity-bdd:serenity-core:$serenityCoreVersion"
-        compile "com.google.inject:guice:3.0"
-        compile "com.google.guava:guava:18.0"
-        compile "org.slf4j:slf4j-api:1.7.7"
-        compile "org.codehaus.groovy:groovy-all:2.3.10"
-
-        testCompile "ch.qos.logback:logback-classic:1.0.13"
-        testCompile "net.serenity-bdd:serenity-test-utils:$serenityCoreVersion"
-
-        testCompile "junit:junit:4.11"
-        testCompile("org.spockframework:spock-core:0.7-groovy-2.0") {
-            exclude group: "junit"
-        }
-        testCompile("com.github.goldin:spock-extensions:0.1.4") {
-            exclude module: "spock-core"
-        }
-    }
-
-
-}
-
-subprojects {
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier = 'sources'
-        from sourceSets.main.allSource
-    }
-
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        classifier = 'javadoc'
-        from javadoc.destinationDir
-    }
-
-    artifacts {
-        archives sourcesJar, javadocJar
-    }
-
-
 
     tasks.withType(JavaCompile) {
         options.compilerArgs << "-Xlint:-options"
+        options.encoding = 'UTF-8'
     }
     if (JavaVersion.current().isJava8Compatible()) {
         allprojects {
@@ -217,11 +120,11 @@ subprojects {
                         name "$project.name"
                         description "$projectDescription"
 
-                        url 'https://github.com/serenity-bdd/$project.name'
+                        url 'https://github.com/serenity-bdd/serenity-jira'
                         scm {
-                            url 'scm:git:git@github.com:serenity-bdd/$project.name.git'
-                            connection 'scm:git:git@github.com:serenity-bdd/$project.name.git'
-                            developerConnection 'scm:git:git@github.com:serenity-bdd/$project.name.git'
+                            url 'scm:git:git@github.com:serenity-bdd/serenity-jira.git'
+                            connection 'scm:git:git@github.com:serenity-bdd/serenity-jira.git'
+                            developerConnection 'scm:git:git@github.com:serenity-bdd/serenity-jira.git'
                         }
                         licenses {
                             license {
@@ -249,27 +152,77 @@ subprojects {
                 }
             }
         }
-    }
-}
 
-release {
-    grgit = Grgit.open(project.file('.'))
-    // versionStrategy Strategies.FINAL
-    // versionStrategy Strategies.PRE_RELEASE
-    defaultVersionStrategy Strategies.SNAPSHOT
-}
+        test {
+            exclude '**/*$*'
+            exclude '**/integration/**'
+            exclude '**/localhost/**'
+            exclude '**/samples/**'
+            exclude '**/*Sample*'
+            minHeapSize = "128m"
+            maxHeapSize = "512m"
+            maxParallelForks = 4
+        }
+
+        task integrationTests(type: Test) {
+            exclude '**/*$*'
+            exclude '**/samples/**'
+            exclude '**/*Sample*'
+            exclude '**/integration/browsers**'
+            exclude '**/localhost/**'
+            include '**/integration/**'
+            reports.junitXml.destination = "${buildDir}/reports/integration-tests"
+            reports.html.destination = "${buildDir}/reports/integration-tests"
+            minHeapSize = "128m"
+            maxHeapSize = "2048m"
+            jvmArgs '-XX:MaxPermSize=256m'
+        }
+
+        test {
+            testLogging {
+                exceptionFormat = 'full'
+            }
+        }
+
+        integrationTests {
+            testLogging {
+                exceptionFormat = 'full'
+            }
+        }
+
+        task javadoc(type: Javadoc, overwrite: true) {
+            source = sourceSets.main.allJava
+            options.memberLevel = JavadocMemberLevel.PUBLIC
+            options.addStringOption('views')
+            options.addStringOption('all')
+            options.addStringOption('quiet')
+            options.addStringOption('qualify')
+            options.addStringOption('Xdoclint:none')
+            options.encoding = 'UTF-8'
+            classpath = configurations.compile
+        }
+
+        check.dependsOn -= integrationTests
 
 
-bintray {
-    user = bintrayUsername //this usually comes form gradle.properties file in ~/.gradle
-    key = bintrayApiKey //this usually comes form gradle.properties file in ~/.gradle
-    publications = ['mavenJava'] // see publications closure
-    pkg {
-        repo = 'maven'
-        userOrg = 'serenity'
-        name = 'serenity-jira'
-        desc = 'Serenity JIRA libraries'
-        licenses = ['Apache-2.0']
-        labels = ['serenity', 'bdd', 'jira']
-    }
+        dependencies {
+            compile "net.serenity-bdd:serenity-core:$serenityCoreVersion"
+            compile "com.google.inject:guice:3.0"
+            compile "com.google.guava:guava:18.0"
+            compile "org.slf4j:slf4j-api:1.7.7"
+            compile "org.codehaus.groovy:groovy-all:2.3.10"
+
+            testCompile "ch.qos.logback:logback-classic:1.0.13"
+            testCompile "net.serenity-bdd:serenity-test-utils:$serenityCoreVersion"
+
+            testCompile "junit:junit:4.11"
+            testCompile("org.spockframework:spock-core:0.7-groovy-2.0") {
+                exclude group: "junit"
+            }
+            testCompile("com.github.goldin:spock-extensions:0.1.4") {
+                exclude module: "spock-core"
+            }
+        }
+
+       }
 }
