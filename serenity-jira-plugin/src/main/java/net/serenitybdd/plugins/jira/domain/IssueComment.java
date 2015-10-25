@@ -86,8 +86,6 @@ public class IssueComment {
 
     /**
      * Sets the author value for this Comment.
-     *
-     * @param author
      */
     public void setAuthor(String author) {
         this.author = author;
@@ -96,8 +94,6 @@ public class IssueComment {
 
     /**
      * Gets the body value for this Comment.
-     *
-     * @return body
      */
     public String getBody() {
         return body;
@@ -106,8 +102,6 @@ public class IssueComment {
 
     /**
      * Sets the body value for this Comment.
-     *
-     * @param body
      */
     public void setBody(String body) {
         this.body = body;
@@ -116,8 +110,6 @@ public class IssueComment {
 
     /**
      * Gets the created value for this Comment.
-     *
-     * @return created
      */
     public Calendar getCreated() {
         return created;
@@ -126,8 +118,6 @@ public class IssueComment {
 
     /**
      * Sets the created value for this Comment.
-     *
-     * @param created
      */
     public void setCreated(Calendar created) {
         this.created = created;
@@ -136,8 +126,6 @@ public class IssueComment {
 
     /**
      * Gets the groupLevel value for this Comment.
-     *
-     * @return groupLevel
      */
     public String getGroupLevel() {
         return groupLevel;
@@ -146,8 +134,6 @@ public class IssueComment {
 
     /**
      * Sets the groupLevel value for this Comment.
-     *
-     * @param groupLevel
      */
     public void setGroupLevel(String groupLevel) {
         this.groupLevel = groupLevel;
@@ -156,8 +142,6 @@ public class IssueComment {
 
     /**
      * Gets the id value for this Comment.
-     *
-     * @return id
      */
     public Long getId() {
         return id;
@@ -166,8 +150,6 @@ public class IssueComment {
 
     /**
      * Sets the id value for this Comment.
-     *
-     * @param id
      */
     public void setId(Long id) {
         this.id = id;
@@ -176,8 +158,6 @@ public class IssueComment {
 
     /**
      * Gets the roleLevel value for this Comment.
-     *
-     * @return roleLevel
      */
     public String getRoleLevel() {
         return roleLevel;
@@ -186,8 +166,6 @@ public class IssueComment {
 
     /**
      * Sets the roleLevel value for this Comment.
-     *
-     * @param roleLevel
      */
     public void setRoleLevel(String roleLevel) {
         this.roleLevel = roleLevel;
@@ -196,8 +174,6 @@ public class IssueComment {
 
     /**
      * Gets the updateAuthor value for this Comment.
-     *
-     * @return updateAuthor
      */
     public String getUpdateAuthor() {
         return updateAuthor;
@@ -206,8 +182,6 @@ public class IssueComment {
 
     /**
      * Sets the updateAuthor value for this Comment.
-     *
-     * @param updateAuthor
      */
     public void setUpdateAuthor(String updateAuthor) {
         this.updateAuthor = updateAuthor;
@@ -216,8 +190,6 @@ public class IssueComment {
 
     /**
      * Gets the updated value for this Comment.
-     *
-     * @return updated
      */
     public Calendar getUpdated() {
         return updated;
