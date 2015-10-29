@@ -133,6 +133,7 @@ subprojects {
                 println "Publishing $project.name:$project.group:$project.version"
 
                 from components.java
+                groupId 'net.serenity-bdd'
 
                 artifact sourcesJar {
                     classifier "sources"
