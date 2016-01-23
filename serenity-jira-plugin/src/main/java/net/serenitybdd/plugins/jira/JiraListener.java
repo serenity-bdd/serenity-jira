@@ -80,7 +80,7 @@ public class JiraListener implements StepListener {
 
     private void logStatus(EnvironmentVariables environmentVariables) {
         String jiraUrl = environmentVariables.getProperty(ThucydidesSystemProperty.JIRA_URL.getPropertyName());
-        String reportUrl = environmentVariables.getProperty(ThucydidesSystemProperty.THUCYDIDES_PUBLIC_URL.getPropertyName());
+        String reportUrl = ThucydidesSystemProperty.THUCYDIDES_PUBLIC_URL.from(environmentVariables,"");
         LOGGER.debug("JIRA LISTENER STATUS");
         LOGGER.debug("JIRA URL: {} ", jiraUrl);
         LOGGER.debug("REPORT URL: {} ", reportUrl);
@@ -90,7 +90,7 @@ public class JiraListener implements StepListener {
     protected boolean shouldUpdateIssues() {
 
         String jiraUrl = environmentVariables.getProperty(ThucydidesSystemProperty.JIRA_URL.getPropertyName());
-        String reportUrl = environmentVariables.getProperty(ThucydidesSystemProperty.THUCYDIDES_PUBLIC_URL.getPropertyName());
+        String reportUrl = ThucydidesSystemProperty.THUCYDIDES_PUBLIC_URL.from(environmentVariables,"");
         if (workflow.isActive()) {
             LOGGER.debug("WORKFLOW TRANSITIONS: {}", workflow.getTransitions());
         }
