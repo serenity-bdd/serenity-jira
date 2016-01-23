@@ -146,7 +146,7 @@ class WhenReadingStoriesFromJira extends Specification {
             def tags = requirementsProvider.getTagsFor(testOutcome)
         then:
             tags.contains(TestTag.withName("Post item for sale").andType("Story")) &&
-            tags.contains(TestTag.withName("TRAD-4/Selling stuff").andType("Epic"))
+            tags.contains(TestTag.withName("Selling stuff").andType("Epic"))
     }
 
     def "should find tags for a story card"() {
@@ -157,7 +157,7 @@ class WhenReadingStoriesFromJira extends Specification {
         when:
         def tags = requirementsProvider.getTagsFor(testOutcome)
         then:
-        tags.contains(TestTag.withName("TRAD-9/Maintaining a watchlist").andType("Story"))
+        tags.contains(TestTag.withName("Maintaining a watchlist").andType("Story"))
     }
 
 }

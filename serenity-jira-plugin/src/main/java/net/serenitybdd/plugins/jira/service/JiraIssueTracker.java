@@ -99,9 +99,6 @@ public class JiraIssueTracker implements IssueTracker {
     /**
      * Return the current status for a given JIRA issue.
      * Note that the status value depends on the issue workflow, so can be very variable.
-     * @param issueKey
-     * @return
-     * @throws IssueTrackerUpdateException
      */
     public String getStatusFor(final String issueKey) throws IssueTrackerUpdateException {
         Optional<IssueSummary> issue = jiraConnection.getRestJiraClient().loadByKey(issueKey);

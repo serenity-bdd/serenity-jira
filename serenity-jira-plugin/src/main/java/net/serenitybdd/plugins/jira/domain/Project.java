@@ -64,8 +64,6 @@ public class Project  {
 
     /**
      * Sets the description value for this Project.
-     *
-     * @param description
      */
     public void setDescription(String description) {
         this.description = description;
@@ -74,8 +72,6 @@ public class Project  {
 
     /**
      * Gets the lead value for this RemoteProject.
-     *
-     * @return lead
      */
     public String getLead() {
         return lead;
@@ -84,8 +80,6 @@ public class Project  {
 
     /**
      * Sets the lead value for this RemoteProject.
-     *
-     * @param lead
      */
     public void setLead(String lead) {
         this.lead = lead;
@@ -94,8 +88,6 @@ public class Project  {
 
     /**
      * Gets the projectUrl value for this RemoteProject.
-     *
-     * @return projectUrl
      */
     public String getProjectUrl() {
         return projectUrl;
@@ -104,8 +96,6 @@ public class Project  {
 
     /**
      * Sets the projectUrl value for this RemoteProject.
-     *
-     * @param projectUrl
      */
     public void setProjectUrl(String projectUrl) {
         this.projectUrl = projectUrl;
@@ -114,8 +104,6 @@ public class Project  {
 
     /**
      * Gets the url value for this RemoteProject.
-     *
-     * @return url
      */
     public String getUrl() {
         return url;
@@ -124,8 +112,6 @@ public class Project  {
 
     /**
      * Sets the url value for this RemoteProject.
-     *
-     * @param url
      */
     public void setUrl(String url) {
         this.url = url;
@@ -149,8 +135,6 @@ public class Project  {
 
     /**
      * Gets the key value for this Entity.
-     *
-     * @return key
      */
     public String getKey() {
         return key;
@@ -159,8 +143,6 @@ public class Project  {
 
     /**
      * Sets the key value for this Entity.
-     *
-     * @param key
      */
     public void setKey(String key) {
         this.key = key;

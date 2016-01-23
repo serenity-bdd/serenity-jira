@@ -35,7 +35,7 @@ public class WhenObtainingTheJIRAConfiguration {
     @Test
     public void base_url_should_be_specified_in_the_jira_url_system_property() {
         environmentVariables.setProperty("jira.url", "http://build.server/jira");
-        assertThat(configuration.getJiraWebserviceUrl(), is("http://build.server/jira/rpc/soap/jirasoapservice-v2"));
+        assertThat(configuration.getJiraWebserviceUrl(), is("http://build.server/jira"));
     }
 
 }

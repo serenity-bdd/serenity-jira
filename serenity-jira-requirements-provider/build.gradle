@@ -4,8 +4,9 @@ ext {
 }
 dependencies {
     compile project(':serenity-jira-plugin')
-    compile 'com.googlecode.lambdaj:lambdaj:2.3.3'
+    compile("com.googlecode.lambdaj:lambdaj:2.3.3") {
+        exclude group: 'org.hamcrest', module: 'hamcrest-all'
+        exclude group: 'cglib', module: 'cglib-nodep'
+        exclude group: 'org.objenesis', module: 'objenesis'
+    }
 }
-
-//sourceSets.main.java.srcDirs = []
-//sourceSets.main.groovy.srcDirs += ["src/main/java"]
