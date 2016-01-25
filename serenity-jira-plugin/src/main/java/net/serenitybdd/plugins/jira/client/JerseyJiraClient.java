@@ -327,9 +327,9 @@ public class JerseyJiraClient {
         if (isJSON(fieldValue)) {
             JsonObject field = new JsonParser().parse(fieldValue).getAsJsonObject();
 
-            if (customField.getType().equals("string")) {
+            if (customField.getType().equals("string") || customField.getType().equals("option")) {
                 return field.equals(JsonNull.INSTANCE) ? "" : field.getAsJsonPrimitive("value").getAsString();
-            } else if (customField.getType().equals("array")) {
+            } else if (customField.getType().equals("array") || customField.getType().equals("option-with-child")) {
                 return readListFrom(field);
             }
         }
