@@ -135,15 +135,62 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
             requirements = Collections.synchronizedList(new ArrayList<Requirement>());
 
             for (final IssueSummary issueSummary : rootRequirementIssues) {
-                Requirement requirement = requirementFrom(issueSummary);
-                List<Requirement> childRequirements = findChildrenFor(requirement, 0);
-                requirements.add(requirement.withChildren(childRequirements));
+                final ListenableFuture<IssueSummary> future = executorService.submit(new Callable<IssueSummary>() {
+                    @Override
+                    public IssueSummary call() throws Exception {
+                        return issueSummary;
+                    }
+                });
+                future.addListener(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            queueSize.incrementAndGet();
+                            Requirement requirement = requirementFrom(future.get());
+                            List<Requirement> childRequirements = findChildrenFor(requirement, 0);
+                            requirements.add(requirement.withChildren(childRequirements));
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        } catch (ExecutionException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }, MoreExecutors.newDirectExecutorService());
+                future.addListener(new Runnable() {
+                    @Override
+                    public void run() {
+                        waitTillQueueNotEmpty();
+                        queueSize.decrementAndGet();
+                    }
+                }, executorService);
+
             }
+            waitTillEmpty();
             requirements = addParentsTo(requirements);
             persist(requirements);
+
         }
         return requirements;
     }
+
+    private void waitTillQueueNotEmpty() {
+        while (queueSize.get() == 0) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+            }
+        }
+    }
+
+    private void waitTillEmpty() {
+        while (queueSize.get() > 0) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {
+            }
+        }
+    }
+
 
     private List<Requirement> persisted(List<Requirement> requirements) {
         if (requirements != null) {

@@ -327,6 +327,7 @@ public class WhenUpdatingCommentsInJIRA {
 
         MockEnvironmentVariables environmentVariables = prepareMockEnvironment();
         environmentVariables.setProperty("thucydides.public.url","");
+        environmentVariables.setProperty("serenity.public.url","");
         JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_should_be_fixed_now");
