@@ -41,7 +41,6 @@ public class JiraListener implements StepListener {
     private static final String BUILD_ID_PROPERTY = "build.id";
     private final IssueTracker issueTracker;
 
-    private Class<?> currentTestCase;
     public Story currentStory;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JiraListener.class);
@@ -99,9 +98,7 @@ public class JiraListener implements StepListener {
     }
 
     protected boolean shouldUpdateWorkflow() {
-        Boolean workflowUpdatesEnabled
-                = Boolean.valueOf(environmentVariables.getProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY));
-        return (workflowUpdatesEnabled);
+        return Boolean.valueOf(environmentVariables.getProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY));
     }
 
     public JiraListener() {
@@ -119,13 +116,11 @@ public class JiraListener implements StepListener {
     }
 
     public void testSuiteStarted(final Class<?> testCase) {
-        this.currentTestCase = testCase;
         this.currentStory = null;
     }
 
     public void testSuiteStarted(final Story story) {
         this.currentStory = story;
-        this.currentTestCase = null;
     }
 
     public void testStarted(final String testName) {
@@ -176,7 +171,7 @@ public class JiraListener implements StepListener {
                         queueSize.decrementAndGet();
                     }
                 }
-            }, MoreExecutors.sameThreadExecutor());
+            }, MoreExecutors.newDirectExecutorService());
             future.addListener(new Runnable() {
                 @Override
                 public void run() {
@@ -291,14 +286,6 @@ public class JiraListener implements StepListener {
 
     private boolean isWikiRenderedActive() {
         return configuration.isWikiRenderedActive();
-    }
-
-    private Story storyUnderTest() {
-        if (currentTestCase != null) {
-            return Stories.findStoryFrom(currentTestCase);
-        } else {
-            return currentStory;
-        }
     }
 
     private List<String> addPrefixesIfRequired(final List<String> issueNumbers) {
