@@ -1,5 +1,6 @@
 package net.serenitybdd.plugins.jira.requirements;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
@@ -43,6 +44,11 @@ public class ConcurrentRequirementsLoader implements RequirementsLoader {
 
         long t0 = System.currentTimeMillis();
         logger.debug("Loading {} requirements", rootRequirementIssues.size());
+
+        if (rootRequirementIssues.isEmpty()) {
+            return ImmutableList.of();
+        }
+        queueSize.set(rootRequirementIssues.size());
         for (final IssueSummary issueSummary : rootRequirementIssues) {
             final ListenableFuture<IssueSummary> future = executorService.submit(new Callable<IssueSummary>() {
                 @Override
@@ -54,12 +60,15 @@ public class ConcurrentRequirementsLoader implements RequirementsLoader {
                 @Override
                 public void run() {
                     try {
-                        queueSize.incrementAndGet();
-                        Requirement requirement = adaptor.requirementFrom(future.get());
+                        IssueSummary issue = future.get();
+
+                        Requirement requirement = adaptor.requirementFrom(issue);
                         logger.debug("Load children for requirement {}", requirement.getName());
                         List<Requirement> childRequirements = requirementsProvider.findChildrenFor(requirement, 0);
                         logger.debug("Load children for requirement {} done", requirement.getName());
                         requirements.add(requirement.withChildren(childRequirements));
+
+                        queueSize.decrementAndGet();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     } catch (ExecutionException e) {
@@ -67,15 +76,6 @@ public class ConcurrentRequirementsLoader implements RequirementsLoader {
                     }
                 }
             }, MoreExecutors.newDirectExecutorService());
-
-            future.addListener(new Runnable() {
-                @Override
-                public void run() {
-                    waitTillQueueNotEmpty();
-                    queueSize.decrementAndGet();
-                }
-            }, MoreExecutors.newDirectExecutorService());
-
         }
         waitTillEmpty();
         logger.debug("{} requirements loaded in {} ms", requirements.size(), System.currentTimeMillis() - t0);
