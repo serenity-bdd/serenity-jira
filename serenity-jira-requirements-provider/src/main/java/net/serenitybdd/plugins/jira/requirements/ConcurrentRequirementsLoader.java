@@ -18,9 +18,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.serenitybdd.plugins.jira.requirements.JIRARequirementsConfiguration.JIRA_MAX_THREADS;
 
-/**
- * Created by john on 28/01/2016.
- */
 public class ConcurrentRequirementsLoader implements RequirementsLoader {
 
     private final ListeningExecutorService executorService;
@@ -59,7 +56,9 @@ public class ConcurrentRequirementsLoader implements RequirementsLoader {
                     try {
                         queueSize.incrementAndGet();
                         Requirement requirement = adaptor.requirementFrom(future.get());
+                        logger.debug("Load children for requirement {}", requirement.getName());
                         List<Requirement> childRequirements = requirementsProvider.findChildrenFor(requirement, 0);
+                        logger.debug("Load children for requirement {} done", requirement.getName());
                         requirements.add(requirement.withChildren(childRequirements));
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -68,13 +67,14 @@ public class ConcurrentRequirementsLoader implements RequirementsLoader {
                     }
                 }
             }, MoreExecutors.newDirectExecutorService());
+
             future.addListener(new Runnable() {
                 @Override
                 public void run() {
                     waitTillQueueNotEmpty();
                     queueSize.decrementAndGet();
                 }
-            }, executorService);
+            }, MoreExecutors.newDirectExecutorService());
 
         }
         waitTillEmpty();

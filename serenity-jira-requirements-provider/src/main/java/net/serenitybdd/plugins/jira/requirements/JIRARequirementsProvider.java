@@ -216,7 +216,7 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
             }
             childRequirements.add(childRequirement);
         }
-        logger.debug("{} child requirements loaded in: {} ms", System.currentTimeMillis() - t0);
+        logger.debug("{} child requirements loaded in: {} ms", childRequirements.size(), System.currentTimeMillis() - t0);
         logger.debug("Child requirements: {}", childRequirements);
         return childRequirements;
     }
