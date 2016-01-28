@@ -11,6 +11,6 @@ public class CountByKeyLoader extends CacheLoader<String, Integer> {
 
     @Override
     public Integer load(String query) throws Exception {
-        return jiraClient.loadCountByJQL(query);
+        return jiraClient.countByJQL(query);
     }
 }

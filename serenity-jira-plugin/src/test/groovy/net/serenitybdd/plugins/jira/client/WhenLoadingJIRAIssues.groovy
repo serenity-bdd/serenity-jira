@@ -76,7 +76,7 @@ class WhenLoadingJIRAIssues extends Specification {
         given:
         def jiraClient = new JerseyJiraClient("https://wakaleo.atlassian.net", "bruce", "batm0bile","DEMO")
         when:
-        List<IssueSummary> issue = jiraClient.findByJQL("key=DEMO-DOES-NOT-EXIST")
+        List<IssueSummary> issue = jiraClient.findByJQL("project='DOES-NOT-EXIST'", LoadingStrategy.LOAD_IN_SINGLE_QUERY)
         then:
         issue.isEmpty()
     }

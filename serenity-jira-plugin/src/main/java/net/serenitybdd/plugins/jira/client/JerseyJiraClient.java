@@ -6,6 +6,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.gson.*;
 import net.serenitybdd.plugins.jira.domain.*;
@@ -45,6 +46,7 @@ public class JerseyJiraClient {
 
     private static final int REDIRECT_REQUEST = 302;
     private static final String DEFAULT_ISSUE_TYPE = "Bug";
+    private static final int WITH_NO_BATCHES = 0;
     private final String url;
     private final String username;
     private final String password;
@@ -55,7 +57,8 @@ public class JerseyJiraClient {
     private Map<String, String> customFieldNameIndex;
     private String metadataIssueType;
     private LoadingCache<String , Optional<IssueSummary>> issueSummaryCache;
-    private LoadingCache<String , List<IssueSummary>> issueQueryCache;
+
+    private Map<LoadingStrategy, LoadingCache<String, List<IssueSummary>>> issueQueryCachePerStrategy;
 
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(JerseyJiraClient.class);
 
@@ -88,9 +91,19 @@ public class JerseyJiraClient {
         this.issueSummaryCache = CacheBuilder.newBuilder()
                 .maximumSize(1000)
                 .build(new FindByKeyLoader(this));
-        this.issueQueryCache = CacheBuilder.newBuilder()
-                .maximumSize(1000)
-                .build(new FindByJQLLoader(this));
+
+        LoadingCache<String , List<IssueSummary>> issueQueryCache = CacheBuilder.newBuilder()
+                                                                                .maximumSize(1000)
+                                                                                .build(new FindByJQLLoader(this));
+
+        LoadingCache<String , List<IssueSummary>> batchedIssueQueryCache = CacheBuilder.newBuilder()
+                                                                                       .maximumSize(1000)
+                                                                                       .build(new FindByJQLLoaderUsingBatches(this));
+
+        this.issueQueryCachePerStrategy = ImmutableMap.of(
+                LoadingStrategy.LOAD_IN_SINGLE_QUERY, issueQueryCache,
+                LoadingStrategy.LOAD_IN_BATCHES, batchedIssueQueryCache);
+
     }
 
     public JerseyJiraClient(String url, String username, String password, int batchSize, String project) {
@@ -105,16 +118,10 @@ public class JerseyJiraClient {
         return new JerseyJiraClient(url, username, password, batchSize, project, metadataIssueType, customFields);
     }
 
-    /**
-     * Load the issue keys for all of the issues matching the specified JQL query
-     *
-     * @param query A valid JQL query
-     * @return a list of JIRA issue keys
-     */
-    public List<IssueSummary> findByJQL(String query) throws JQLException {
+    public List<IssueSummary> findByJQL(String query, LoadingStrategy loadingStrategy) throws JQLException {
         try {
-            Preconditions.checkNotNull(query,"JIRA key cannot be null");
-            return issueQueryCache.get(query);
+            Preconditions.checkNotNull(query, "JIRA key cannot be null");
+            return issueQueryCachePerStrategy.get(loadingStrategy).get(query);
         } catch (ExecutionException e) {
             throw new JQLException(e.getCause());
         } catch (RuntimeException runtimeException) {
@@ -122,12 +129,23 @@ public class JerseyJiraClient {
         }
     }
 
-    protected List<IssueSummary> loadByJQL(String query)  {
+    
+    /**
+     * Load the issue keys for all of the issues matching the specified JQL query
+     *
+     * @param query A valid JQL query
+     * @return a list of JIRA issue keys
+     */
+    public List<IssueSummary> findByJQL(String query) throws JQLException {
+        return findByJQL(query, LoadingStrategy.LOAD_IN_SINGLE_QUERY);
+    }
+
+    protected List<IssueSummary> loadByJQLBatches(String query)  {
         int total = countByJQL(query);
         List<IssueSummary> issues = Lists.newArrayList();
         int startAt = 0;
         while(issues.size() < total) {
-            String jsonResponse = getJSONResponse(query, startAt);
+            String jsonResponse = getJSONResponse(query, startAt, batchSize);
             JsonObject responseObject = new JsonParser().parse(jsonResponse).getAsJsonObject();
             JsonArray issueEntries = (JsonArray) responseObject.get("issues");
             for (int i = 0; i < issueEntries.size(); i++) {
@@ -138,6 +156,21 @@ public class JerseyJiraClient {
         }
         return issues;
     }
+
+    protected List<IssueSummary> loadByJQL(String query)  {
+        List<IssueSummary> issues = Lists.newArrayList();
+        String jsonResponse = getJSONResponse(query, 0, WITH_NO_BATCHES);
+        JsonObject responseObject = new JsonParser().parse(jsonResponse).getAsJsonObject();
+        JsonArray issueEntries = (JsonArray) responseObject.get("issues");
+        if (issueEntries != null) {
+            for (int i = 0; i < issueEntries.size(); i++) {
+                JsonObject issueObject = issueEntries.get(i).getAsJsonObject();
+                issues.add(convertToIssueSummary(issueObject));
+            }
+        }
+        return issues;
+    }
+
 
     public List<Version> findVersionsForProject(String projectName) {
         String versionData = getJSONProjectVersions(projectName);
@@ -158,7 +191,7 @@ public class JerseyJiraClient {
         return restClient().target(url).path(path);
     }
 
-    private String getJSONResponse(String query, int startAt) {
+    private String getJSONResponse(String query, int startAt, int batchSize) {
 
         String fields = "key,status,summary,description,comment,issuetype,labels,fixVersions";
         fields = addCustomFieldsTo(fields);
@@ -166,9 +199,12 @@ public class JerseyJiraClient {
         WebTarget target = buildWebTargetFor(REST_SEARCH)
                                             .queryParam("jql", query)
                                             .queryParam("startAt", startAt)
-                                            .queryParam("maxResults", batchSize)
                                             .queryParam("expand", "renderedFields")
                                             .queryParam("fields", fields);
+        
+        if (batchSize > 0) {
+            target = target.queryParam("maxResults", batchSize);
+        }
         Response response = target.request().get();
         checkValid(response);
         return response.readEntity(String.class);
@@ -409,16 +445,7 @@ public class JerseyJiraClient {
     }
 
     public Integer countByJQL(String query) {
-        return loadCountByJQL(query);
-//        try {
-//            return issueCountCache.get(query);
-//        } catch (ExecutionException e) {
-//            throw new JSONException(e.getCause());
-//        }
-    }
-
-    protected Integer loadCountByJQL(String query) {
-        WebTarget target = buildWebTargetFor(REST_SEARCH).queryParam("jql", query);
+        WebTarget target = buildWebTargetFor(REST_SEARCH).queryParam("jql", query).queryParam("maxResults", 0);
         Response response = target.request().get();
 
         if (isEmpty(response)) {
@@ -433,6 +460,9 @@ public class JerseyJiraClient {
 
         JsonObject responseObject = new JsonParser().parse(jsonResponse).getAsJsonObject();
         total = responseObject.getAsJsonPrimitive("total").getAsInt();
+
+        logger.debug("Count by JQL for {}", query);
+
         return total;
     }
 
@@ -460,8 +490,8 @@ public class JerseyJiraClient {
                 .path(path)
                 .queryParam("expand", "renderedFields")
                 .queryParam("project", project)
-                .queryParam("issuetypeName",metadataIssueType)
-                .queryParam("expand","projects.issuetypes.fields");
+                .queryParam("issuetypeName", metadataIssueType)
+                .queryParam("expand", "projects.issuetypes.fields");
 
         Response response = target.request().get();
 
@@ -514,6 +544,7 @@ public class JerseyJiraClient {
         int status = response.getStatus();
         if (status != OK && (status != CREATE_ISSUE_OK) && (status != DELETE_ISSUE_OK) ){
             switch(status) {
+                case 400 : return;
                 case 401 : handleAuthenticationError("Authentication error (401) for user " + this.username);
                 case 403 : handleAuthenticationError("Forbidden error (403) for user " + this.username);
                 case 404 : handleConfigurationError("Service not found (404) - try checking the JIRA URL?");
@@ -590,7 +621,7 @@ public class JerseyJiraClient {
     }
 
     public List<CascadingSelectOption> findOptionsForCascadingSelect(String fieldName) {
-        JsonObject responseObject = null;
+        JsonObject responseObject;
         Optional<String> jsonResponse = readFieldMetadata(url, "rest/api/2/issue/createmeta");
         if (jsonResponse.isPresent()) {
             responseObject = new JsonParser().parse(jsonResponse.get()).getAsJsonObject();
@@ -600,7 +631,6 @@ public class JerseyJiraClient {
                     .getAsJsonArray("issuetypes")
                     .get(0).getAsJsonObject().getAsJsonObject("fields");
 
-            Set<Map.Entry<String, JsonElement>> entries = fields.entrySet();
             Iterator<Map.Entry<String, JsonElement>> fieldKeys = fields.entrySet().iterator();
             while(fieldKeys.hasNext()) {
                 String entryFieldName = fieldKeys.next().getKey();
@@ -671,13 +701,6 @@ public class JerseyJiraClient {
         checkValid(response);
         return Project.fromJsonString(response.readEntity(String.class));
     }
-
-    /*public IssueSummary getIssue(String issueKey)  {
-        WebTarget target = restClient().target(url).path(ISSUE + "/" + issueKey);
-        Response response = target.request().get();
-        checkValid(response);
-        return IssueSummary.fromJsonString(response.readEntity(String.class));
-    } */
 
     public IssueSummary getIssue(String issueKey)  {
         WebTarget target = restClient().target(url).path(ISSUE  + issueKey);

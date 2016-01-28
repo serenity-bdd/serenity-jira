@@ -106,9 +106,9 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
     }
 
     private void logConnectionDetailsFor(JIRAConfiguration jiraConfiguration) {
-        logger.debug("JIRA URL: {0}", jiraConfiguration.getJiraUrl());
-        logger.debug("JIRA project: {0}", jiraConfiguration.getProject());
-        logger.debug("JIRA user: {0}", jiraConfiguration.getJiraUser());
+        logger.debug("JIRA URL: {}", jiraConfiguration.getJiraUrl());
+        logger.debug("JIRA project: {}", jiraConfiguration.getProject());
+        logger.debug("JIRA user: {}", jiraConfiguration.getJiraUser());
     }
 
     @Override

@@ -9,6 +9,7 @@ import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
+import net.serenitybdd.plugins.jira.client.LoadingStrategy;
 import net.serenitybdd.plugins.jira.model.JQLException;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
@@ -108,9 +109,9 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
     }
 
     private void logConnectionDetailsFor(JIRAConfiguration jiraConfiguration) {
-        logger.debug("JIRA URL: {0}", jiraConfiguration.getJiraUrl());
-        logger.debug("JIRA project: {0}", jiraConfiguration.getProject());
-        logger.debug("JIRA user: {0}", jiraConfiguration.getJiraUser());
+        logger.debug("JIRA URL: {}", jiraConfiguration.getJiraUrl());
+        logger.debug("JIRA project: {}", jiraConfiguration.getProject());
+        logger.debug("JIRA user: {}", jiraConfiguration.getJiraUser());
     }
 
     private String getProjectKey() {
@@ -125,7 +126,7 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
             List<IssueSummary> rootRequirementIssues;
             logger.info("Loading root requirements: " + rootRequirementsJQL());
             try {
-                rootRequirementIssues = jiraClient.findByJQL(rootRequirementsJQL());
+                rootRequirementIssues = jiraClient.findByJQL(rootRequirementsJQL(), LoadingStrategy.LOAD_IN_BATCHES);
             } catch (JQLException e) {
                 logger.info("No root requirements found (JQL = " + rootRequirementsJQL(), e);
                 rootRequirementIssues = Lists.newArrayList();
@@ -264,7 +265,7 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
         List<IssueSummary> children = null;
         try {
             logger.info("Loading child requirements for: " + parent.getName());
-            children = jiraClient.findByJQL(childIssuesJQL(parent, level));
+            children = jiraClient.findByJQL(childIssuesJQL(parent, level), LoadingStrategy.LOAD_IN_SINGLE_QUERY);
 
             logger.info("Loading child requirements for " + parent.getName() + " done: " + children.size());
         } catch (JQLException e) {
