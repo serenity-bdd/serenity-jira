@@ -105,8 +105,6 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
     @Override
     public List<Requirement> getRequirements() {
 
-        RequirementsAdaptor adaptor = new RequirementsAdaptor(environmentVariables);
-
         requirements = persisted(requirements);
         if ((requirements == null) && providerActivated()) {
 
@@ -120,7 +118,7 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
             }
             logger.debug("Loading root requirements done: " + rootRequirementIssues.size());
 
-            RequirementsLoader requirementsLoader = new SerialRequirementsLoader(environmentVariables, this);
+            RequirementsLoader requirementsLoader = new ConcurrentRequirementsLoader(environmentVariables, this);
             requirements = requirementsLoader.loadFrom(rootRequirementIssues);
             requirements = addParentsTo(requirements);
             persist(requirements);
