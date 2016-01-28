@@ -29,9 +29,10 @@ public class ConcurrentRequirementsLoader implements RequirementsLoader {
     private final RequirementsAdaptor adaptor;
 
     private final AtomicInteger queueSize = new AtomicInteger(0);
-    static int DEFAULT_MAX_THREADS = 16;
+    static int DEFAULT_MAX_THREADS = 4;
 
-    public ConcurrentRequirementsLoader(EnvironmentVariables environmentVariables, JIRARequirementsProvider requirementsProvider) {
+    public ConcurrentRequirementsLoader(EnvironmentVariables environmentVariables,
+                                        JIRARequirementsProvider requirementsProvider) {
         this.environmentVariables = environmentVariables;
         this.requirementsProvider = requirementsProvider;
         this.executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(getMaxJobs()));
@@ -101,6 +102,6 @@ public class ConcurrentRequirementsLoader implements RequirementsLoader {
     }
 
     private int getMaxJobs() {
-        return environmentVariables.getPropertyAsInteger(JIRA_MAX_THREADS.getName(),DEFAULT_MAX_THREADS);
+        return environmentVariables.getPropertyAsInteger(JIRA_MAX_THREADS.getName(), DEFAULT_MAX_THREADS);
     }
 }

@@ -22,7 +22,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.serenitybdd.plugins.jira.requirements.JIRARequirementsConfiguration.JIRA_CUSTOM_FIELD;
 import static net.serenitybdd.plugins.jira.requirements.JIRARequirementsConfiguration.JIRA_CUSTOM_NARRATIVE_FIELD;
@@ -41,7 +40,6 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
     private final String EPIC_LINK = "Epic Link";
 
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(JIRARequirementsProvider.class);
-    static int DEFAULT_MAX_THREADS = 4;
 
     public JIRARequirementsProvider() {
         this(new SystemPropertiesJIRAConfiguration(Injectors.getInjector().getProvider(EnvironmentVariables.class).get() ),
@@ -217,15 +215,6 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
             childRequirements.add(childRequirement);
         }
         return childRequirements;
-    }
-
-    private void waitTillFull(AtomicInteger counter, int size) {
-        while (counter.get() != size) {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-            }
-        }
     }
 
     private String childIssuesJQL(Requirement parent, int level) {
