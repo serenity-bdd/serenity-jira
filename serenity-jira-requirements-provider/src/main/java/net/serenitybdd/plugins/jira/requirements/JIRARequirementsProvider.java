@@ -6,33 +6,26 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.ListenableFuture;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
+import net.serenitybdd.plugins.jira.client.JerseyJiraClient;
 import net.serenitybdd.plugins.jira.client.LoadingStrategy;
+import net.serenitybdd.plugins.jira.domain.IssueSummary;
 import net.serenitybdd.plugins.jira.model.JQLException;
+import net.serenitybdd.plugins.jira.service.JIRAConfiguration;
+import net.serenitybdd.plugins.jira.service.SystemPropertiesJIRAConfiguration;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.requirements.RequirementsTagProvider;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.EnvironmentVariables;
-import net.serenitybdd.plugins.jira.client.JerseyJiraClient;
-import net.serenitybdd.plugins.jira.domain.IssueSummary;
-import net.serenitybdd.plugins.jira.service.JIRAConfiguration;
-import net.serenitybdd.plugins.jira.service.SystemPropertiesJIRAConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static net.serenitybdd.plugins.jira.requirements.JIRARequirementsConfiguration.JIRA_CUSTOM_FIELD;
 import static net.serenitybdd.plugins.jira.requirements.JIRARequirementsConfiguration.JIRA_CUSTOM_NARRATIVE_FIELD;
-import static net.serenitybdd.plugins.jira.requirements.JIRARequirementsConfiguration.JIRA_MAX_THREADS;
 
 
 /**
@@ -48,10 +41,6 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
     private final String EPIC_LINK = "Epic Link";
 
     private final org.slf4j.Logger logger = LoggerFactory.getLogger(JIRARequirementsProvider.class);
-
-    private final  ListeningExecutorService executorService;
-
-    private final AtomicInteger queueSize = new AtomicInteger(0);
     static int DEFAULT_MAX_THREADS = 4;
 
     public JIRARequirementsProvider() {
@@ -63,9 +52,6 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
         this(jiraConfiguration, Injectors.getInjector().getProvider(EnvironmentVariables.class).get() );
     }
 
-    private int getMaxJobs() {
-        return environmentVariables.getPropertyAsInteger(JIRA_MAX_THREADS.getName(),DEFAULT_MAX_THREADS);
-    }
     public JIRARequirementsProvider(JIRAConfiguration jiraConfiguration, EnvironmentVariables environmentVariables) {
         logConnectionDetailsFor(jiraConfiguration);
         projectKey = jiraConfiguration.getProject();
@@ -74,8 +60,6 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
                 jiraConfiguration.getJiraUser(),
                 jiraConfiguration.getJiraPassword(),
                 projectKey).usingCustomFields(customFieldsDefinedIn(environmentVariables));
-
-        executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(getMaxJobs()));
     }
 
     private List<String> definedCustomFields() {
@@ -120,6 +104,9 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
 
     @Override
     public List<Requirement> getRequirements() {
+
+        RequirementsAdaptor adaptor = new RequirementsAdaptor(environmentVariables);
+
         requirements = persisted(requirements);
         if ((requirements == null) && providerActivated()) {
 
@@ -133,65 +120,14 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
             }
             logger.debug("Loading root requirements done: " + rootRequirementIssues.size());
 
-            requirements = Collections.synchronizedList(new ArrayList<Requirement>());
-
-            for (final IssueSummary issueSummary : rootRequirementIssues) {
-                final ListenableFuture<IssueSummary> future = executorService.submit(new Callable<IssueSummary>() {
-                    @Override
-                    public IssueSummary call() throws Exception {
-                        return issueSummary;
-                    }
-                });
-                future.addListener(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            queueSize.incrementAndGet();
-                            Requirement requirement = requirementFrom(future.get());
-                            List<Requirement> childRequirements = findChildrenFor(requirement, 0);
-                            requirements.add(requirement.withChildren(childRequirements));
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        } catch (ExecutionException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }, MoreExecutors.newDirectExecutorService());
-                future.addListener(new Runnable() {
-                    @Override
-                    public void run() {
-                        waitTillQueueNotEmpty();
-                        queueSize.decrementAndGet();
-                    }
-                }, executorService);
-
-            }
-            waitTillEmpty();
+            RequirementsLoader requirementsLoader = new SerialRequirementsLoader(environmentVariables, this);
+            requirements = requirementsLoader.loadFrom(rootRequirementIssues);
             requirements = addParentsTo(requirements);
             persist(requirements);
 
         }
         return requirements;
     }
-
-    private void waitTillQueueNotEmpty() {
-        while (queueSize.get() == 0) {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-            }
-        }
-    }
-
-    private void waitTillEmpty() {
-        while (queueSize.get() > 0) {
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {
-            }
-        }
-    }
-
 
     private List<Requirement> persisted(List<Requirement> requirements) {
         if (requirements != null) {
@@ -201,11 +137,11 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
     }
 
     private void persist(List<Requirement> requirements) {
-
+        // TODO: Implement me
     }
 
     private boolean providerActivated() {
-        return environmentVariables.getPropertyAsBoolean("thucydides.providers.jira-requirements-provider", true);
+        return environmentVariables.getPropertyAsBoolean("serenity.providers.jira-requirements-provider", true);
     }
 
     private List<Requirement> addParentsTo(List<Requirement> requirements) {
@@ -261,8 +197,8 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
     }
 
 
-    private List<Requirement> findChildrenFor(Requirement parent, final int level) {
-        List<IssueSummary> children = null;
+    protected List<Requirement> findChildrenFor(Requirement parent, final int level) {
+        List<IssueSummary> children;
         try {
             logger.info("Loading child requirements for: " + parent.getName());
             children = jiraClient.findByJQL(childIssuesJQL(parent, level), LoadingStrategy.LOAD_IN_SINGLE_QUERY);

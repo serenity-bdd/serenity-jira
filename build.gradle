@@ -190,6 +190,7 @@ subprojects {
             exclude '**/*Sample*'
             minHeapSize = "128m"
             maxHeapSize = "512m"
+            maxParallelForks = 4
         }
 
         task integrationTests(type: Test) {

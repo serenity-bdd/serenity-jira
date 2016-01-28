@@ -304,7 +304,6 @@ public class JerseyJiraClient {
         Map<String,String> renderedFieldMap = Maps.newHashMap();
         Set<Map.Entry<String, JsonElement>> entries = renderedFields.entrySet();
         for(Map.Entry<String,JsonElement>  currentEntry : entries) {
-        //for(Object key : Lists.newArrayList(entries)) {
             String fieldName = currentEntry.getKey();
             JsonElement element = currentEntry.getValue();
             if (!(element.isJsonNull())) {
