@@ -107,11 +107,11 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
         if ((requirements == null) && providerActivated()) {
 
             List<IssueSummary> rootRequirementIssues;
-            logger.info("Loading root requirements: " + rootRequirementsJQL());
+            logger.debug("Loading root requirements: " + rootRequirementsJQL());
             try {
                 rootRequirementIssues = jiraClient.findByJQL(rootRequirementsJQL(), LoadingStrategy.LOAD_IN_BATCHES);
             } catch (JQLException e) {
-                logger.info("No root requirements found (JQL = " + rootRequirementsJQL(), e);
+                logger.debug("No root requirements found (JQL = " + rootRequirementsJQL(), e);
                 rootRequirementIssues = Lists.newArrayList();
             }
             logger.debug("Loading root requirements done: " + rootRequirementIssues.size());
@@ -195,11 +195,13 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
 
     protected List<Requirement> findChildrenFor(Requirement parent, final int level) {
         List<IssueSummary> children;
+
+        long t0 = System.currentTimeMillis();
         try {
-            logger.info("Loading child requirements for: " + parent.getName());
+            logger.debug("Loading child requirements for: " + parent.getName());
             children = jiraClient.findByJQL(childIssuesJQL(parent, level), LoadingStrategy.LOAD_IN_SINGLE_QUERY);
 
-            logger.info("Loading child requirements for " + parent.getName() + " done: " + children.size());
+            logger.debug("Loading child requirements for " + parent.getName() + " done: " + children.size());
         } catch (JQLException e) {
             logger.warn("No children found for requirement " + parent, e);
             return NO_REQUIREMENTS;
@@ -214,6 +216,8 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
             }
             childRequirements.add(childRequirement);
         }
+        logger.debug("{} child requirements loaded in: {} ms", System.currentTimeMillis() - t0);
+        logger.debug("Child requirements: {}", childRequirements);
         return childRequirements;
     }
 

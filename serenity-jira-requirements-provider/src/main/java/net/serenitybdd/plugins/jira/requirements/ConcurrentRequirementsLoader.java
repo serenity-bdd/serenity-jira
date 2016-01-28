@@ -78,7 +78,8 @@ public class ConcurrentRequirementsLoader implements RequirementsLoader {
 
         }
         waitTillEmpty();
-        logger.debug("Loading requirements done in {} ms", System.currentTimeMillis() - t0);
+        logger.debug("{} requirements loaded in {} ms", requirements.size(), System.currentTimeMillis() - t0);
+        logger.debug("Requirements: {}", requirements);
 
         return requirements;
     }
