@@ -67,8 +67,8 @@ public class WhenUpdatingIssueStatus {
         TestOutcome result = newTestOutcome("issue_123_should_be_fixed_now", TestResult.SUCCESS);
 
         when(issueTracker.getStatusFor("MYPROJECT-123")).thenReturn("Open");
-//        when(environmentVariables.getProperty("thucydides.jira.workflow.active")).thenReturn("false");
-        environmentVariables.setProperty("thucydides.jira.workflow.active","false");
+
+        environmentVariables.setProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY,"false");
 
         workflowLoader = new ClasspathWorkflowLoader(ClasspathWorkflowLoader.BUNDLED_WORKFLOW, environmentVariables);
         JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
@@ -86,8 +86,8 @@ public class WhenUpdatingIssueStatus {
         TestOutcome result = newTestOutcome("issue_123_should_be_fixed_now", TestResult.SUCCESS);
 
         when(issueTracker.getStatusFor("MYPROJECT-123")).thenReturn("Open");
-//        when(environmentVariables.getProperty("thucydides.jira.workflow.active")).thenReturn("");
-        environmentVariables.setProperty("thucydides.jira.workflow.active","");
+
+        environmentVariables.setProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY,"");
 
         workflowLoader = new ClasspathWorkflowLoader(ClasspathWorkflowLoader.BUNDLED_WORKFLOW, environmentVariables);
         JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
@@ -103,8 +103,8 @@ public class WhenUpdatingIssueStatus {
     @Test
     public void a_successful_test_should_resolve_an_open_issue() {
 
-//        when(environmentVariables.getProperty("thucydides.jira.workflow.active")).thenReturn("true");
-        environmentVariables.setProperty("thucydides.jira.workflow.active","true");
+
+        environmentVariables.setProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY,"true");
 
         TestOutcome result = newTestOutcome("issue_123_should_be_fixed_now", TestResult.SUCCESS);
 
@@ -122,8 +122,8 @@ public class WhenUpdatingIssueStatus {
 
     @Test
     public void a_successful_test_should_resolve_an_in_progress_issue() {
-//        when(environmentVariables.getProperty("thucydides.jira.workflow.active")).thenReturn("true");
-        environmentVariables.setProperty("thucydides.jira.workflow.active","true");
+
+        environmentVariables.setProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY,"true");
 
         TestOutcome result = newTestOutcome("issue_123_should_be_fixed_now", TestResult.SUCCESS);
 
@@ -142,8 +142,8 @@ public class WhenUpdatingIssueStatus {
 
     @Test
     public void a_successful_test_should_resolve_a_reopened_issue() {
-        //when(environmentVariables.getProperty("thucydides.jira.workflow.active")).thenReturn("true");
-        environmentVariables.setProperty("thucydides.jira.workflow.active","true");
+
+        environmentVariables.setProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY,"true");
 
         TestOutcome result = newTestOutcome("issue_123_should_be_fixed_now", TestResult.SUCCESS);
 
@@ -160,8 +160,8 @@ public class WhenUpdatingIssueStatus {
 
     @Test
     public void a_successful_test_should_not_affect_a_resolved_issue() {
-        //when(environmentVariables.getProperty("thucydides.jira.workflow.active")).thenReturn("true");
-        environmentVariables.setProperty("thucydides.jira.workflow.active","true");
+
+        environmentVariables.setProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY,"true");
 
         TestOutcome result = newTestOutcome("issue_123_should_be_fixed_now", TestResult.SUCCESS);
 
@@ -178,8 +178,8 @@ public class WhenUpdatingIssueStatus {
 
     @Test
     public void a_failing_test_should_open_a_resolved_issue() {
-        //when(environmentVariables.getProperty("thucydides.jira.workflow.active")).thenReturn("true");
-        environmentVariables.setProperty("thucydides.jira.workflow.active","true");
+
+        environmentVariables.setProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY,"true");
 
         TestOutcome result = newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE);
 
@@ -196,8 +196,8 @@ public class WhenUpdatingIssueStatus {
 
     @Test
     public void a_failing_test_should_open_a_closed_issue() {
-        //when(environmentVariables.getProperty("thucydides.jira.workflow.active")).thenReturn("true");
-        environmentVariables.setProperty("thucydides.jira.workflow.active","true");
+
+        environmentVariables.setProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY,"true");
 
         TestOutcome result = newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE);
 
@@ -214,8 +214,8 @@ public class WhenUpdatingIssueStatus {
 
     @Test
     public void a_failing_test_should_leave_an_open_issue_open() {
-        //when(environmentVariables.getProperty("thucydides.jira.workflow.active")).thenReturn("true");
-        environmentVariables.setProperty("thucydides.jira.workflow.active","true");
+
+        environmentVariables.setProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY,"true");
 
         TestOutcome result = newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE);
 
@@ -232,8 +232,8 @@ public class WhenUpdatingIssueStatus {
 
     @Test
     public void a_failing_test_should_leave_a_reopened_issue_reopened() {
-//        when(environmentVariables.getProperty("thucydides.jira.workflow.active")).thenReturn("true");
-        environmentVariables.setProperty("thucydides.jira.workflow.active","true");
+
+        environmentVariables.setProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY,"true");
         TestOutcome result = newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE);
 
         when(issueTracker.getStatusFor("MYPROJECT-123")).thenReturn("Reopen");
@@ -249,8 +249,8 @@ public class WhenUpdatingIssueStatus {
 
     @Test
     public void a_failing_test_should_leave_in_progress_issue_in_progress() {
-//        when(environmentVariables.getProperty("thucydides.jira.workflow.active")).thenReturn("true");
-        environmentVariables.setProperty("thucydides.jira.workflow.active","true");
+
+        environmentVariables.setProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY,"true");
         TestOutcome result = newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE);
 
         when(issueTracker.getStatusFor("MYPROJECT-123")).thenReturn("In Progress");

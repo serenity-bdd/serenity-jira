@@ -9,8 +9,8 @@ import org.slf4j.LoggerFactory
 class ClasspathWorkflowLoader implements WorkflowLoader {
 
     public static final String BUNDLED_WORKFLOW = "default-workflow.groovy"
-    public static final String WORKFLOW_CONFIGURATION_PROPERTY = "thucydides.jira.workflow"
-    public static final String ACTIVATE_WORKFLOW_PROPERTY = "thucydides.jira.workflow.active"
+    public static final String WORKFLOW_CONFIGURATION_PROPERTY = "serenity.jira.workflow"
+    public static final String ACTIVATE_WORKFLOW_PROPERTY = "serenity.jira.workflow.active"
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ClasspathWorkflowLoader.class);
 
