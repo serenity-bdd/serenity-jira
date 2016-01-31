@@ -15,14 +15,14 @@ class WhenUsingACustomJiraWorkflow extends Specification {
     def environmentVariables = new MockEnvironmentVariables()
 
     def setupSpec() {
-        environmentVariables.setProperty('thucydides.jira.workflow','custom-workflow.groovy')
+        environmentVariables.setProperty(ClasspathWorkflowLoader.WORKFLOW_CONFIGURATION_PROPERTY,'custom-workflow.groovy')
     }
 
     def setup() {
         workflow = new ClasspathWorkflowLoader("jira-workflow.groovy", environmentVariables).load();
     }
 
-    def "should load a custom workflow defined in the thucydides.jira.workflow system property"() {
+    def "should load a custom workflow defined in the serenity.jira.workflow system property"() {
 
         expect:
         def transitions = workflow.transitions.forTestResult(result).whenIssueIs(issueStatus)

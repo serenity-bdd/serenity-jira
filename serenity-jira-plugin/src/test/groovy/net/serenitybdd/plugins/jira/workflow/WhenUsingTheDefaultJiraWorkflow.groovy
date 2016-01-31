@@ -10,11 +10,11 @@ class WhenUsingTheDefaultJiraWorkflow extends Specification {
     def workflow
 
     def setupSpec() {
-        System.properties['thucydides.jira.workflow.active'] = 'true'
+        System.properties[ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY] = 'true'
     }
 
     def cleanupSpec() {
-        System.properties.remove('thucydides.jira.workflow.active')
+        System.properties.remove(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY)
     }
 
     def setup() {

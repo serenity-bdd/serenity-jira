@@ -88,7 +88,7 @@ public class WhenUpdatingCommentsInJIRA {
         environmentVariables = new MockEnvironmentVariables();
         environmentVariables.setProperty("jira.url", "http://my.jira.server");
         environmentVariables.setProperty("thucydides.public.url", "http://my.server/myproject/thucydides");
-        environmentVariables.setProperty("thucydides.jira.workflow.active","true");
+        environmentVariables.setProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY,"true");
         environmentVariables.setProperty("build.id","2012-01-17_15-39-03");
 
         workflowLoader = new ClasspathWorkflowLoader(ClasspathWorkflowLoader.BUNDLED_WORKFLOW, environmentVariables);
@@ -96,7 +96,7 @@ public class WhenUpdatingCommentsInJIRA {
 
     @After
     public void resetPluginSpecificProperties() {
-        System.clearProperty("thucydides.skip.jira.updates");
+        System.clearProperty(JiraListener.SKIP_JIRA_UPDATES);
     }
 
     @Mock
@@ -310,7 +310,7 @@ public class WhenUpdatingCommentsInJIRA {
     @Test
     public void should_skip_JIRA_updates_if_requested() {
         MockEnvironmentVariables environmentVariables = prepareMockEnvironment();
-        environmentVariables.setProperty("thucydides.skip.jira.updates","true");
+        environmentVariables.setProperty(JiraListener.SKIP_JIRA_UPDATES,"true");
 
         JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
         listener.testSuiteStarted(SampleTestSuite.class);

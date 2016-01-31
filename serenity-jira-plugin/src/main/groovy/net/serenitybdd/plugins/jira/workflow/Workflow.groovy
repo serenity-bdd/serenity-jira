@@ -6,8 +6,6 @@ package net.serenitybdd.plugins.jira.workflow
  */
 class Workflow {
 
-    public static final String WORKFLOW_CONFIGURATION_PROPERTY = "thucydides.jira.workflow"
-
     private final String name;
     private final boolean active;
 
