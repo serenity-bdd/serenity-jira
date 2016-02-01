@@ -1,12 +1,12 @@
-# Thucydides plugin for JIRA
+# Serenity plugin for JIRA
 
-This plugin updates JIRA issues referenced in Thucydides stories with links to the corresponding story reports.
+This plugin updates JIRA issues referenced in Serenity stories with links to the corresponding story reports.
 
-When you are using Thucydides with JUnit, JUnit tests can implement acceptance criteria for particular stories. If you
+When you are using Serenity with JUnit, JUnit tests can implement acceptance criteria for particular stories. If you
 are working with JIRA, these stories can be represented as JIRA issues. You can refer to a JIRA issue by placing a
 reference to the corresponding JIRA issue number in the @Title annotation, as shown here:
 
-    @RunWith(ThucydidesRunner.class)
+    @RunWith(SerenityRunner.class)
     @Story(Application.Search.SearchByKeyword.class)
     public class SearchByKeywordStoryTest {
 
@@ -32,34 +32,34 @@ You then specify the *jira.url* as a system property when you run the tests:
 
     $ mvn test -Djira.url=http://issues.acme.com
 
-This will make Thucydides include a link to the corresponding JIRA issue in the Thucydides reports. This feature is
-supported in the core Thucydides library.
+This will make Serenity include a link to the corresponding JIRA issue in the Serenity reports. This feature is
+supported in the core Serenity library.
 
-For tighter, round-trip integration you can also use thucydides-jira-plugin. This will not only include links to JIRA
+For tighter, round-trip integration you can also use serenity-jira-plugin. This will not only include links to JIRA
 in the Thucydides reports, but it will also update the corresponding JIRA issues with links to the corresponding
-Story page in the Thucydides reports. To set this up, add the `thucydides-jira-plugin` dependency to your project
+Story page in the Serenity reports. To set this up, add the `thucydides-jira-plugin` dependency to your project
 dependencies:
 
     <dependencies>
         ...
         <dependency>
-            <groupId>net.thucydides.plugins.jira</groupId>
-            <artifactId>thucydides-jira-plugin</artifactId>
-            <version>0.5.0</version>
+            <groupId>net.serenity-bdd</groupId>
+            <artifactId>serenity-jira-plugin</artifactId>
+            <version>1.1.1</version>
         </dependency>
     </dependencies>
 
 Then run the tests with the *jira.url*, *jira.username* and *jira.password* system parameters. These last two
 parameters need to be a user who can connect to JIRA and add and update comments.
 
-You also need to provide the base URL for the published Thucydides report in the system property
-*thucydides.reports.url*. You would typically point this to the latest Thucydides reports on your build server.
+You also need to provide the base URL for the published Serenity report in the system property
+*thucydides.reports.url*. You would typically point this to the latest Serenity reports on your build server.
 (If you are using Jenkins, you can use the HTML Publisher plugin for this):
 
     $ mvn test -Djira.url=http://issues.acme.com -Djira.username=scott -Djira.password=tiger \
                -Dthucydides.reports.url= http:://jenkins.acme.com/myproject/job/webtests/Thucydides_Report
 
-If you do not want Thucydides to update the JIRA issues for a particular run (e.g. for testing or debugging purposes),
+If you do not want Serenity to update the JIRA issues for a particular run (e.g. for testing or debugging purposes),
 you can also set *serenity.skip.jira.updates* to true, e.g.
 
     $mvn verify -Dserenity.skip.jira.updates=true
@@ -103,7 +103,7 @@ you can override the default configuration by using the 'serenity.jira.workflow'
     $mvn verify -serenity.jira.workflow=my-workflow.groovy
 
 Alternatively, you can simply create a file called 'jira-workflow.groovy' and place it somewhere on your classpath (e.g. in the 'src/test/resources' directory).
-Thucydides will then use this workflow. In both these cases, you don't need to explicitly set the 'serenity.jira.workflow.active'
+Serenity will then use this workflow. In both these cases, you don't need to explicitly set the 'serenity.jira.workflow.active'
 property.
 
 
