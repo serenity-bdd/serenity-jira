@@ -7,7 +7,7 @@ buildscript {
     }
     dependencies {
         classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.2'
-        classpath 'org.ajoberstar:gradle-git:1.2.0'
+        classpath 'org.ajoberstar:gradle-git:1.4.0-rc.1'
         classpath 'org.pegdown:pegdown:1.4.1'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.11.3'
     }
@@ -19,7 +19,7 @@ import org.ajoberstar.grgit.Grgit
 import org.ajoberstar.gradle.git.release.opinion.Strategies
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.8'
+    gradleVersion = '2.10'
 }
 
 subprojects {
@@ -56,7 +56,7 @@ allprojects {
 }
 
 release {
-    grgit = Grgit.open(project.file('.'))
+    grgit = Grgit.open()
 
     versionStrategy Strategies.FINAL
     versionStrategy Strategies.PRE_RELEASE
@@ -190,7 +190,7 @@ subprojects {
             exclude '**/*Sample*'
             minHeapSize = "128m"
             maxHeapSize = "512m"
-            maxParallelForks = 4
+            maxParallelForks = Runtime.runtime.availableProcessors()
         }
 
         task integrationTests(type: Test) {
@@ -205,6 +205,7 @@ subprojects {
             minHeapSize = "128m"
             maxHeapSize = "2048m"
             jvmArgs '-XX:MaxPermSize=256m'
+            maxParallelForks = Runtime.runtime.availableProcessors()
         }
 
         test {
@@ -239,7 +240,7 @@ subprojects {
             compile "com.google.inject:guice:3.0"
             compile "com.google.guava:guava:18.0"
             compile "org.slf4j:slf4j-api:1.7.7"
-            compile "org.codehaus.groovy:groovy-all:2.3.10"
+            compile "org.codehaus.groovy:groovy-all:2.4.4"
 
             testCompile("ch.qos.logback:logback-classic:1.0.13") {
                 exclude group:"org.slf4j", module:"slf4j-api"
