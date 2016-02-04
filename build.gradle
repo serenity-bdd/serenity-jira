@@ -27,7 +27,7 @@ subprojects {
 }
 
 ext {
-    serenityCoreVersion = "1.1.25-rc.3"
+    serenityCoreVersion = "1.1.25-rc.5"
 
     // Bintray configuration
     bintrayBaseUrl = 'https://api.bintray.com/maven'
@@ -51,6 +51,7 @@ allprojects {
         resolutionStrategy {
             // fail fast on dependency convergence problems
             failOnVersionConflict()
+            force  'commons-collections:commons-collections:3.2.2'
         }
     }
 }
@@ -252,6 +253,11 @@ subprojects {
                 exclude group: "junit"
                 exclude group:"org.codehaus.groovy", module: "groovy-all"
             }
+        }
+
+        task copyDeps(type: Copy) {
+            from configurations.runtime + configurations.testCompile
+            into project.projectDir.path + "/lib"
         }
     }
 }
