@@ -1,9 +1,12 @@
 ## Serenity BDD Jira Plugin change Log
 
-### upcoming (2016/02/18 14:35 +00:00)
+### upcoming (2016/03/01 07:14 +00:00)
  
 **Pull requests:**
  
+- [#20](https://github.com/serenity-bdd/serenity-jira/pull/20) Updated serenty core to 1.1.27 ([@YamStranger](https://github.com/YamStranger))
+- [#19](https://github.com/serenity-bdd/serenity-jira/pull/19) Updated serenity-core to 1.1.26 ([@YamStranger](https://github.com/YamStranger))
+- [#18](https://github.com/serenity-bdd/serenity-jira/pull/18) Updated contiributing guide - explaned multiline commits and pull requests name convention ([@YamStranger](https://github.com/YamStranger))
 - [#16](https://github.com/serenity-bdd/serenity-jira/pull/16) Updating serenity core to1.26-rc.1 ([@YamStranger](https://github.com/YamStranger))
 - [#15](https://github.com/serenity-bdd/serenity-jira/pull/15) Updated serenity-core and java docs to avoid warnings ([@YamStranger](https://github.com/YamStranger))
 - [#14](https://github.com/serenity-bdd/serenity-jira/pull/14) Updating of serenity core version to rc.5 ([@YamStranger](https://github.com/YamStranger))
@@ -13,11 +16,12 @@
  
 **Commits:**
  
+- [2667837](https://github.com/serenity-bdd/serenity-jira/commit/2667837e21514044159901bf93dcfeb430870487) docs: updating contributing docs ([@YamStranger](https://github.com/YamStranger))
+- [5cace57](https://github.com/serenity-bdd/serenity-jira/commit/5cace57f7fb171ed7dcd0a8725e4246f001d077d) chore: updating serenty-core to 1.1.26 ([@YamStranger](https://github.com/YamStranger))
 - [8782cb0](https://github.com/serenity-bdd/serenity-jira/commit/8782cb05ad1a08a755cfc26969e427188ae7bb79) fix: core update ([@YamStranger](https://github.com/YamStranger))
-- [88bdcce](https://github.com/serenity-bdd/serenity-jira/commit/88bdcce6edeb0f11e43bb989bd213a1f389362c1) use serenity equivalent properties for "thucydides.skip.jira.updates", "thucydides.jira.workflow.active", "thucydides.jira.workflow", use constants ([@cliviu](https://github.com/cliviu))
-- [90c184f](https://github.com/serenity-bdd/serenity-jira/commit/90c184fb381f635be7885d98c549dadbf7a2c36a) update docu ([@cliviu](https://github.com/cliviu))
 - [9a58f0a](https://github.com/serenity-bdd/serenity-jira/commit/9a58f0a804612d0b7be826b15c2d706ea1bd2c13) chore: updating gitignore ([@YamStranger](https://github.com/YamStranger))
 - [a2a1f94](https://github.com/serenity-bdd/serenity-jira/commit/a2a1f94df1e0eddd3a29d347660d6d2885367649) fix: updating build ([@YamStranger](https://github.com/YamStranger))
+- [df08d1c](https://github.com/serenity-bdd/serenity-jira/commit/df08d1c8056243de173c9f03a559bf6e638cb458) chore: updating serenty core to 1.1.27 ([@YamStranger](https://github.com/YamStranger))
 - [f649c00](https://github.com/serenity-bdd/serenity-jira/commit/f649c00f056cc071c2fc3c84dbd2d3ee7f462972) chore: updated serenity-core and java docs to avoid warnings ([@YamStranger](https://github.com/YamStranger))
 - [fd0c71e](https://github.com/serenity-bdd/serenity-jira/commit/fd0c71eeed027645763e4ca5782b5b3600eb0dd0) chore: updated wrapper, and build publishing libs ([@YamStranger](https://github.com/YamStranger))
  
@@ -27,22 +31,6 @@
  
 - [#10](https://github.com/serenity-bdd/serenity-jira/pull/10) https://github.com/serenity-bdd/serenity-jira/issues/9 - fix JUnit tests, add another correction ([@cliviu](https://github.com/cliviu))
 - [#5](https://github.com/serenity-bdd/serenity-jira/pull/5) connection with zephyr, use new zapi , fix synchronization problems when parallel processing ([@cliviu](https://github.com/cliviu))
- 
-**Commits:**
- 
-- [0b176aa](https://github.com/serenity-bdd/serenity-jira/commit/0b176aa2907581d83cc5b05dadc1491f301ef006) Improved handling of concurrent requirement loading. ([@wakaleo](https://github.com/wakaleo))
-- [3bf4778](https://github.com/serenity-bdd/serenity-jira/commit/3bf4778af8c99b8de49281e5aa381c74d855f5bb) Minor refactoring ([@wakaleo](https://github.com/wakaleo))
-- [3e707f2](https://github.com/serenity-bdd/serenity-jira/commit/3e707f2cbf41fba895cf6a3e1660350cd32af5ca) Added extra logging ([@wakaleo](https://github.com/wakaleo))
-- [646dda8](https://github.com/serenity-bdd/serenity-jira/commit/646dda84c6f11ec400c92c93cf1731d98441b9b4) Updated Gradle wrapper ([@wakaleo](https://github.com/wakaleo))
-- [756f45b](https://github.com/serenity-bdd/serenity-jira/commit/756f45b278bb11e1cb80ec7b5912b206f3f710dc) Disabled parallel tests to check an issue on Snap-CI ([@wakaleo](https://github.com/wakaleo))
-- [84d9a4f](https://github.com/serenity-bdd/serenity-jira/commit/84d9a4f687bd5b77514653e7a8094733cc300ce0) Minor refactoring ([@wakaleo](https://github.com/wakaleo))
-- [9226fd1](https://github.com/serenity-bdd/serenity-jira/commit/9226fd1cfa1ed177b390b2f70eaaa528c82356c9) Experimental change to check if concurrent requirements loading is causing issues on Snap-CI ([@wakaleo](https://github.com/wakaleo))
-- [b6fa0e7](https://github.com/serenity-bdd/serenity-jira/commit/b6fa0e7323eddf878d65602f86a579e285cc1381) Experimental change to check if concurrent requirements loading is causing issues on Snap-CI ([@wakaleo](https://github.com/wakaleo))
-- [d354e44](https://github.com/serenity-bdd/serenity-jira/commit/d354e44c412e5ef17446c8853a1a60cf866101e8) Performance improvements ([@wakaleo](https://github.com/wakaleo))
-- [d527e3e](https://github.com/serenity-bdd/serenity-jira/commit/d527e3e8acf17c9bb24a0ee8ffb12dac532e6ebf) Optimised the concurrent requirements loader ([@wakaleo](https://github.com/wakaleo))
-- [dc8127e](https://github.com/serenity-bdd/serenity-jira/commit/dc8127e0c8e4d1348476e405e866a883b8a9ce5d) bug fix for https://github.com/serenity-bdd/serenity-jira/issues/9 ([@cliviu](https://github.com/cliviu))
-- [ea3b28b](https://github.com/serenity-bdd/serenity-jira/commit/ea3b28b0def265b7bc17e0331b2dc3d28fe671da) Updated dependencies ([@wakaleo](https://github.com/wakaleo))
-- [f706166](https://github.com/serenity-bdd/serenity-jira/commit/f70616689990899a73c0e662518b8009f4776437) https://github.com/serenity-bdd/serenity-jira/issues/9 - fix JUnit tests, add another correction ([@cliviu](https://github.com/cliviu))
  
 ### v1.1.1 (2015/10/29 08:06 +00:00)
  
