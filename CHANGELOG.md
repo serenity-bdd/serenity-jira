@@ -1,6 +1,6 @@
 ## Serenity BDD Jira Plugin change Log
 
-### upcoming (2016/03/14 05:34 +00:00)
+### upcoming (2016/03/25 12:03 +00:00)
  
 **Pull requests:**
  
