@@ -1,9 +1,10 @@
 ## Serenity BDD Jira Plugin change Log
 
-### upcoming (2016/03/25 12:03 +00:00)
+### upcoming (2016/04/05 13:54 +00:00)
  
 **Pull requests:**
  
+- [#27](https://github.com/serenity-bdd/serenity-jira/pull/27) Updated core to 1.1.29-rc.2 ([@YamStranger](https://github.com/YamStranger))
 - [#23](https://github.com/serenity-bdd/serenity-jira/pull/23) Updated core to 1.1.29-rc.1 ([@YamStranger](https://github.com/YamStranger))
 - [#20](https://github.com/serenity-bdd/serenity-jira/pull/20) Updated serenty core to 1.1.27 ([@YamStranger](https://github.com/YamStranger))
 - [#19](https://github.com/serenity-bdd/serenity-jira/pull/19) Updated serenity-core to 1.1.26 ([@YamStranger](https://github.com/YamStranger))
@@ -24,6 +25,7 @@
 - [a2a1f94](https://github.com/serenity-bdd/serenity-jira/commit/a2a1f94df1e0eddd3a29d347660d6d2885367649) fix: updating build ([@YamStranger](https://github.com/YamStranger))
 - [df08d1c](https://github.com/serenity-bdd/serenity-jira/commit/df08d1c8056243de173c9f03a559bf6e638cb458) chore: updating serenty core to 1.1.27 ([@YamStranger](https://github.com/YamStranger))
 - [e73769f](https://github.com/serenity-bdd/serenity-jira/commit/e73769fe5f02d623a851999d9b445b4751876ff7) chore: core updated to v1.1.29-rc.1 ([@YamStranger](https://github.com/YamStranger))
+- [f302960](https://github.com/serenity-bdd/serenity-jira/commit/f3029602e74845f9029982018cb063b8e1d694a1) chore: updated core to 1.1.29-rc.2 ([@YamStranger](https://github.com/YamStranger))
 - [f649c00](https://github.com/serenity-bdd/serenity-jira/commit/f649c00f056cc071c2fc3c84dbd2d3ee7f462972) chore: updated serenity-core and java docs to avoid warnings ([@YamStranger](https://github.com/YamStranger))
 - [fd0c71e](https://github.com/serenity-bdd/serenity-jira/commit/fd0c71eeed027645763e4ca5782b5b3600eb0dd0) chore: updated wrapper, and build publishing libs ([@YamStranger](https://github.com/YamStranger))
  
