@@ -23,7 +23,14 @@ class WhenIdentifyingCustomFields extends Specification {
         then:
             options.collect { it.option }.containsAll("Grow Apples", "Grow Potatoes", "Raise Chickens", "Raise Sheep")
         and:
-            options[0].nestedOptions.collect { it.option } == ["Grow red apples", "Grow green apples"]
+            def List<List<String>> check = options.collect {it.nestedOptions }.collect { it.option }
+            def values = []
+            check.each {
+                it.each {
+                    values << it
+                }
+            }
+            values.containsAll(["Grow red apples","Grow green apples"])
     }
 
     def "Cascading select options should store parent options"() {
