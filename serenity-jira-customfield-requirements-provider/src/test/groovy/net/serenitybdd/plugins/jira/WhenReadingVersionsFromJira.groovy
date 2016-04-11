@@ -31,9 +31,9 @@ class WhenReadingVersionsFromJira extends Specification {
         when:
             def releases = requirementsProvider.getReleases()
         then:
-            releases.collect {it.name} == ["Release 1","Release 2","Release 3","Release 4"]
+            releases.collect {it.name}.containsAll(["Release 1","Release 2","Release 3","Release 4"])
         and:
-            releases[0].children.collect {it.name} == ["Sprint 1", "Sprint 2"]
+            releases[0].children.collect {it.name}.containsAll(["Sprint 3", "Sprint 4", "Sprint 5"])
     }
 
     def "should find the release for a given issue"() {

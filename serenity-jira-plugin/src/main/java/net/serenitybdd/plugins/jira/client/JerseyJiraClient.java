@@ -129,7 +129,7 @@ public class JerseyJiraClient {
         }
     }
 
-    
+
     /**
      * Load the issue keys for all of the issues matching the specified JQL query
      *
@@ -201,7 +201,7 @@ public class JerseyJiraClient {
                                             .queryParam("startAt", startAt)
                                             .queryParam("expand", "renderedFields")
                                             .queryParam("fields", fields);
-        
+
         if (batchSize > 0) {
             target = target.queryParam("maxResults", batchSize);
         }
@@ -621,25 +621,51 @@ public class JerseyJiraClient {
 
     public List<CascadingSelectOption> findOptionsForCascadingSelect(String fieldName) {
         JsonObject responseObject;
+        final List<CascadingSelectOption> result= new ArrayList<>();
         Optional<String> jsonResponse = readFieldMetadata(url, "rest/api/2/issue/createmeta");
         if (jsonResponse.isPresent()) {
             responseObject = new JsonParser().parse(jsonResponse.get()).getAsJsonObject();
-
-            JsonObject fields = responseObject.getAsJsonArray("projects")
-                    .get(0).getAsJsonObject()
-                    .getAsJsonArray("issuetypes")
-                    .get(0).getAsJsonObject().getAsJsonObject("fields");
-
-            Iterator<Map.Entry<String, JsonElement>> fieldKeys = fields.entrySet().iterator();
-            while(fieldKeys.hasNext()) {
-                String entryFieldName = fieldKeys.next().getKey();
-                JsonObject entry = fields.getAsJsonObject(entryFieldName);
-                if (entry.getAsJsonPrimitive("name").getAsString().equalsIgnoreCase(fieldName)) {
-                    return convertToCascadingSelectOptions(entry.getAsJsonArray("allowedValues"));
+            JsonArray projects = responseObject.getAsJsonArray("projects");
+            for (final JsonElement pr : projects) {
+                final JsonObject project = pr.getAsJsonObject();
+                final JsonArray issueTypes = project.getAsJsonArray("issuetypes");
+                for (final JsonElement st : issueTypes) {
+                    final JsonObject issueType=st.getAsJsonObject();
+                    final JsonObject fields = issueType.getAsJsonObject("fields");
+                    Iterator<Map.Entry<String, JsonElement>> fieldKeys = fields.entrySet().iterator();
+                    while(fieldKeys.hasNext()) {
+                        String entryFieldName = fieldKeys.next().getKey();
+                        JsonObject entry = fields.getAsJsonObject(entryFieldName);
+                        if (entry.getAsJsonPrimitive("name").getAsString().equalsIgnoreCase(fieldName)) {
+                            result.addAll(convertToCascadingSelectOptions(entry.getAsJsonArray("allowedValues")));
+                        }
+                    }
                 }
             }
         }
-        return EMPTY_LIST;
+        return removeDuplicated(result);
+    }
+
+    private List<CascadingSelectOption> removeDuplicated(final List<CascadingSelectOption> options){
+        List<CascadingSelectOption> filtered = new LinkedList<>();
+        Map<String, CascadingSelectOption> filter = new HashMap<>();
+        for (final CascadingSelectOption option : options) {
+            filter.put(identification(option).toString(),option);
+        }
+        filtered.addAll(filter.values());
+        return filtered;
+    }
+
+    private StringBuilder identification(final CascadingSelectOption option){
+        StringBuilder builder = new StringBuilder(option.getOption());
+        Map<String, CascadingSelectOption> filter = new HashMap<>();
+        for (final CascadingSelectOption children : option.getNestedOptions()) {
+            filter.put(identification(children).toString(),children);
+        }
+        for (final String key : filter.keySet()) {
+            builder.append(key);
+        }
+        return builder;
     }
 
     private List<CascadingSelectOption> convertToCascadingSelectOptions(JsonArray allowedValues)  {
