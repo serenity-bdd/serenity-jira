@@ -1,9 +1,11 @@
 ## Serenity BDD Jira Plugin change Log
 
-### upcoming (2016/04/05 13:54 +00:00)
+### upcoming (2016/04/20 06:55 +00:00)
  
 **Pull requests:**
  
+- [#31](https://github.com/serenity-bdd/serenity-jira/pull/31) Core updated to 1.1.29 ([@YamStranger](https://github.com/YamStranger))
+- [#30](https://github.com/serenity-bdd/serenity-jira/pull/30) Updated tests based on new jira structure. ([@YamStranger](https://github.com/YamStranger))
 - [#27](https://github.com/serenity-bdd/serenity-jira/pull/27) Updated core to 1.1.29-rc.2 ([@YamStranger](https://github.com/YamStranger))
 - [#23](https://github.com/serenity-bdd/serenity-jira/pull/23) Updated core to 1.1.29-rc.1 ([@YamStranger](https://github.com/YamStranger))
 - [#20](https://github.com/serenity-bdd/serenity-jira/pull/20) Updated serenty core to 1.1.27 ([@YamStranger](https://github.com/YamStranger))
@@ -19,8 +21,11 @@
 **Commits:**
  
 - [2667837](https://github.com/serenity-bdd/serenity-jira/commit/2667837e21514044159901bf93dcfeb430870487) docs: updating contributing docs ([@YamStranger](https://github.com/YamStranger))
+- [458cef1](https://github.com/serenity-bdd/serenity-jira/commit/458cef105261853f89abeac42601dbc5d7ab6aa2) feat: fixed tests based on new structure. Updated jira core to load requirements recursively ([@YamStranger](https://github.com/YamStranger))
 - [5cace57](https://github.com/serenity-bdd/serenity-jira/commit/5cace57f7fb171ed7dcd0a8725e4246f001d077d) chore: updating serenty-core to 1.1.26 ([@YamStranger](https://github.com/YamStranger))
+- [7112eba](https://github.com/serenity-bdd/serenity-jira/commit/7112eba23f78a682708573cd10398b84a40f58a2) test: updated tests baed on new jira structure ([@YamStranger](https://github.com/YamStranger))
 - [8782cb0](https://github.com/serenity-bdd/serenity-jira/commit/8782cb05ad1a08a755cfc26969e427188ae7bb79) fix: core update ([@YamStranger](https://github.com/YamStranger))
+- [9a2c327](https://github.com/serenity-bdd/serenity-jira/commit/9a2c327911072348ae1ed9830dfa45be4ea061f9) chore: core updated ([@YamStranger](https://github.com/YamStranger))
 - [9a58f0a](https://github.com/serenity-bdd/serenity-jira/commit/9a58f0a804612d0b7be826b15c2d706ea1bd2c13) chore: updating gitignore ([@YamStranger](https://github.com/YamStranger))
 - [a2a1f94](https://github.com/serenity-bdd/serenity-jira/commit/a2a1f94df1e0eddd3a29d347660d6d2885367649) fix: updating build ([@YamStranger](https://github.com/YamStranger))
 - [df08d1c](https://github.com/serenity-bdd/serenity-jira/commit/df08d1c8056243de173c9f03a559bf6e638cb458) chore: updating serenty core to 1.1.27 ([@YamStranger](https://github.com/YamStranger))
