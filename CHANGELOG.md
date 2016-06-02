@@ -1,26 +1,12 @@
 ## Serenity BDD Jira Plugin change Log
 
-### upcoming (2016/04/20 06:55 +00:00)
+### upcoming (2016/06/02 06:21 +00:00)
  
-**Pull requests:**
- 
-- [#31](https://github.com/serenity-bdd/serenity-jira/pull/31) Core updated to 1.1.29 ([@YamStranger](https://github.com/YamStranger))
-- [#30](https://github.com/serenity-bdd/serenity-jira/pull/30) Updated tests based on new jira structure. ([@YamStranger](https://github.com/YamStranger))
-- [#27](https://github.com/serenity-bdd/serenity-jira/pull/27) Updated core to 1.1.29-rc.2 ([@YamStranger](https://github.com/YamStranger))
-- [#23](https://github.com/serenity-bdd/serenity-jira/pull/23) Updated core to 1.1.29-rc.1 ([@YamStranger](https://github.com/YamStranger))
-- [#20](https://github.com/serenity-bdd/serenity-jira/pull/20) Updated serenty core to 1.1.27 ([@YamStranger](https://github.com/YamStranger))
-- [#19](https://github.com/serenity-bdd/serenity-jira/pull/19) Updated serenity-core to 1.1.26 ([@YamStranger](https://github.com/YamStranger))
-- [#18](https://github.com/serenity-bdd/serenity-jira/pull/18) Updated contiributing guide - explaned multiline commits and pull requests name convention ([@YamStranger](https://github.com/YamStranger))
-- [#16](https://github.com/serenity-bdd/serenity-jira/pull/16) Updating serenity core to1.26-rc.1 ([@YamStranger](https://github.com/YamStranger))
-- [#15](https://github.com/serenity-bdd/serenity-jira/pull/15) Updated serenity-core and java docs to avoid warnings ([@YamStranger](https://github.com/YamStranger))
-- [#14](https://github.com/serenity-bdd/serenity-jira/pull/14) Updating of serenity core version to rc.5 ([@YamStranger](https://github.com/YamStranger))
-- [#13](https://github.com/serenity-bdd/serenity-jira/pull/13) Build script updating ([@YamStranger](https://github.com/YamStranger))
-- [#12](https://github.com/serenity-bdd/serenity-jira/pull/12) update docu ([@cliviu](https://github.com/cliviu))
-- [#11](https://github.com/serenity-bdd/serenity-jira/pull/11) use serenity equivalent properties for "thucydides.skip.jira.updates", "thucydides.jira.workflow.active", "thucydides.jira.workflow", use constants ([@cliviu](https://github.com/cliviu))
  
 **Commits:**
  
 - [2667837](https://github.com/serenity-bdd/serenity-jira/commit/2667837e21514044159901bf93dcfeb430870487) docs: updating contributing docs ([@YamStranger](https://github.com/YamStranger))
+- [29f49e4](https://github.com/serenity-bdd/serenity-jira/commit/29f49e419a0f6efdcd31609c11ad2d3aa821d71f) fix: fixed nullpointer exception, if description is empty ([@YamStranger](https://github.com/YamStranger))
 - [458cef1](https://github.com/serenity-bdd/serenity-jira/commit/458cef105261853f89abeac42601dbc5d7ab6aa2) feat: fixed tests based on new structure. Updated jira core to load requirements recursively ([@YamStranger](https://github.com/YamStranger))
 - [5cace57](https://github.com/serenity-bdd/serenity-jira/commit/5cace57f7fb171ed7dcd0a8725e4246f001d077d) chore: updating serenty-core to 1.1.26 ([@YamStranger](https://github.com/YamStranger))
 - [7112eba](https://github.com/serenity-bdd/serenity-jira/commit/7112eba23f78a682708573cd10398b84a40f58a2) test: updated tests baed on new jira structure ([@YamStranger](https://github.com/YamStranger))
