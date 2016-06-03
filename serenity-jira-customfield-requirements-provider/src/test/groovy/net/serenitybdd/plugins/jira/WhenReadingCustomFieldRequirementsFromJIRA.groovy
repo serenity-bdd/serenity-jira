@@ -37,9 +37,18 @@ class WhenReadingCustomFieldRequirementsFromJIRA extends Specification {
         and:
             requirements.collect { it.type } as Set == ["capability"] as Set
         and:
-            requirements[0].children.collect { it.name } == ["Grow red apples","Grow green apples"]
+            def List<List<String>> check = requirements.collect {
+                it.children.collect{it.name}
+            }
+            def values = []
+            check.each {
+                it.each {
+                    values << it
+                }
+            }
+            values.containsAll(["Grow red apples","Grow green apples"])
         and:
-            requirements[0].children.collect { it.type } == ["feature", "feature"]
+            requirements[0].children.collect { it.type }.containsAll(["feature", "feature"])
     }
 
     def "should get corresponding requirements from a test outcome "() {
@@ -75,7 +84,7 @@ class WhenReadingCustomFieldRequirementsFromJIRA extends Specification {
         def tags = requirementsProvider.getTagsFor(outcome)
         then:
         tags.contains(TestTag.withName("Earning Points/Points from special offers").andType("feature"))
-        tags.contains(TestTag.withName("Earning Points").andType("capability"))
+        tags.contains(TestTag.withName("Earning points from special offers").andType("Story"))
     }
 
     def "should get all matching requirements set from a test outcome "() {
@@ -85,7 +94,7 @@ class WhenReadingCustomFieldRequirementsFromJIRA extends Specification {
         when:
         List<Requirement> requirements = requirementsProvider.getAssociatedRequirements(outcome)
         then:
-        requirements.collect { it.name }.containsAll(["Grow normal potatoes", "Grow Potatoes"])
+        requirements.collect { it.name }.containsAll(["Grow normal potatoes"])
     }
 
     def "associated tags should include all requirements"() {
@@ -95,17 +104,17 @@ class WhenReadingCustomFieldRequirementsFromJIRA extends Specification {
         when:
             def tags = requirementsProvider.getTagsFor(outcome)
         then:
-            tags.collect { it.name }.containsAll(["Grow Potatoes/Grow normal potatoes", "Grow Potatoes"])
+            tags.collect { it.name }.containsAll(["Grow Potatoes/Grow normal potatoes"])
     }
 
     def "should get corresponding requirements from a test tag "() {
         given:
-            TestTag tag = TestTag.withName("Grow Potatoes").andType("capability")
+            TestTag tag = TestTag.withName("Earning Points/Points from special offers").andType("feature")
         when:
             Optional<Requirement> requirement = requirementsProvider.getRequirementFor(tag)
         then:
             requirement.isPresent()
         and:
-            requirement.get().name == "Grow Potatoes"
+            requirement.get().name == "Points from special offers"
     }
 }

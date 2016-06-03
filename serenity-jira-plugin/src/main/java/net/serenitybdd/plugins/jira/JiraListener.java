@@ -39,6 +39,7 @@ import static ch.lambdaj.Lambda.convert;
 public class JiraListener implements StepListener {
 
     private static final String BUILD_ID_PROPERTY = "build.id";
+    public static final String SKIP_JIRA_UPDATES = "serenity.skip.jira.updates";
     private final IssueTracker issueTracker;
 
     public Story currentStory;
@@ -270,7 +271,7 @@ public class JiraListener implements StepListener {
     }
 
     private boolean dryRun() {
-        return Boolean.valueOf(environmentVariables.getProperty("thucydides.skip.jira.updates"));
+        return Boolean.valueOf(environmentVariables.getProperty(SKIP_JIRA_UPDATES));
     }
 
     private String linkToReport(List<TestOutcome> testOutcomes) {

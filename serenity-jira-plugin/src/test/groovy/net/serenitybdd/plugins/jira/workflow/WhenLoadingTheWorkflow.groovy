@@ -18,7 +18,7 @@ class WhenLoadingTheWorkflow extends Specification {
 
     def "should try to load the system-defined workflow configuration if provided"() {
         given:
-        environmentVariables.getProperty('thucydides.jira.workflow') >> 'custom-workflow.groovy'
+        environmentVariables.getProperty(ClasspathWorkflowLoader.WORKFLOW_CONFIGURATION_PROPERTY) >> 'custom-workflow.groovy'
         when:
         ClasspathWorkflowLoader workflowLoader = new ClasspathWorkflowLoader('workflow-by-default.groovy', environmentVariables)
         Workflow workflow = workflowLoader.load()
@@ -39,7 +39,7 @@ class WhenLoadingTheWorkflow extends Specification {
         given:
         ClasspathWorkflowLoader workflowLoader = new ClasspathWorkflowLoader('workflow-by-default.groovy', environmentVariables)
         and:
-        environmentVariables.getProperty('thucydides.jira.workflow') >> 'custom-workflow.groovy'
+        environmentVariables.getProperty(ClasspathWorkflowLoader.WORKFLOW_CONFIGURATION_PROPERTY) >> 'custom-workflow.groovy'
         when:
         Workflow workflow = workflowLoader.load()
         then:
@@ -50,7 +50,7 @@ class WhenLoadingTheWorkflow extends Specification {
         given:
         ClasspathWorkflowLoader workflowLoader = new ClasspathWorkflowLoader('workflow-by-default.groovy', environmentVariables)
         and:
-        environmentVariables.getProperty('thucydides.jira.workflow') >> 'does-not-exist-workflow.groovy'
+        environmentVariables.getProperty(ClasspathWorkflowLoader.WORKFLOW_CONFIGURATION_PROPERTY) >> 'does-not-exist-workflow.groovy'
         when:
         Workflow workflow = workflowLoader.load()
         then:
@@ -61,7 +61,7 @@ class WhenLoadingTheWorkflow extends Specification {
         given:
         ClasspathWorkflowLoader workflowLoader = new ClasspathWorkflowLoader('default-workflow-does-not-exist.groovy', environmentVariables)
         and:
-        environmentVariables.getProperty('thucydides.jira.workflow') >> 'does-not-exist-workflow.groovy'
+        environmentVariables.getProperty(ClasspathWorkflowLoader.WORKFLOW_CONFIGURATION_PROPERTY) >> 'does-not-exist-workflow.groovy'
         when:
         Workflow workflow = workflowLoader.load()
         then:
@@ -82,7 +82,7 @@ class WhenLoadingTheWorkflow extends Specification {
         given:
         ClasspathWorkflowLoader workflowLoader = new ClasspathWorkflowLoader('workflow-by-default.groovy', environmentVariables)
         and:
-        environmentVariables.getProperty('thucydides.jira.workflow') >> 'custom-workflow.groovy'
+        environmentVariables.getProperty(ClasspathWorkflowLoader.WORKFLOW_CONFIGURATION_PROPERTY) >> 'custom-workflow.groovy'
         when:
         Workflow workflow = workflowLoader.load()
         then:
@@ -93,7 +93,7 @@ class WhenLoadingTheWorkflow extends Specification {
         given:
         ClasspathWorkflowLoader workflowLoader = new ClasspathWorkflowLoader('workflow-by-default.groovy', environmentVariables)
         and:
-        environmentVariables.getProperty('thucydides.jira.workflow') >> 'workflow-that-does-not-exist.groovy'
+        environmentVariables.getProperty(ClasspathWorkflowLoader.WORKFLOW_CONFIGURATION_PROPERTY) >> 'workflow-that-does-not-exist.groovy'
         when:
         Workflow workflow = workflowLoader.load()
         then:
@@ -121,7 +121,7 @@ class WhenLoadingTheWorkflow extends Specification {
 
     def "should activate default workflow if the corresponding system property is set"() {
         given:
-        environmentVariables.getProperty('thucydides.jira.workflow.active') >> 'true'
+        environmentVariables.getProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY) >> 'true'
         ClasspathWorkflowLoader workflowLoader = new ClasspathWorkflowLoader('default-workflow.groovy', environmentVariables)
         when:
         Workflow workflow = workflowLoader.load()

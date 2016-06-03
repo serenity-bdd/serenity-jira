@@ -18,6 +18,7 @@ import net.thucydides.core.model.TestTag;
 import net.thucydides.core.requirements.RequirementsTagProvider;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.EnvironmentVariables;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.LoggerFactory;
 
@@ -177,7 +178,7 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
     private String narativeTextFrom(IssueSummary issue) {
         Optional<String> customFieldName = Optional.fromNullable(environmentVariables.getProperty(JIRA_CUSTOM_NARRATIVE_FIELD.getName()));
         if (customFieldName.isPresent()) {
-            return customFieldNameFor(issue, customFieldName.get()).or(issue.getRendered().getDescription());
+            return customFieldNameFor(issue, customFieldName.get()).or(ObjectUtils.firstNonNull(issue.getRendered().getDescription(), ""));
         } else {
             return issue.getRendered().getDescription();
         }

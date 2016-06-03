@@ -1,6 +1,7 @@
 package net.serenitybdd.plugins.jira.model;
 
 import com.google.common.collect.ImmutableList;
+import net.serenitybdd.plugins.jira.workflow.ClasspathWorkflowLoader;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -56,7 +57,7 @@ public class WhenFormattingJIRACommentUpdates {
         environmentVariables = new MockEnvironmentVariables();
         environmentVariables.setProperty("jira.url", "http://my.jira.server");
         environmentVariables.setProperty("thucydides.public.url", "http://my.server/myproject/thucydides");
-        environmentVariables.setProperty("thucydides.jira.workflow.active", "true");
+        environmentVariables.setProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY, "true");
     }
 
     @Test

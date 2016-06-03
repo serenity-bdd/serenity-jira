@@ -53,7 +53,7 @@ public class JiraIssueTracker implements IssueTracker {
      *
      * @param issueKey the unique key identifying the issue to be commented.
      * @param commentText  text of the comment.
-     * @throws IssueTrackerUpdateException
+     * @throws IssueTrackerUpdateException if something wrong
      */
     public void addComment(final String issueKey, final String commentText) {
             jiraConnection.getRestJiraClient().addComment(issueKey,new IssueComment(commentText));
@@ -82,7 +82,7 @@ public class JiraIssueTracker implements IssueTracker {
      *
      * @param issueKey Identifies the specified issue.
      * @return the list of comments.
-     * @throws IssueTrackerUpdateException
+     * @throws IssueTrackerUpdateException if something wrong
      */
     public List<IssueComment> getCommentsFor(String issueKey) throws IssueTrackerUpdateException {
         try {
