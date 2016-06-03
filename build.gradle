@@ -1,22 +1,32 @@
+import org.ajoberstar.gradle.git.release.opinion.Strategies
+import org.ajoberstar.grgit.Grgit
+
 buildscript {
     repositories {
+        mavenLocal()
         jcenter()
-        maven {
-            url 'https://geonet.artifactoryonline.com/geonet/public-releases'
-        }
     }
     dependencies {
-        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.2'
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.5'
         classpath 'org.ajoberstar:gradle-git:1.4.0-rc.1'
-        classpath 'org.pegdown:pegdown:1.4.1'
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.11.3'
     }
 }
 
-apply plugin: 'org.ajoberstar.release-opinion'
+apply plugin: 'org.ajoberstar.release-base'
+release {
+    grgit = Grgit.open()
+    versionStrategy Strategies.FINAL
+    versionStrategy Strategies.PRE_RELEASE
+    defaultVersionStrategy Strategies.SNAPSHOT
+}
 
-import org.ajoberstar.grgit.Grgit
-import org.ajoberstar.gradle.git.release.opinion.Strategies
+repositories {
+    mavenLocal()
+    jcenter()
+    maven() {
+        url "http://dl.bintray.com/serenity/maven/"
+    }
+}
 
 task wrapper(type: Wrapper) {
     gradleVersion = '2.10'
@@ -45,7 +55,6 @@ ext {
 
 allprojects {
     apply plugin: 'project-report'
-    apply plugin: 'com.github.ben-manes.versions'
 
     configurations.all {
         resolutionStrategy {
@@ -56,14 +65,6 @@ allprojects {
             "commons-codec:commons-codec:1.10"
         }
     }
-}
-
-release {
-    grgit = Grgit.open()
-
-    versionStrategy Strategies.FINAL
-    versionStrategy Strategies.PRE_RELEASE
-    defaultVersionStrategy Strategies.SNAPSHOT
 }
 
 subprojects {
@@ -82,7 +83,6 @@ subprojects {
         mavenLocal()
         jcenter()
     }
-
 
     task sourcesJar(type: Jar, dependsOn: classes) {
         classifier = 'sources'
