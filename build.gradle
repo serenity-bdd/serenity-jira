@@ -243,7 +243,7 @@ subprojects {
             compile "net.serenity-bdd:serenity-core:$serenityCoreVersion"
             compile "com.google.inject:guice:3.0"
             compile "com.google.guava:guava:18.0"
-            compile "org.slf4j:slf4j-api:1.7.7"
+            compile "org.slf4j:slf4j-api:1.7.21"
             compile "org.codehaus.groovy:groovy-all:2.4.4"
 
             testCompile("ch.qos.logback:logback-classic:1.0.13") {
