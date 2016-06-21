@@ -1,7 +1,33 @@
 ## Serenity BDD Jira Plugin change Log
 
-### upcoming (2016/06/02 06:21 +00:00)
+### upcoming (2016/06/21 18:19 +00:00)
  
+**Pull requests:**
+ 
+- [#39](https://github.com/serenity-bdd/serenity-jira/pull/39) Fixed loading of JiraCustomFieldRequirementsProvider, added test ([@YamStranger](https://github.com/YamStranger))
+ 
+**Commits:**
+ 
+- [295090c](https://github.com/serenity-bdd/serenity-jira/commit/295090c6e5447b3ada183fe2db5847b218f864a1) fix: fixed loading of JiraCustomFieldRequirementsProvider, added test ([@YamStranger](https://github.com/YamStranger))
+ 
+### v1.1.2 (2016/06/03 07:35 +00:00)
+ 
+**Pull requests:**
+ 
+- [#34](https://github.com/serenity-bdd/serenity-jira/pull/34) Fixed nullpointer exception, if description is empty ([@YamStranger](https://github.com/YamStranger))
+- [#31](https://github.com/serenity-bdd/serenity-jira/pull/31) Core updated to 1.1.29 ([@YamStranger](https://github.com/YamStranger))
+- [#30](https://github.com/serenity-bdd/serenity-jira/pull/30) Updated tests based on new jira structure. ([@YamStranger](https://github.com/YamStranger))
+- [#27](https://github.com/serenity-bdd/serenity-jira/pull/27) Updated core to 1.1.29-rc.2 ([@YamStranger](https://github.com/YamStranger))
+- [#23](https://github.com/serenity-bdd/serenity-jira/pull/23) Updated core to 1.1.29-rc.1 ([@YamStranger](https://github.com/YamStranger))
+- [#20](https://github.com/serenity-bdd/serenity-jira/pull/20) Updated serenty core to 1.1.27 ([@YamStranger](https://github.com/YamStranger))
+- [#19](https://github.com/serenity-bdd/serenity-jira/pull/19) Updated serenity-core to 1.1.26 ([@YamStranger](https://github.com/YamStranger))
+- [#18](https://github.com/serenity-bdd/serenity-jira/pull/18) Updated contiributing guide - explaned multiline commits and pull requests name convention ([@YamStranger](https://github.com/YamStranger))
+- [#16](https://github.com/serenity-bdd/serenity-jira/pull/16) Updating serenity core to1.26-rc.1 ([@YamStranger](https://github.com/YamStranger))
+- [#15](https://github.com/serenity-bdd/serenity-jira/pull/15) Updated serenity-core and java docs to avoid warnings ([@YamStranger](https://github.com/YamStranger))
+- [#14](https://github.com/serenity-bdd/serenity-jira/pull/14) Updating of serenity core version to rc.5 ([@YamStranger](https://github.com/YamStranger))
+- [#13](https://github.com/serenity-bdd/serenity-jira/pull/13) Build script updating ([@YamStranger](https://github.com/YamStranger))
+- [#12](https://github.com/serenity-bdd/serenity-jira/pull/12) update docu ([@cliviu](https://github.com/cliviu))
+- [#11](https://github.com/serenity-bdd/serenity-jira/pull/11) use serenity equivalent properties for "thucydides.skip.jira.updates", "thucydides.jira.workflow.active", "thucydides.jira.workflow", use constants ([@cliviu](https://github.com/cliviu))
  
 **Commits:**
  
