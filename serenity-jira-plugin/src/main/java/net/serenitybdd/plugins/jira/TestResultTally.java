@@ -42,8 +42,7 @@ public class TestResultTally {
     
     public TestResult getResultForIssue(final String issueNumber) {
         List<TestOutcome> testOutcomesForThisIssue = testOutcomesTally.get(issueNumber);
-        TestResultList overallResults = TestResultList.of(convert(testOutcomesForThisIssue, toTestResults()));
-        return overallResults.getOverallResult();
+        return TestResultList.overallResultFrom(convert(testOutcomesForThisIssue, toTestResults()));
     }
 
     private Converter<TestOutcome, TestResult> toTestResults() {

@@ -184,8 +184,7 @@ public class TestResultComment {
     }
 
     public TestResult getOverallResult() {
-        List<TestResult> testResults = convert(namedTestResults, toTestResults());
-        return TestResultList.of(testResults).getOverallResult();
+        return TestResultList.overallResultFrom(convert(namedTestResults, toTestResults()));
     }
 
     private Converter<NamedTestResult, TestResult> toTestResults() {
