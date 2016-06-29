@@ -1,9 +1,10 @@
 ## Serenity BDD Jira Plugin change Log
 
-### upcoming (2016/06/21 18:19 +00:00)
+### upcoming (2016/06/29 15:38 +00:00)
  
 **Pull requests:**
  
+- [#43](https://github.com/serenity-bdd/serenity-jira/pull/43) fix compile errors ([@cliviu](https://github.com/cliviu))
 - [#39](https://github.com/serenity-bdd/serenity-jira/pull/39) Fixed loading of JiraCustomFieldRequirementsProvider, added test ([@YamStranger](https://github.com/YamStranger))
  
 **Commits:**
