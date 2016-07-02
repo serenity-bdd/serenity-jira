@@ -17,6 +17,7 @@ import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.inOrder;
@@ -40,6 +41,18 @@ public class WhenUpdatingIssueStatus {
 
         @Issues({"#MYPROJECT-123","#MYPROJECT-456"})
         public void issue_123_and_456_should_be_fixed_now() {}
+
+        public void anotherTest() {}
+    }
+
+    @Story(SampleFeature.SampleStory2.class)
+    static class SampleTestCase2 {
+
+        @Issue("#MYPROJECT-789")
+        public void issue_789_should_be_fixed_now() {}
+
+        @Issues({"#MYPROJECT-333","#MYPROJECT-444"})
+        public void issue_333_and_444_should_be_fixed_now() {}
 
         public void anotherTest() {}
     }
@@ -262,6 +275,23 @@ public class WhenUpdatingIssueStatus {
         listener.testSuiteFinished();
 
         verify(issueTracker, never()).doTransition(eq("MYPROJECT-123"), anyString());
+    }
+
+    @Test
+    public void starting_a_new_test_suite_should_clear_issues_of_the_previous_suite() {
+
+        environmentVariables.setProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY,"true");
+        TestOutcome result = newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE);
+
+        JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
+        listener.testSuiteStarted(SampleTestCase.class);
+        listener.testStarted("issue_123_should_be_fixed_now");
+        listener.testFinished(result);
+        listener.testSuiteFinished();
+        assertThat(listener.getTestResultTally().getIssues()).isNotEmpty();
+
+        listener.testSuiteStarted(SampleTestCase2.class);
+        assertThat(listener.getTestResultTally().getIssues()).isEmpty();
     }
 
     private TestOutcome newTestOutcome(String testMethod, TestResult testResult) {

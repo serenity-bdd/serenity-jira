@@ -403,4 +403,8 @@ public class JiraListener implements StepListener {
 
     public void exampleFinished() {
     }
+
+    public TestResultTally getTestResultTally(){
+        return resultTally;
+    }
 }
