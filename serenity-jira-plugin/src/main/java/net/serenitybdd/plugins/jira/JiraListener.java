@@ -118,10 +118,12 @@ public class JiraListener implements StepListener {
 
     public void testSuiteStarted(final Class<?> testCase) {
         this.currentStory = null;
+        resultTally.resetIssues();
     }
 
     public void testSuiteStarted(final Story story) {
         this.currentStory = story;
+        resultTally.resetIssues();
     }
 
     public void testStarted(final String testName) {
@@ -400,5 +402,9 @@ public class JiraListener implements StepListener {
     }
 
     public void exampleFinished() {
+    }
+
+    public TestResultTally getTestResultTally(){
+        return resultTally;
     }
 }
