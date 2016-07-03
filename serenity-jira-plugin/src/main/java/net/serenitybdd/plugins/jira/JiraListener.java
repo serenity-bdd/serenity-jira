@@ -24,6 +24,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -53,6 +54,7 @@ public class JiraListener implements StepListener {
     private final String projectPrefix;
 
     private final TestResultTally resultTally;
+    private Set<String> testSuiteIssues;
 
     static int DEFAULT_MAX_THREADS = 4;
 
@@ -66,6 +68,7 @@ public class JiraListener implements StepListener {
         configuration = Injectors.getInjector().getInstance(JIRAConfiguration.class);
         this.loader = loader;
         this.resultTally = new TestResultTally();
+        this.testSuiteIssues = new HashSet<>();
         workflow = loader.load();
 
         executorService = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(getMaxJobs()));
@@ -118,12 +121,12 @@ public class JiraListener implements StepListener {
 
     public void testSuiteStarted(final Class<?> testCase) {
         this.currentStory = null;
-        resultTally.resetIssues();
+        testSuiteIssues.clear();
     }
 
     public void testSuiteStarted(final Story story) {
         this.currentStory = story;
-        resultTally.resetIssues();
+        testSuiteIssues.clear();
     }
 
     public void testStarted(final String testName) {
@@ -134,6 +137,7 @@ public class JiraListener implements StepListener {
         if (shouldUpdateIssues()) {
             List<String> issues = addPrefixesIfRequired(stripInitialHashesFrom(issueReferencesIn(result)));
             tallyResults(result, issues);
+            testSuiteIssues.addAll(issues);
         }
     }
 
@@ -149,8 +153,7 @@ public class JiraListener implements StepListener {
     public void testSuiteFinished() {
 
         if (shouldUpdateIssues()) {
-            Set<String> issues = resultTally.getIssues();
-            updateIssueStatus(issues);
+            updateIssueStatus(testSuiteIssues);
         }
     }
 
@@ -250,7 +253,6 @@ public class JiraListener implements StepListener {
 
             IssueComment updatedComment = existingComment.withText(testResultComment.asText());
             issueTracker.updateComment(issueId,updatedComment);
-            
         }
         return testResultComment;
     }
@@ -406,5 +408,9 @@ public class JiraListener implements StepListener {
 
     public TestResultTally getTestResultTally(){
         return resultTally;
+    }
+
+    public Set<String> getTestSuiteIssues() {
+        return testSuiteIssues;
     }
 }
