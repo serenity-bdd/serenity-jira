@@ -56,9 +56,4 @@ public class TestResultTally {
     public Set<String> getIssues() {
         return testOutcomesTally.keySet();
     }
-
-    public void resetIssues()
-    {
-        testOutcomesTally.clear();
-    }
 }
