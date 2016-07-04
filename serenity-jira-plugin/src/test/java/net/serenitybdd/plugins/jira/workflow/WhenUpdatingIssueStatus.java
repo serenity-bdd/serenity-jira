@@ -285,17 +285,33 @@ public class WhenUpdatingIssueStatus {
 
         JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
         listener.testSuiteStarted(SampleTestCase.class);
+        assertThat(listener.getTestSuiteIssues()).isEmpty();
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
         listener.testSuiteFinished();
-        assertThat(listener.getTestResultTally().getIssues()).isNotEmpty();
+        assertThat(listener.getTestSuiteIssues()).containsSequence("MYPROJECT-123");
+        assertThat(listener.getTestResultTally().getIssues()).containsSequence("MYPROJECT-123");
 
+        result = newTestOutcomeForSampleClass2("issue_789_should_be_fixed_now", TestResult.FAILURE);
         listener.testSuiteStarted(SampleTestCase2.class);
-        assertThat(listener.getTestResultTally().getIssues()).isEmpty();
+        assertThat(listener.getTestSuiteIssues()).isEmpty();
+        listener.testStarted("issue_789_should_be_fixed_now");
+        listener.testFinished(result);
+        listener.testSuiteFinished();
+        assertThat(listener.getTestSuiteIssues()).containsSequence("MYPROJECT-789");
+        assertThat(listener.getTestResultTally().getIssues()).containsSequence("MYPROJECT-123","MYPROJECT-789");
     }
 
     private TestOutcome newTestOutcome(String testMethod, TestResult testResult) {
         TestOutcome result = TestOutcome.forTest(testMethod, SampleTestCase.class);
+        TestStep step = new TestStep("a narrative description");
+        step.setResult(testResult);
+        result.recordStep(step);
+        return result;
+    }
+
+    private TestOutcome newTestOutcomeForSampleClass2(String testMethod, TestResult testResult) {
+        TestOutcome result = TestOutcome.forTest(testMethod, SampleTestCase2.class);
         TestStep step = new TestStep("a narrative description");
         step.setResult(testResult);
         result.recordStep(step);
