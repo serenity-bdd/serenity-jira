@@ -58,6 +58,18 @@ class WhenReadingRequirementsFromJira extends Specification {
         totalNumberOf(requirements) == 29
     }
 
+    def "when setting story root issue type"() {
+        given:
+        environmentVariables.setProperty("jira.root.issue.type","story")
+        and:
+        def requirementsProvider = new JIRARequirementsProvider(configuration, environmentVariables)
+        when:
+        def requirements = requirementsProvider.getRequirements();
+        then:
+        requirementsProvider.rootIssueType.is("story")
+        totalNumberOf(requirements) == 21
+    }
+
     def totalNumberOf(List<Requirement> requirements) {
         int total = 0;
         requirements.each {
