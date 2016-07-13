@@ -235,14 +235,14 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
         return level < getRequirementsLinks().size() - 1;
     }
 
-    //////////////////////////////////////
+
 
     private String rootRequirementsJQL() {
         return "issuetype = " + getRootIssueType() + " and project=" + getProjectKey();
     }
 
     private String getRootIssueType() {
-        return environmentVariables.getProperty(JIRARequirementsConfiguration.JIRA_ROOT_ISSUE_TYPE, "epic");
+        return environmentVariables.getProperty(JIRARequirementsConfiguration.JIRA_ROOT_ISSUE_TYPE.getName(), "epic");
     }
 
     @Override
