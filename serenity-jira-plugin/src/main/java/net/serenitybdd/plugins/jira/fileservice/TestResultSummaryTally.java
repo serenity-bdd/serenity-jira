@@ -15,7 +15,9 @@ import java.util.concurrent.ConcurrentMap;
 
 import static ch.lambdaj.Lambda.convert;
 
+
 class TestResultSummaryTally {
+
     private final ConcurrentMap<String, List<TestOutcomeSummary>> testOutcomesTally;
 
     TestResultSummaryTally() {
@@ -29,7 +31,6 @@ class TestResultSummaryTally {
 
     List<TestOutcomeSummary> getTestOutcomesForIssue(String issueNumber) {
         return ImmutableList.copyOf(getTestOutcomeListForIssue(issueNumber));
-
     }
 
     private List<TestOutcomeSummary> getTestOutcomeListForIssue(final String issueNumber) {

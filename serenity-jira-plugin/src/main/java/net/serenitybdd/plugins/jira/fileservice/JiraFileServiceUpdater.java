@@ -99,7 +99,7 @@ public class JiraFileServiceUpdater {
      * @param outcomeDirectory  - the directory where the test outcomes are.
      * @throws IOException
      */
-    public void loadOutcomesFromDirectory(String outcomeDirectory) throws IOException
+    public List<TestOutcomeSummary> loadOutcomesFromDirectory(String outcomeDirectory) throws IOException
     {
         List<TestOutcomeSummary> testOutcomeSummaries = loadTestOutcomesSummariesFromPath(outcomeDirectory);
         for(TestOutcomeSummary currentTestOutcomeSummary : testOutcomeSummaries)
@@ -107,6 +107,7 @@ public class JiraFileServiceUpdater {
             loadTestOutcomeSummary(currentTestOutcomeSummary);
         }
         updateAllIssuesStatus();
+        return testOutcomeSummaries;
     }
 
     /**
@@ -116,16 +117,18 @@ public class JiraFileServiceUpdater {
      * @param outcomesNameFilter - regular expression filter for the outcomes names
      * @throws IOException
      */
-    public void loadOutcomesFromDirectory(String outcomeDirectory, String outcomesNameFilter) throws IOException
+    public List<TestOutcomeSummary> loadOutcomesFromDirectory(String outcomeDirectory, String outcomesNameFilter) throws IOException
     {
         List<TestOutcomeSummary> testOutcomeSummaries = loadTestOutcomesSummariesFromPath(outcomeDirectory);
         for(TestOutcomeSummary currentTestOutcomeSummary : testOutcomeSummaries)
         {
             if(currentTestOutcomeSummary.getName().matches(outcomesNameFilter)) {
                 loadTestOutcomeSummary(currentTestOutcomeSummary);
+
             }
         }
         updateAllIssuesStatus();
+        return testOutcomeSummaries;
     }
 
 
@@ -341,7 +344,6 @@ public class JiraFileServiceUpdater {
     private Converter<String, String> toIssueNumbersWithPrefixes() {
         return new Converter<String, String>() {
             public String convert(String issueNumber) {
-                System.out.println("Convert called with " + issueNumber + " and project prefix "  + projectPrefix);
                 if (StringUtils.isEmpty(projectPrefix)) {
                     return issueNumber;
                 }
