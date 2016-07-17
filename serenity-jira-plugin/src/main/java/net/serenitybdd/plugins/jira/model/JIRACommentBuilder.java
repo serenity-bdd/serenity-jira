@@ -26,16 +26,16 @@ public class JIRACommentBuilder {
 
     public JIRACommentBuilder(final boolean wikiRendering,
                               final String reportUrl,
-                              final List<TestOutcome> testOutcomes) {
+                              final List<NamedTestResult> testOutcomes) {
         this(wikiRendering, testOutcomes, reportUrl, null);
     }
 
 
     public JIRACommentBuilder(final boolean wikiRendering,
-                              final List<TestOutcome> testOutcomes,
+                              final List<NamedTestResult> testOutcomes,
                               final String reportUrl,
                               final String testRunNumber) {
-        this(wikiRendering, reportUrl, namedTestResultsFrom(testOutcomes), testRunNumber);
+        this(wikiRendering, reportUrl, testOutcomes, testRunNumber);
     }
 
 
@@ -114,7 +114,7 @@ public class JIRACommentBuilder {
         commentBuilder.append(line).append(NEW_LINE);
     }
 
-    public JIRACommentBuilder withResults(final List<TestOutcome> testOutcomes) {
+    public JIRACommentBuilder withResults(final List<NamedTestResult> testOutcomes) {
         return new JIRACommentBuilder(this.wikiRendering, reportUrl, testOutcomes);
     }
 
