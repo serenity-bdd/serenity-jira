@@ -52,7 +52,7 @@ public class JiraListener implements StepListener {
     private final EnvironmentVariables environmentVariables;
     private final String projectPrefix;
 
-    private final TestResultTally resultTally;
+    private final TestResultTally<TestOutcome> resultTally;
     private Set<String> testSuiteIssues;
 
     static int DEFAULT_MAX_THREADS = 4;

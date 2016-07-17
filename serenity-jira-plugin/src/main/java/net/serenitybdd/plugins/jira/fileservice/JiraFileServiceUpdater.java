@@ -8,6 +8,7 @@ import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.inject.Inject;
 import net.serenitybdd.plugins.jira.JiraListener;
+import net.serenitybdd.plugins.jira.TestResultTally;
 import net.serenitybdd.plugins.jira.domain.IssueComment;
 import net.serenitybdd.plugins.jira.guice.Injectors;
 import net.serenitybdd.plugins.jira.model.IssueTracker;
@@ -65,7 +66,7 @@ public class JiraFileServiceUpdater {
     private final EnvironmentVariables environmentVariables;
     private final String projectPrefix;
 
-    private final TestResultSummaryTally resultTally;
+    private final TestResultTally<TestOutcomeSummary> resultTally;
     private Set<String> allIssues;
 
     static int DEFAULT_MAX_THREADS = 4;
@@ -79,7 +80,7 @@ public class JiraFileServiceUpdater {
         this.projectPrefix = environmentVariables.getProperty(ThucydidesSystemProperty.JIRA_PROJECT.getPropertyName());
         configuration = Injectors.getInjector().getInstance(JIRAConfiguration.class);
         this.loader = loader;
-        this.resultTally = new TestResultSummaryTally();
+        this.resultTally = new TestResultTally<TestOutcomeSummary>();
         this.allIssues = new HashSet<>();
         workflow = loader.load();
 
@@ -372,7 +373,7 @@ public class JiraFileServiceUpdater {
             }
         };
     }
-    public TestResultSummaryTally getTestResultTally(){
+    public TestResultTally<TestOutcomeSummary> getTestResultTally(){
         return resultTally;
     }
 
