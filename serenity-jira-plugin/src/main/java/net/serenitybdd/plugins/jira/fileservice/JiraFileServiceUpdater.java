@@ -160,7 +160,7 @@ public class JiraFileServiceUpdater {
     private void logStatus(EnvironmentVariables environmentVariables) {
         String jiraUrl = environmentVariables.getProperty(ThucydidesSystemProperty.JIRA_URL.getPropertyName());
         String reportUrl = ThucydidesSystemProperty.THUCYDIDES_PUBLIC_URL.from(environmentVariables,"");
-        LOGGER.debug("JIRA LISTENER STATUS");
+        LOGGER.debug("JIRA UPDATER STATUS");
         LOGGER.debug("JIRA URL: {} ", jiraUrl);
         LOGGER.debug("REPORT URL: {} ", reportUrl);
         LOGGER.debug("WORKFLOW ACTIVE: {} ", workflow.isActive());
