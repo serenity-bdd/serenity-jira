@@ -2,13 +2,11 @@ package net.serenitybdd.plugins.jira.fileservice;
 
 
 import net.serenitybdd.plugins.jira.JiraListener;
-import net.serenitybdd.plugins.jira.WhenUpdatingCommentsInJIRA;
 import net.serenitybdd.plugins.jira.domain.IssueComment;
 import net.serenitybdd.plugins.jira.model.IssueTracker;
 import net.serenitybdd.plugins.jira.service.NoSuchIssueException;
 import net.serenitybdd.plugins.jira.workflow.ClasspathWorkflowLoader;
 import net.thucydides.core.model.TestOutcome;
-import net.thucydides.core.model.TestResult;
 import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -73,7 +71,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
     public void when_a_test_with_a_referenced_issue_finishes_the_plugin_should_add_a_new_comment_for_this_issue() throws IOException {
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuite").toPath();
-        jiraUpdater.loadOutcomesFromDirectory(directory.toAbsolutePath().toString(), "issue_123_should.*");
+        jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString(), "issue_123_should.*");
         verify(issueTracker).addComment(eq("MYPROJECT-123"), anyString());
     }
 
@@ -82,7 +80,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
         MockEnvironmentVariables mockEnvironmentVariables = prepareMockEnvironment();
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, mockEnvironmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuite").toPath();
-        jiraUpdater.loadOutcomesFromDirectory(directory.toAbsolutePath().toString(),"issue_123_should.*");
+        jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString(),"issue_123_should.*");
         verify(issueTracker).addComment(eq("MYPROJECT-123"), anyString());
     }
 
@@ -91,7 +89,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
         MockEnvironmentVariables mockEnvironmentVariables = prepareMockEnvironment();
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, mockEnvironmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuitewithoutprefixes").toPath();
-        jiraUpdater.loadOutcomesFromDirectory(directory.toAbsolutePath().toString());
+        jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString());
         verify(issueTracker).addComment(eq("MYPROJECT-123"), anyString());
     }
 
@@ -99,7 +97,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
     public void when_a_test_with_a_referenced_annotated_issue_finishes_the_plugin_should_add_a_new_comment_for_this_issue() throws IOException{
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuitewithissueannotation").toPath();
-        jiraUpdater.loadOutcomesFromDirectory(directory.toAbsolutePath().toString(),"issue_123_should.*");
+        jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString(),"issue_123_should.*");
         verify(issueTracker).addComment(eq("MYPROJECT-123"), anyString());
     }
 
@@ -107,7 +105,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
     public void when_a_test_with_several_referenced_issues_finishes_the_plugin_should_add_a_new_comment_for_each_issue() throws IOException{
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuite").toPath();
-        jiraUpdater.loadOutcomesFromDirectory(directory.toAbsolutePath().toString());
+        jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString());
         verify(issueTracker).addComment(eq("MYPROJECT-123"), anyString());
         verify(issueTracker).addComment(eq("MYPROJECT-456"), anyString());
     }
@@ -125,7 +123,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
     public void should_add_one_comment_even_when_several_steps_are_called() throws IOException{
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuitetestfailure").toPath();
-        jiraUpdater.loadOutcomesFromDirectory(directory.toAbsolutePath().toString(), "issue_123_and_456_should.*|anotherTest");
+        jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString(), "issue_123_and_456_should.*|anotherTest");
         verify(issueTracker).addComment(eq("MYPROJECT-123"), anyString());
         verify(issueTracker).addComment(eq("MYPROJECT-456"), anyString());
     }
@@ -135,7 +133,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
 
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuitetestfailure").toPath();
-        List<TestOutcomeSummary> testOutcomeSummaries = jiraUpdater.loadOutcomesFromDirectory(directory.toAbsolutePath().toString(), "issue_123_should.*");
+        List<TestOutcomeSummary> testOutcomeSummaries = jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString(), "issue_123_should.*");
 
         verify(issueTracker).addComment(eq("MYPROJECT-123"),
                 contains("http://my.server/myproject/thucydides/" + testOutcomeSummaries.get(0).getReportName()));
@@ -150,7 +148,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
 
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuitetestfailure").toPath();
-        jiraUpdater.loadOutcomesFromDirectory(directory.toAbsolutePath().toString(), "issue_123_should.*");
+        jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString(), "issue_123_should.*");
 
         verify(issueTracker).updateComment(eq("MYPROJECT-123"),any(IssueComment.class));
     }
@@ -163,7 +161,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
 
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuitetestfailure").toPath();
-        jiraUpdater.loadOutcomesFromDirectory(directory.toAbsolutePath().toString(), "issue_123_should.*");
+        jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString(), "issue_123_should.*");
 
         verify(issueTracker, never()).doTransition(anyString(), anyString());
     }
@@ -175,7 +173,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
 
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuitetestfailure").toPath();
-        jiraUpdater.loadOutcomesFromDirectory(directory.toAbsolutePath().toString(), "issue_123_should.*");
+        jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString(), "issue_123_should.*");
 
         verify(issueTracker, never()).doTransition(anyString(), anyString());
     }
@@ -187,7 +185,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
 
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuitetestfailure").toPath();
-        jiraUpdater.loadOutcomesFromDirectory(directory.toAbsolutePath().toString(), "issue_123_should.*");
+        jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString(), "issue_123_should.*");
 
         verify(issueTracker, never()).addComment(anyString(), anyString());
     }
@@ -201,7 +199,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
 
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuitetestfailure").toPath();
-        jiraUpdater.loadOutcomesFromDirectory(directory.toAbsolutePath().toString(), "issue_123_should.*");
+        jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString(), "issue_123_should.*");
 
         verify(issueTracker, never()).addComment(anyString(), anyString());
     }
@@ -220,7 +218,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
 
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuite").toPath();
-        jiraUpdater.loadOutcomesFromDirectory(directory.toAbsolutePath().toString(), "issue_123_should.*");
+        jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString(), "issue_123_should.*");
 
         verify(issueTracker).doTransition("MYPROJECT-123", "Resolve Issue");
     }
@@ -232,7 +230,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
 
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuitetestfailure").toPath();
-        jiraUpdater.loadOutcomesFromDirectory(directory.toAbsolutePath().toString(), "issue_123_should.*");
+        jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString(), "issue_123_should.*");
 
         verify(issueTracker).doTransition("MYPROJECT-123", "Reopen Issue");
     }

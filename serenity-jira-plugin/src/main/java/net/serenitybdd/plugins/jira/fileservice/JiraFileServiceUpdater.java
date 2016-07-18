@@ -96,11 +96,11 @@ public class JiraFileServiceUpdater {
     }
 
     /**
-     * All outcomes are loaded, at the end the issues status is updated
-     * @param outcomeDirectory  - the directory where the test outcomes are.
+     * Loads test results from outcome directory and updates Jira comments and workflow.
+     * @param outcomeDirectory  - test outcome directory.
      * @throws IOException
      */
-    public List<TestOutcomeSummary> loadOutcomesFromDirectory(String outcomeDirectory) throws IOException
+    public List<TestOutcomeSummary> updateJiraForTestResultsFrom(String outcomeDirectory) throws IOException
     {
         List<TestOutcomeSummary> testOutcomeSummaries = loadTestOutcomesSummariesFromPath(outcomeDirectory);
         for(TestOutcomeSummary currentTestOutcomeSummary : testOutcomeSummaries)
@@ -112,13 +112,14 @@ public class JiraFileServiceUpdater {
     }
 
     /**
-     * All outcomes with name is matching the filter are loaded, at the end the issues status is updated.
+     *  Loads test results from outcome directory (matching the given regular expression filter for TestOutcomes names)
+     *  and updates Jira comments and workflow.
      *
-     * @param outcomeDirectory
-     * @param outcomesNameFilter - regular expression filter for the outcomes names
+     * @param outcomeDirectory test outcome directory.
+     * @param outcomesNameFilter - regular expression filter for the outcomes names.
      * @throws IOException
      */
-    public List<TestOutcomeSummary> loadOutcomesFromDirectory(String outcomeDirectory, String outcomesNameFilter) throws IOException
+    public List<TestOutcomeSummary> updateJiraForTestResultsFrom(String outcomeDirectory, String outcomesNameFilter) throws IOException
     {
         List<TestOutcomeSummary> testOutcomeSummaries = loadTestOutcomesSummariesFromPath(outcomeDirectory);
         for(TestOutcomeSummary currentTestOutcomeSummary : testOutcomeSummaries)
