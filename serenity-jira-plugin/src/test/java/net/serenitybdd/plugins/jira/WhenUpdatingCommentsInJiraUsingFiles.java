@@ -1,7 +1,9 @@
-package net.serenitybdd.plugins.jira.fileservice;
+package net.serenitybdd.plugins.jira;
 
 
-import net.serenitybdd.plugins.jira.JiraListener;
+import net.serenitybdd.plugins.jira.JiraFileServiceUpdater;
+import net.serenitybdd.plugins.jira.JiraUpdater;
+import net.serenitybdd.plugins.jira.TestOutcomeSummary;
 import net.serenitybdd.plugins.jira.domain.IssueComment;
 import net.serenitybdd.plugins.jira.model.IssueTracker;
 import net.serenitybdd.plugins.jira.service.NoSuchIssueException;
@@ -55,7 +57,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
 
     @After
     public void resetPluginSpecificProperties() {
-        System.clearProperty(JiraListener.SKIP_JIRA_UPDATES);
+        System.clearProperty(JiraUpdater.SKIP_JIRA_UPDATES);
     }
 
     private MockEnvironmentVariables prepareMockEnvironment() {
@@ -181,7 +183,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
     @Test
     public void should_skip_JIRA_updates_if_requested() throws IOException {
         MockEnvironmentVariables environmentVariables = prepareMockEnvironment();
-        environmentVariables.setProperty(JiraListener.SKIP_JIRA_UPDATES,"true");
+        environmentVariables.setProperty(JiraUpdater.SKIP_JIRA_UPDATES,"true");
 
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuitetestfailure").toPath();
@@ -207,8 +209,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
     @Test
     public void default_listeners_should_use_default_issue_tracker() {
         JiraFileServiceUpdater listener = new JiraFileServiceUpdater();
-
-        assertThat(listener.getIssueTracker(), is(notNullValue()));
+        assertThat(listener.getJiraUpdater().getIssueTracker(), is(notNullValue()));
     }
 
     @Test

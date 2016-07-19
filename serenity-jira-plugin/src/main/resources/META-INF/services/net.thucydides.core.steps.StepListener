@@ -1,1 +1,1 @@
-net.serenitybdd.plugins.jira.JiraListener
+net.serenitybdd.plugins.jira.JiraStepListener

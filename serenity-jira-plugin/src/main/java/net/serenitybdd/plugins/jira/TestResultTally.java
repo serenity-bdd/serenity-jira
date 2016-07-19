@@ -24,12 +24,10 @@ public class TestResultTally<T> {
 
     public synchronized void recordResult(String issueNumber, T outcome) {
         getTestOutcomeListForIssue(issueNumber).add(outcome);
-
     }
 
     public List<T> getTestOutcomesForIssue(String issueNumber) {
        return ImmutableList.copyOf(getTestOutcomeListForIssue(issueNumber));
-
     }
 
     protected List<T> getTestOutcomeListForIssue(final String issueNumber) {
