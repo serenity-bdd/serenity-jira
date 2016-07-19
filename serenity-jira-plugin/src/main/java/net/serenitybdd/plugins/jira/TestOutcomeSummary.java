@@ -1,6 +1,5 @@
 package net.serenitybdd.plugins.jira;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
