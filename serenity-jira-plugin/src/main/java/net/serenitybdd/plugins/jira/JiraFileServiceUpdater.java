@@ -7,6 +7,8 @@ import net.serenitybdd.plugins.jira.guice.Injectors;
 import net.serenitybdd.plugins.jira.model.IssueTracker;
 import net.serenitybdd.plugins.jira.workflow.WorkflowLoader;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestOutcomeSummary;
+import net.thucydides.core.reports.JiraUpdaterService;
 import net.thucydides.core.reports.TestOutcomeStream;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.slf4j.Logger;
@@ -22,7 +24,7 @@ import java.util.Set;
 /**
  * Loads test outcomes from a given directory and updates Jira issues comments and Jira issues workflow status.
  */
-public class JiraFileServiceUpdater {
+public class JiraFileServiceUpdater implements JiraUpdaterService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JiraFileServiceUpdater.class);
     private final TestResultTally<TestOutcomeSummary> resultTally;

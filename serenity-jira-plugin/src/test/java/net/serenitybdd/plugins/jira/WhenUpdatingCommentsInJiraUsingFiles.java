@@ -1,14 +1,12 @@
 package net.serenitybdd.plugins.jira;
 
 
-import net.serenitybdd.plugins.jira.JiraFileServiceUpdater;
-import net.serenitybdd.plugins.jira.JiraUpdater;
-import net.serenitybdd.plugins.jira.TestOutcomeSummary;
 import net.serenitybdd.plugins.jira.domain.IssueComment;
 import net.serenitybdd.plugins.jira.model.IssueTracker;
 import net.serenitybdd.plugins.jira.service.NoSuchIssueException;
 import net.serenitybdd.plugins.jira.workflow.ClasspathWorkflowLoader;
 import net.thucydides.core.model.TestOutcome;
+import net.thucydides.core.model.TestOutcomeSummary;
 import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.util.EnvironmentVariables;

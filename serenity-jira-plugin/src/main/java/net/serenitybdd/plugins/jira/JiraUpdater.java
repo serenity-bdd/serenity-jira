@@ -16,6 +16,7 @@ import net.serenitybdd.plugins.jira.workflow.ClasspathWorkflowLoader;
 import net.serenitybdd.plugins.jira.workflow.Workflow;
 import net.serenitybdd.plugins.jira.workflow.WorkflowLoader;
 import net.thucydides.core.ThucydidesSystemProperty;
+import net.thucydides.core.model.TestOutcomeSummary;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.lang3.StringUtils;
