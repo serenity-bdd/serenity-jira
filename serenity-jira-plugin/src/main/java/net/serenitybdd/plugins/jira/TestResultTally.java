@@ -14,34 +14,32 @@ import java.util.concurrent.ConcurrentMap;
 
 import static ch.lambdaj.Lambda.convert;
 
-public class TestResultTally {
+public class TestResultTally<T> {
     
-    private final ConcurrentMap<String, List<TestOutcome>> testOutcomesTally;
+    private final ConcurrentMap<String, List<T>> testOutcomesTally;
 
     public TestResultTally() {
         this.testOutcomesTally = Maps.newConcurrentMap();
     }
 
-    public synchronized void recordResult(String issueNumber, TestOutcome outcome) {
+    public synchronized void recordResult(String issueNumber, T outcome) {
         getTestOutcomeListForIssue(issueNumber).add(outcome);
-
     }
 
-    public List<TestOutcome> getTestOutcomesForIssue(String issueNumber) {
+    public List<T> getTestOutcomesForIssue(String issueNumber) {
        return ImmutableList.copyOf(getTestOutcomeListForIssue(issueNumber));
-
     }
 
-    protected List<TestOutcome> getTestOutcomeListForIssue(final String issueNumber) {
-        List<TestOutcome> resultTallyForIssue = testOutcomesTally.get(issueNumber);
+    protected List<T> getTestOutcomeListForIssue(final String issueNumber) {
+        List<T> resultTallyForIssue = testOutcomesTally.get(issueNumber);
         if (resultTallyForIssue == null) {
-            testOutcomesTally.putIfAbsent(issueNumber, new Vector<TestOutcome>());
+            testOutcomesTally.putIfAbsent(issueNumber, new Vector<T>());
         }
         return testOutcomesTally.get(issueNumber);
     }
     
     public TestResult getResultForIssue(final String issueNumber) {
-        List<TestOutcome> testOutcomesForThisIssue = testOutcomesTally.get(issueNumber);
+        List<T> testOutcomesForThisIssue = testOutcomesTally.get(issueNumber);
         return TestResultList.overallResultFrom(convert(testOutcomesForThisIssue, toTestResults()));
     }
 

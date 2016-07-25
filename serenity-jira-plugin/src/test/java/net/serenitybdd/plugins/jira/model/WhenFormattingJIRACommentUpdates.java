@@ -1,5 +1,6 @@
 package net.serenitybdd.plugins.jira.model;
 
+import ch.lambdaj.function.convert.Converter;
 import com.google.common.collect.ImmutableList;
 import net.serenitybdd.plugins.jira.workflow.ClasspathWorkflowLoader;
 import net.thucydides.core.model.TestOutcome;
@@ -13,6 +14,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
+import static ch.lambdaj.Lambda.convert;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.is;
@@ -36,6 +38,8 @@ public class WhenFormattingJIRACommentUpdates {
 
     List<TestOutcome> testOutcomes;
 
+    List<NamedTestResult> namedTestResults;
+
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
@@ -53,11 +57,25 @@ public class WhenFormattingJIRACommentUpdates {
         when(aNewTestOutcome.getTitle()).thenReturn("A New Test");
 
         testOutcomes = ImmutableList.of(anotherSuccessfulTestOutcome, failingTestOutcome, successfulTestOutcome);
+        namedTestResults = namedTestResultsFrom(testOutcomes);
 
         environmentVariables = new MockEnvironmentVariables();
         environmentVariables.setProperty("jira.url", "http://my.jira.server");
         environmentVariables.setProperty("thucydides.public.url", "http://my.server/myproject/thucydides");
         environmentVariables.setProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY, "true");
+    }
+
+    private List<NamedTestResult> namedTestResultsFrom(List<TestOutcome> testOutcomes) {
+        return convert(testOutcomes, toNamedTestResults());
+    }
+
+    private Converter<TestOutcome, NamedTestResult> toNamedTestResults() {
+        return new Converter<TestOutcome, NamedTestResult>() {
+
+            public NamedTestResult convert(TestOutcome from) {
+                return new NamedTestResult(from.getTitle(), from.getResult());
+            }
+        };
     }
 
     @Test
@@ -81,7 +99,7 @@ public class WhenFormattingJIRACommentUpdates {
 
         String updatedComment = TestResultComment.comment(true)
                 .withReportUrl("http://my.server/myproject/thucydides/my_test.html")
-                .withResults(testOutcomes)
+                .withResults(namedTestResults)
                 .withTestRun("2012-01-17_15-39-03")
                 .asText();
 
@@ -94,14 +112,14 @@ public class WhenFormattingJIRACommentUpdates {
         TestResultComment testReport = TestResultComment.fromText("Thucydides Test Report");
 
         String updatedComment = testReport
-                                    .withUpdatedTestResults(testOutcomes)
+                                    .withUpdatedTestResults(namedTestResults)
                                     .withUpdatedReportUrl("http://my.server/myproject/thucydides/my_test.html")
                                     .withUpdatedTestRunNumber("2012-01-17_15-39-03")
                                     .asText();
 
         String expectedComment = TestResultComment.comment(true)
                 .withReportUrl("http://my.server/myproject/thucydides/my_test.html")
-                .withResults(testOutcomes)
+                .withResults(namedTestResults)
                 .withTestRun("2012-01-17_15-39-03")
                 .asText();
 
@@ -113,7 +131,7 @@ public class WhenFormattingJIRACommentUpdates {
 
         String updatedComment = TestResultComment.comment(true)
                 .withReportUrl("http://my.server/myproject/thucydides/my_test.html")
-                .withResults(testOutcomes)
+                .withResults(namedTestResults)
                 .withTestRun("2012-01-17_15-39-03")
                 .asText();
 
@@ -125,7 +143,7 @@ public class WhenFormattingJIRACommentUpdates {
 
         String updatedComment = TestResultComment.comment(true)
                 .withReportUrl("http://my.server/myproject/thucydides/my_test.html")
-                .withResults(testOutcomes)
+                .withResults(namedTestResults)
                 .withTestRun("2012-01-17_15-39-03")
                 .asText();
 
@@ -138,7 +156,7 @@ public class WhenFormattingJIRACommentUpdates {
 
         String updatedComment = TestResultComment.comment(true)
                 .withReportUrl("http://my.server/myproject/thucydides/my_test.html")
-                .withResults(testOutcomes)
+                .withResults(namedTestResults)
                 .withTestRun("2012-01-17_15-39-03")
                 .asText();
 
@@ -152,7 +170,7 @@ public class WhenFormattingJIRACommentUpdates {
 
         String commentText = TestResultComment.comment(true)
                 .withReportUrl("http://my.server/myproject/thucydides/my_test.html")
-                .withResults(testOutcomes)
+                .withResults(namedTestResults)
                 .withTestRun("2012-01-17_15-39-03")
                 .asText();
 
@@ -166,7 +184,7 @@ public class WhenFormattingJIRACommentUpdates {
 
         String commentText = TestResultComment.comment(true)
                 .withReportUrl("http://my.server/myproject/thucydides/my_test.html")
-                .withResults(testOutcomes)
+                .withResults(namedTestResults)
                 .withTestRun("2012-01-17_15-39-03")
                 .asText();
 
@@ -180,7 +198,7 @@ public class WhenFormattingJIRACommentUpdates {
 
         String commentText = TestResultComment.comment(true)
                 .withReportUrl("http://my.server/myproject/thucydides/my_test.html")
-                .withResults(testOutcomes)
+                .withResults(namedTestResults)
                 .withTestRun("2012-01-17_15-39-03")
                 .asText();
 
@@ -203,7 +221,7 @@ public class WhenFormattingJIRACommentUpdates {
 
         String commentText = TestResultComment.comment(true)
                 .withReportUrl("http://my.server/myproject/thucydides/my_test.html")
-                .withResults(testOutcomes)
+                .withResults(namedTestResults)
                 .withTestRun("2012-01-17_15-39-03")
                 .asText();
 
@@ -217,7 +235,7 @@ public class WhenFormattingJIRACommentUpdates {
 
         String commentText = TestResultComment.comment(true)
                 .withReportUrl("http://my.server/myproject/thucydides/my_test.html")
-                .withResults(testOutcomes)
+                .withResults(namedTestResults)
                 .withTestRun("2012-01-17_15-39-03")
                 .asText();
 
@@ -231,7 +249,7 @@ public class WhenFormattingJIRACommentUpdates {
 
         String commentText = TestResultComment.comment(true)
                 .withReportUrl("http://my.server/myproject/thucydides/my_test.html")
-                .withResults(testOutcomes)
+                .withResults(namedTestResults)
                 .withTestRun("2012-01-17_15-39-03")
                 .asText();
 
@@ -239,7 +257,7 @@ public class WhenFormattingJIRACommentUpdates {
         List<TestOutcome> newResults = ImmutableList.of(successfulTestOutcome, anotherSuccessfulTestOutcome, aNewTestOutcome);
         TestResultComment comment = TestResultComment.fromText(commentText);
         
-        TestResultComment updatedComment = comment.withUpdatedTestResults(newResults);
+        TestResultComment updatedComment = comment.withUpdatedTestResults(namedTestResultsFrom(newResults));
 
         List<NamedTestResult> testResults = updatedComment.getNamedTestResults();
 

@@ -207,11 +207,10 @@ public class TestResultComment {
                 .asText();
     }
 
-    public TestResultComment withUpdatedTestResults(final List<TestOutcome> newResults) {
+    public TestResultComment withUpdatedTestResults(final List<NamedTestResult> newTestResults) {
         Map<String, NamedTestResult> mergedTestResultsIndexedByName = Maps.newHashMap();
         mergedTestResultsIndexedByName.putAll(namedTestResults);
 
-        List<NamedTestResult> newTestResults = convert(newResults, fromTestOutcomesToNamedTestResults());
         for (NamedTestResult testResult : newTestResults) {
             mergedTestResultsIndexedByName.put(testResult.getTestName(), testResult);
         }

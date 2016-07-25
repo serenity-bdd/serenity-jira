@@ -96,7 +96,7 @@ public class WhenUpdatingCommentsInJIRA {
 
     @After
     public void resetPluginSpecificProperties() {
-        System.clearProperty(JiraListener.SKIP_JIRA_UPDATES);
+        System.clearProperty(JiraUpdater.SKIP_JIRA_UPDATES);
     }
 
     @Mock
@@ -114,7 +114,7 @@ public class WhenUpdatingCommentsInJIRA {
 
     @Test
     public void when_a_test_with_a_referenced_issue_finishes_the_plugin_should_add_a_new_comment_for_this_issue() {
-        JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
 
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_should_be_fixed_now");
@@ -128,7 +128,7 @@ public class WhenUpdatingCommentsInJIRA {
     public void should_not_add_the_project_prefix_to_the_issue_number_if_already_present() {
         MockEnvironmentVariables mockEnvironmentVariables = prepareMockEnvironment();
 
-        JiraListener listener = new JiraListener(issueTracker, mockEnvironmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, mockEnvironmentVariables, workflowLoader);
 
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_should_be_fixed_now");
@@ -142,7 +142,7 @@ public class WhenUpdatingCommentsInJIRA {
     public void should_add_the_project_prefix_to_the_issue_number_if_not_already_present() {
         MockEnvironmentVariables mockEnvironmentVariables = prepareMockEnvironment();
 
-        JiraListener listener = new JiraListener(issueTracker, mockEnvironmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, mockEnvironmentVariables, workflowLoader);
 
         listener.testSuiteStarted(SampleTestSuiteWithoutPrefixes.class);
         listener.testStarted("issue_123_should_be_fixed_now");
@@ -162,7 +162,7 @@ public class WhenUpdatingCommentsInJIRA {
 
     @Test
     public void when_a_test_with_a_referenced_annotated_issue_finishes_the_plugin_should_add_a_new_comment_for_this_issue() {
-        JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
 
         listener.testSuiteStarted(SampleTestSuiteWithIssueAnnotation.class);
         listener.testStarted("issue_123_should_be_fixed_now");
@@ -174,7 +174,7 @@ public class WhenUpdatingCommentsInJIRA {
 
     @Test
     public void when_a_test_with_several_referenced_issues_finishes_the_plugin_should_add_a_new_comment_for_each_issue() {
-        JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
 
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_and_456_should_be_fixed_now");
@@ -187,7 +187,7 @@ public class WhenUpdatingCommentsInJIRA {
 
     @Test
     public void when_a_test_with_several_annotated_referenced_issues_finishes_the_plugin_should_add_a_new_comment_for_each_issue() {
-        JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
 
         listener.testSuiteStarted(SampleTestSuiteWithIssueAnnotation.class);
         listener.testStarted("issue_123_and_456_should_be_fixed_now");
@@ -208,7 +208,7 @@ public class WhenUpdatingCommentsInJIRA {
 
     @Test
     public void should_add_one_comment_even_when_several_steps_are_called() {
-        JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
 
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_and_456_should_be_fixed_now");
@@ -239,7 +239,7 @@ public class WhenUpdatingCommentsInJIRA {
 
     @Test
     public void should_work_with_a_story_class() {
-        JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
 
         listener.testSuiteStarted(net.thucydides.core.model.Story.from(SampleTestSuite.class));
         listener.testStarted("Fixes issues #MYPROJECT-123");
@@ -252,7 +252,7 @@ public class WhenUpdatingCommentsInJIRA {
 
     @Test
     public void the_comment_should_contain_a_link_to_the_corresponding_story_report() {
-        JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE));
@@ -269,7 +269,7 @@ public class WhenUpdatingCommentsInJIRA {
                                                             new IssueComment("",2L,"Thucydides Test Results", "bruce"));
         when(issueTracker.getCommentsFor("MYPROJECT-123")).thenReturn(existingComments);
 
-        JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE));
@@ -284,7 +284,7 @@ public class WhenUpdatingCommentsInJIRA {
         when(issueTracker.getStatusFor("MYPROJECT-123"))
                 .thenThrow(new NoSuchIssueException("It ain't there no more."));
 
-        JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE));
@@ -298,7 +298,7 @@ public class WhenUpdatingCommentsInJIRA {
         MockEnvironmentVariables environmentVariables = prepareMockEnvironment();
         environmentVariables.setProperty("jira.url","");
 
-        JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE));
@@ -310,9 +310,9 @@ public class WhenUpdatingCommentsInJIRA {
     @Test
     public void should_skip_JIRA_updates_if_requested() {
         MockEnvironmentVariables environmentVariables = prepareMockEnvironment();
-        environmentVariables.setProperty(JiraListener.SKIP_JIRA_UPDATES,"true");
+        environmentVariables.setProperty(JiraUpdater.SKIP_JIRA_UPDATES,"true");
 
-        JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE));
@@ -328,7 +328,7 @@ public class WhenUpdatingCommentsInJIRA {
         MockEnvironmentVariables environmentVariables = prepareMockEnvironment();
         environmentVariables.setProperty("thucydides.public.url","");
         environmentVariables.setProperty("serenity.public.url","");
-        JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE));
@@ -339,9 +339,9 @@ public class WhenUpdatingCommentsInJIRA {
 
     @Test
     public void default_listeners_should_use_default_issue_tracker() {
-        JiraListener listener = new JiraListener();
+        JiraStepListener listener = new JiraStepListener();
 
-        assertThat(listener.getIssueTracker(), is(notNullValue()));
+        assertThat(listener.getJiraUpdater().getIssueTracker(), is(notNullValue()));
     }
 
     @Test
@@ -349,7 +349,7 @@ public class WhenUpdatingCommentsInJIRA {
 
         when(issueTracker.getStatusFor("MYPROJECT-123")).thenReturn("Open");
 
-        JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.SUCCESS));
@@ -363,7 +363,7 @@ public class WhenUpdatingCommentsInJIRA {
 
         when(issueTracker.getStatusFor("MYPROJECT-123")).thenReturn("Closed");
 
-        JiraListener listener = new JiraListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
         listener.testSuiteStarted(SampleTestSuite.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE));
