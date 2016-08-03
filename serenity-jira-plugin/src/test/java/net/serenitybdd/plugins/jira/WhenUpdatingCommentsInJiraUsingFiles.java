@@ -27,9 +27,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class WhenUpdatingCommentsInJiraUsingFiles {
 
@@ -85,12 +83,12 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
     }
 
     @Test
-    public void should_add_the_project_prefix_to_the_issue_number_if_not_already_present() throws IOException {
+    public void should_add_the_project_prefix_to_the_issue_number_if_not_already_present() throws IOException, InterruptedException {
         MockEnvironmentVariables mockEnvironmentVariables = prepareMockEnvironment();
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, mockEnvironmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuitewithoutprefixes").toPath();
         jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString());
-        verify(issueTracker).addComment(eq("MYPROJECT-123"), anyString());
+        verify(issueTracker, atLeast(2)).addComment(contains("MYPROJECT"), anyString());
     }
 
     @Test
