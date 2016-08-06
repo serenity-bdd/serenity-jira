@@ -45,8 +45,8 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
         environmentVariables = new MockEnvironmentVariables();
         environmentVariables.setProperty("jira.url", "http://my.jira.server");
         environmentVariables.setProperty("thucydides.public.url", "http://my.server/myproject/thucydides");
-        environmentVariables.setProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY,"true");
-        environmentVariables.setProperty("build.id","2012-01-17_15-39-03");
+        environmentVariables.setProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY, "true");
+        environmentVariables.setProperty("build.id", "2012-01-17_15-39-03");
 
         workflowLoader = new ClasspathWorkflowLoader(ClasspathWorkflowLoader.BUNDLED_WORKFLOW, environmentVariables);
     }
@@ -74,11 +74,11 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
     }
 
     @Test
-    public void should_not_add_the_project_prefix_to_the_issue_number_if_already_present() throws IOException{
+    public void should_not_add_the_project_prefix_to_the_issue_number_if_already_present() throws IOException {
         MockEnvironmentVariables mockEnvironmentVariables = prepareMockEnvironment();
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, mockEnvironmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuite").toPath();
-        jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString(),"issue_123_should.*");
+        jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString(), "issue_123_should.*");
         verify(issueTracker).addComment(eq("MYPROJECT-123"), anyString());
     }
 
@@ -92,15 +92,15 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
     }
 
     @Test
-    public void when_a_test_with_a_referenced_annotated_issue_finishes_the_plugin_should_add_a_new_comment_for_this_issue() throws IOException{
+    public void when_a_test_with_a_referenced_annotated_issue_finishes_the_plugin_should_add_a_new_comment_for_this_issue() throws IOException {
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuitewithissueannotation").toPath();
-        jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString(),"issue_123_should.*");
+        jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString(), "issue_123_should.*");
         verify(issueTracker).addComment(eq("MYPROJECT-123"), anyString());
     }
 
     @Test
-    public void when_a_test_with_several_referenced_issues_finishes_the_plugin_should_add_a_new_comment_for_each_issue() throws IOException{
+    public void when_a_test_with_several_referenced_issues_finishes_the_plugin_should_add_a_new_comment_for_each_issue() throws IOException {
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuite").toPath();
         jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString());
@@ -118,7 +118,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
     TestOutcome testOutcome;
 
     @Test
-    public void should_add_one_comment_even_when_several_steps_are_called() throws IOException{
+    public void should_add_one_comment_even_when_several_steps_are_called() throws IOException {
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuitetestfailure").toPath();
         jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString(), "issue_123_and_456_should.*|anotherTest");
@@ -127,28 +127,38 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
     }
 
     @Test
-    public void the_comment_should_contain_a_link_to_the_corresponding_story_report() throws IOException{
+    public void the_comment_should_contain_a_link_to_the_corresponding_story_report() throws IOException {
 
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuitetestfailure").toPath();
         List<TestOutcomeSummary> testOutcomeSummaries = jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString(), "issue_123_should.*");
 
+        TestOutcomeSummary failingTestOutcome = testOutcomeSummaryWithName("issue_123_should_be_fixed_now", testOutcomeSummaries);
         verify(issueTracker).addComment(eq("MYPROJECT-123"),
-                contains("http://my.server/myproject/thucydides/" + testOutcomeSummaries.get(0).getReportName()));
+                contains("http://my.server/myproject/thucydides/" + failingTestOutcome.getReportName()));
+    }
+
+    private TestOutcomeSummary testOutcomeSummaryWithName(String name, List<TestOutcomeSummary> testOutcomeSummaries) {
+        for(TestOutcomeSummary testOutcomeSummary : testOutcomeSummaries) {
+            if (testOutcomeSummary.getName().equals(name)) {
+                return testOutcomeSummary;
+            }
+        }
+        return null;
     }
 
     @Test
     public void should_update_existing_thucydides_report_comments_if_present() throws IOException {
 
-        List<IssueComment> existingComments = Arrays.asList(new IssueComment("",1L,"a comment", "bruce"),
-                new IssueComment("",2L,"Thucydides Test Results", "bruce"));
+        List<IssueComment> existingComments = Arrays.asList(new IssueComment("", 1L, "a comment", "bruce"),
+                new IssueComment("", 2L, "Thucydides Test Results", "bruce"));
         when(issueTracker.getCommentsFor("MYPROJECT-123")).thenReturn(existingComments);
 
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuitetestfailure").toPath();
         jiraUpdater.updateJiraForTestResultsFrom(directory.toAbsolutePath().toString(), "issue_123_should.*");
 
-        verify(issueTracker).updateComment(eq("MYPROJECT-123"),any(IssueComment.class));
+        verify(issueTracker).updateComment(eq("MYPROJECT-123"), any(IssueComment.class));
     }
 
 
@@ -167,7 +177,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
     @Test
     public void should_not_update_status_if_jira_url_is_undefined() throws IOException {
         MockEnvironmentVariables environmentVariables = prepareMockEnvironment();
-        environmentVariables.setProperty("jira.url","");
+        environmentVariables.setProperty("jira.url", "");
 
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuitetestfailure").toPath();
@@ -179,7 +189,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
     @Test
     public void should_skip_JIRA_updates_if_requested() throws IOException {
         MockEnvironmentVariables environmentVariables = prepareMockEnvironment();
-        environmentVariables.setProperty(JiraUpdater.SKIP_JIRA_UPDATES,"true");
+        environmentVariables.setProperty(JiraUpdater.SKIP_JIRA_UPDATES, "true");
 
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuitetestfailure").toPath();
@@ -192,8 +202,8 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
     public void should_skip_JIRA_updates_if_no_public_url_is_specified() throws IOException {
 
         MockEnvironmentVariables environmentVariables = prepareMockEnvironment();
-        environmentVariables.setProperty("thucydides.public.url","");
-        environmentVariables.setProperty("serenity.public.url","");
+        environmentVariables.setProperty("thucydides.public.url", "");
+        environmentVariables.setProperty("serenity.public.url", "");
 
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuitetestfailure").toPath();
