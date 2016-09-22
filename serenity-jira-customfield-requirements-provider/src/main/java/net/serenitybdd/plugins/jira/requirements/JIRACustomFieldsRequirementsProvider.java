@@ -209,15 +209,12 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
             Optional<IssueSummary> parentIssue = jiraClient.findByKey(issueKey);
             Optional<CustomFieldCast> parentRequirementsField = parentIssue.get().customField(requirementsField);
             if (parentIssue.isPresent()  && parentRequirementsField.isPresent()) {
-                List<String> requirementNames = null;
-                if(parentRequirementsField.get().value() instanceof String) {
-                    requirementNames = Lists.newArrayList();
-                    requirementNames.add(parentRequirementsField.get().asString());
+                if((parentRequirementsField.get().value() instanceof String) && ((String) parentRequirementsField.get().value()).isEmpty())
+                {
+                    return Optional.absent();
                 }
-                else {
-                    requirementNames = parentRequirementsField.get().asListOf(STRINGS);
-                }
-                List< Requirement > requirements = requirementsCalled(requirementNames);
+                List<String> requirementNames = parentRequirementsField.get().asListOf(STRINGS);
+                List<Requirement> requirements = requirementsCalled(requirementNames);
                 if (!requirements.isEmpty()) {
                     return Optional.of(requirements.get(requirements.size() - 1));
                 }
