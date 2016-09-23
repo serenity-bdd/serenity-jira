@@ -9,6 +9,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import net.serenitybdd.plugins.jira.client.JerseyJiraClient;
+import net.serenitybdd.plugins.jira.domain.CustomFieldCast;
 import net.serenitybdd.plugins.jira.domain.IssueSummary;
 import net.serenitybdd.plugins.jira.model.CascadingSelectOption;
 import net.serenitybdd.plugins.jira.model.JQLException;
@@ -24,10 +25,7 @@ import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static ch.lambdaj.Lambda.convert;
 import static net.thucydides.core.ThucydidesSystemProperty.THUCYDIDES_REQUIREMENT_TYPES;
@@ -209,9 +207,14 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
     private Optional<Requirement> getParentRequirementByIssueKey(String issueKey) {
         try {
             Optional<IssueSummary> parentIssue = jiraClient.findByKey(issueKey);
-            if (parentIssue.isPresent()  && parentIssue.get().customField(requirementsField).isPresent()) {
-                List<String> requirementNames = parentIssue.get().customField(requirementsField).get().asListOf(STRINGS);
-                List< Requirement > requirements = requirementsCalled(requirementNames);
+            Optional<CustomFieldCast> parentRequirementsField = parentIssue.get().customField(requirementsField);
+            if (parentIssue.isPresent()  && parentRequirementsField.isPresent()) {
+                if((parentRequirementsField.get().value() instanceof String) && ((String) parentRequirementsField.get().value()).isEmpty())
+                {
+                    return Optional.absent();
+                }
+                List<String> requirementNames = parentRequirementsField.get().asListOf(STRINGS);
+                List<Requirement> requirements = requirementsCalled(requirementNames);
                 if (!requirements.isEmpty()) {
                     return Optional.of(requirements.get(requirements.size() - 1));
                 }

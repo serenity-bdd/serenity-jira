@@ -65,6 +65,16 @@ class WhenReadingCustomFieldRequirementsFromJIRA extends Specification {
             requirement.get().type == "feature"
     }
 
+    def "should not crash when having no parent requirement from a test outcome "() {
+        given:
+        TestOutcome outcome = Mock(TestOutcome)
+        outcome.issueKeys >> ["DEMO-7"]
+        when:
+        Optional<Requirement> requirement = requirementsProvider.getParentRequirementOf(outcome)
+        then:
+        requirement.isPresent() == false
+    }
+
     def "should get corresponding requirement from a test outcome"() {
         given:
             TestOutcome outcome = Mock(TestOutcome)
