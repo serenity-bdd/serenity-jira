@@ -14,6 +14,6 @@ class WhenLoadingTagProviders extends Specification {
         then: "JIRACustomFieldsRequirementsProvider should be loaded"
             providers.
                 findAll ({{provider -> provider instanceof JIRACustomFieldsRequirementsProvider}}).
-                size() == 3
+                size() == 1
     }
 }
