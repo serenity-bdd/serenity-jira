@@ -98,7 +98,6 @@ public class JiraStepListener implements StepListener {
 
     public void assumptionViolated(String s) {}
 
-    @Override
     public void testRunFinished() {
     }
 
