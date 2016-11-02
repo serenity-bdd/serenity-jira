@@ -17,7 +17,6 @@ public class JIRACustomFieldsRequirementsTagProviderStrategy implements TagProvi
         return ImmutableSet.of(new JIRACustomFieldsRequirementsProvider());
     }
 
-    @Override
     public boolean hasHighPriority() {
         return true;
     }
