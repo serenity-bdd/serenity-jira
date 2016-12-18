@@ -20,6 +20,7 @@ import net.thucydides.core.model.Release;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.requirements.ReleaseProvider;
+import net.thucydides.core.requirements.RequirementsList;
 import net.thucydides.core.requirements.RequirementsTagProvider;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -203,6 +204,16 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
             return Optional.absent();
         }
     }
+
+    public Optional<Requirement> getParentRequirementOf(Requirement requirement) {
+        for (Requirement candidateParent : RequirementsList.of(getRequirements()).asFlattenedList()) {
+            if (candidateParent.getChildren().contains(requirement)) {
+                return Optional.of(candidateParent);
+            }
+        }
+        return Optional.absent();
+    }
+
 
     private Optional<Requirement> getParentRequirementByIssueKey(String issueKey) {
         try {
