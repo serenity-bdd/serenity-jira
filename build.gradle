@@ -37,7 +37,7 @@ subprojects {
 }
 
 ext {
-    serenityCoreVersion = "1.2.1-rc.3"
+    serenityCoreVersion = "1.2.3-SNAPSHOT"
 
     // Bintray configuration
     bintrayBaseUrl = 'https://api.bintray.com/maven'
@@ -254,7 +254,7 @@ subprojects {
         dependencies {
             compile "net.serenity-bdd:serenity-core:$serenityCoreVersion"
             compile "com.google.inject:guice:3.0"
-            compile "com.google.guava:guava:19.0"
+            compile "com.google.guava:guava:20.0"
             compile "org.slf4j:slf4j-api:1.7.21"
             compile "org.codehaus.groovy:groovy-all:2.4.4"
 

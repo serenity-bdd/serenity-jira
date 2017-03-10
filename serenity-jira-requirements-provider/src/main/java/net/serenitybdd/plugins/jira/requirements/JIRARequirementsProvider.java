@@ -15,6 +15,7 @@ import net.serenitybdd.plugins.jira.service.SystemPropertiesJIRAConfiguration;
 import net.thucydides.core.guice.Injectors;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestTag;
+import net.thucydides.core.requirements.RequirementsList;
 import net.thucydides.core.requirements.RequirementsTagProvider;
 import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.EnvironmentVariables;
@@ -268,6 +269,16 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
         } else {
             return Optional.absent();
         }
+    }
+
+    @Override
+    public Optional<Requirement> getParentRequirementOf(Requirement requirement) {
+        for (Requirement candidateParent : RequirementsList.of(getRequirements()).asFlattenedList()) {
+            if (candidateParent.getChildren().contains(requirement)) {
+                return Optional.of(candidateParent);
+            }
+        }
+        return Optional.absent();
     }
 
     private boolean noSuchIssue(JQLException e) {
