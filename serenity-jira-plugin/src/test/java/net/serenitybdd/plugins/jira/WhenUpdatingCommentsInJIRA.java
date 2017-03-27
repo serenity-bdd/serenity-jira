@@ -229,7 +229,7 @@ public class WhenUpdatingCommentsInJIRA {
         verify(issueTracker).addComment(eq("MYPROJECT-123"), anyString());
         verify(issueTracker).addComment(eq("MYPROJECT-456"), anyString());
     }
-    
+
     @Test
     public void should_update_existing_thucydides_report_comments_if_present() {
 
