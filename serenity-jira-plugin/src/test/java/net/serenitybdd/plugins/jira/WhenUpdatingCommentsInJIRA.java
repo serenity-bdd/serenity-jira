@@ -2,12 +2,9 @@ package net.serenitybdd.plugins.jira;
 
 import net.serenitybdd.plugins.jira.domain.IssueComment;
 import net.serenitybdd.plugins.jira.model.IssueTracker;
+import net.serenitybdd.plugins.jira.service.NoSuchIssueException;
 import net.serenitybdd.plugins.jira.workflow.ClasspathWorkflowLoader;
-import net.thucydides.core.annotations.Feature;
-import net.thucydides.core.annotations.Issue;
-import net.thucydides.core.annotations.Issues;
-import net.thucydides.core.annotations.Story;
-import net.thucydides.core.annotations.Title;
+import net.thucydides.core.annotations.*;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
@@ -15,7 +12,6 @@ import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
-import net.serenitybdd.plugins.jira.service.NoSuchIssueException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,11 +26,8 @@ import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.contains;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class WhenUpdatingCommentsInJIRA {
 
@@ -236,32 +229,7 @@ public class WhenUpdatingCommentsInJIRA {
         verify(issueTracker).addComment(eq("MYPROJECT-123"), anyString());
         verify(issueTracker).addComment(eq("MYPROJECT-456"), anyString());
     }
-
-    @Test
-    public void should_work_with_a_story_class() {
-        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
-
-        listener.testSuiteStarted(net.thucydides.core.model.Story.from(SampleTestSuite.class));
-        listener.testStarted("Fixes issues #MYPROJECT-123");
-        listener.testFinished(newTestOutcome("Fixes issues #MYPROJECT-123", TestResult.FAILURE));
-        listener.testSuiteFinished();
-
-        verify(issueTracker).addComment(eq("MYPROJECT-123"),
-                contains("http://my.server/myproject/thucydides/11862381fef61f33bcaeea77d74fca8c.html"));
-    }
-
-    @Test
-    public void the_comment_should_contain_a_link_to_the_corresponding_story_report() {
-        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
-        listener.testSuiteStarted(SampleTestSuite.class);
-        listener.testStarted("issue_123_should_be_fixed_now");
-        listener.testFinished(newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE));
-        listener.testSuiteFinished();
-
-        verify(issueTracker).addComment(eq("MYPROJECT-123"),
-                contains("http://my.server/myproject/thucydides/9a0db07c882810765b226fe66b60da41.html"));
-    }
-
+    
     @Test
     public void should_update_existing_thucydides_report_comments_if_present() {
 
