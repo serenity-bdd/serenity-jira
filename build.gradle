@@ -46,7 +46,7 @@ subprojects {
 }
 
 ext {
-    serenityCoreVersion = "1.2.3-SNAPSHOT"
+    serenityCoreVersion = "1.2.4"
 
     // Bintray configuration
     bintrayBaseUrl = 'https://api.bintray.com/maven'
