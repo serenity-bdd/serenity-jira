@@ -13,6 +13,15 @@ buildscript {
 }
 
 apply plugin: 'org.ajoberstar.release-base'
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+group = 'net.serenity-bdd'
+
 release {
     grgit = Grgit.open()
     versionStrategy Strategies.FINAL
