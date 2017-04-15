@@ -13,7 +13,7 @@ import net.serenitybdd.plugins.jira.domain.*;
 import net.serenitybdd.plugins.jira.model.CascadingSelectOption;
 import net.serenitybdd.plugins.jira.model.CustomField;
 import net.serenitybdd.plugins.jira.model.JQLException;
-import org.glassfish.jersey.client.filter.HttpBasicAuthFilter;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
@@ -507,7 +507,7 @@ public class JerseyJiraClient {
     }
 
     public Client restClient() {
-        return ClientBuilder.newBuilder().register(new HttpBasicAuthFilter(username, password)).build();
+        return ClientBuilder.newBuilder().register(HttpAuthenticationFeature.universal(username, password)).build();
     }
 
     private String stringValueOf(JsonElement field) {

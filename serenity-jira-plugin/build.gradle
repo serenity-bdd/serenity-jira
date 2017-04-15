@@ -3,7 +3,7 @@ ext {
     projectDescription = 'Serenity JIRA Plugin'
 }
 dependencies {
-    compile('org.glassfish.jersey.core:jersey-client:2.3.1') {
+    compile('org.glassfish.jersey.core:jersey-client:2.25.1') {
         exclude group:"javax.ws.rs", module:"javax.ws.rs-api"
         exclude group:"com.google.guava", module:"guava"
     }
