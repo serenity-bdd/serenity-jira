@@ -58,6 +58,11 @@ public class JiraStepListener implements StepListener {
     public void testStarted(final String testName) {
     }
 
+    @Override
+    public void testStarted(String description, String id) {
+
+    }
+
     public void testFinished(TestOutcome result) {
         if (jiraUpdater.shouldUpdateIssues()) {
             List<String> issues = jiraUpdater.getPrefixedIssuesWithoutHashes(new TestOutcomeSummary(result));

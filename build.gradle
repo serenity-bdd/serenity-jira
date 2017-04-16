@@ -13,6 +13,15 @@ buildscript {
 }
 
 apply plugin: 'org.ajoberstar.release-base'
+apply plugin: 'groovy'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'com.jfrog.bintray'
+
+group = 'net.serenity-bdd'
+
 release {
     grgit = Grgit.open()
     versionStrategy Strategies.FINAL
@@ -37,7 +46,7 @@ subprojects {
 }
 
 ext {
-    serenityCoreVersion = "1.2.1-rc.3"
+    serenityCoreVersion = "1.2.5-rc.2"
 
     // Bintray configuration
     bintrayBaseUrl = 'https://api.bintray.com/maven'
@@ -254,7 +263,7 @@ subprojects {
         dependencies {
             compile "net.serenity-bdd:serenity-core:$serenityCoreVersion"
             compile "com.google.inject:guice:3.0"
-            compile "com.google.guava:guava:19.0"
+            compile "com.google.guava:guava:21.0"
             compile "org.slf4j:slf4j-api:1.7.21"
             compile "org.codehaus.groovy:groovy-all:2.4.4"
 

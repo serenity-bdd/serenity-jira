@@ -205,6 +205,7 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
         }
     }
 
+    @Override
     public Optional<Requirement> getParentRequirementOf(Requirement requirement) {
         for (Requirement candidateParent : RequirementsList.of(getRequirements()).asFlattenedList()) {
             if (candidateParent.getChildren().contains(requirement)) {
@@ -213,7 +214,6 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
         }
         return Optional.absent();
     }
-
 
     private Optional<Requirement> getParentRequirementByIssueKey(String issueKey) {
         try {

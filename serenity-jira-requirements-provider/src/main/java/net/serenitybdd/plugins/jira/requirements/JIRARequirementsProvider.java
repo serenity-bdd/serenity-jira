@@ -271,6 +271,7 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
         }
     }
 
+    @Override
     public Optional<Requirement> getParentRequirementOf(Requirement requirement) {
         for (Requirement candidateParent : RequirementsList.of(getRequirements()).asFlattenedList()) {
             if (candidateParent.getChildren().contains(requirement)) {
