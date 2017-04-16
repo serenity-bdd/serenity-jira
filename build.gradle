@@ -13,15 +13,6 @@ buildscript {
 }
 
 apply plugin: 'org.ajoberstar.release-base'
-apply plugin: 'groovy'
-apply plugin: 'eclipse'
-apply plugin: 'idea'
-apply plugin: 'maven'
-apply plugin: 'maven-publish'
-apply plugin: 'com.jfrog.bintray'
-
-group = 'net.serenity-bdd'
-
 release {
     grgit = Grgit.open()
     versionStrategy Strategies.FINAL
@@ -46,7 +37,7 @@ subprojects {
 }
 
 ext {
-    serenityCoreVersion = "1.2.5-rc.2"
+    serenityCoreVersion = "1.2.5-rc.5"
 
     // Bintray configuration
     bintrayBaseUrl = 'https://api.bintray.com/maven'
@@ -70,8 +61,8 @@ allprojects {
             // fail fast on dependency convergence problems
             failOnVersionConflict()
             force  'commons-collections:commons-collections:3.2.2',
-            "xml-apis:xml-apis:1.4.01",
-            "commons-codec:commons-codec:1.10"
+                    "xml-apis:xml-apis:1.4.01",
+                    "commons-codec:commons-codec:1.10"
         }
     }
 }
