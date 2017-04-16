@@ -1,7 +1,6 @@
 package net.serenitybdd.plugins.jira.requirements
 
 import net.thucydides.core.statistics.service.ClasspathTagProviderService
-import net.serenitybdd.plugins.jira.requirements.JIRACustomFieldsRequirementsProvider
 import spock.lang.Specification
 
 class WhenLoadingTagProviders extends Specification {
@@ -13,7 +12,7 @@ class WhenLoadingTagProviders extends Specification {
             def providers = service.getTagProviders();
         then: "JIRACustomFieldsRequirementsProvider should be loaded"
             providers.
-                findAll ({{provider -> provider instanceof JIRACustomFieldsRequirementsProvider}}).
+                findAll ({provider -> provider instanceof JIRACustomFieldsRequirementsProvider}).
                 size() == 1
     }
 }

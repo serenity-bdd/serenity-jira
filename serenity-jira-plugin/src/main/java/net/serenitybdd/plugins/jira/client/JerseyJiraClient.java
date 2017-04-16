@@ -507,7 +507,7 @@ public class JerseyJiraClient {
     }
 
     public Client restClient() {
-        return ClientBuilder.newBuilder().register(HttpAuthenticationFeature.universal(username, password)).build();
+        return ClientBuilder.newBuilder().register(HttpAuthenticationFeature.basic(username, password)).build();
     }
 
     private String stringValueOf(JsonElement field) {
