@@ -420,6 +420,9 @@ public class JerseyJiraClient {
 
     private List<String> toList(JsonArray array)  {
         List<String> list = Lists.newArrayList();
+        if(array == null) {
+            return list;
+        }
         for (int i = 0; i < array.size(); i++) {
             list.add(stringValueOf(array.get(i)));
         }
@@ -428,6 +431,9 @@ public class JerseyJiraClient {
 
     private List<String> toListOfVersions(JsonArray array)  {
         List<String> list = Lists.newArrayList();
+        if(array == null) {
+            return list;
+        }
         for (int i = 0; i < array.size(); i++) {
             JsonObject versionObject = (JsonObject) array.get(i);
             list.add(versionObject.getAsJsonPrimitive("name").getAsString());
