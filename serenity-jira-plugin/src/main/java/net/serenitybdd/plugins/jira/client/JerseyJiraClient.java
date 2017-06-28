@@ -642,7 +642,8 @@ public class JerseyJiraClient {
                     while(fieldKeys.hasNext()) {
                         String entryFieldName = fieldKeys.next().getKey();
                         JsonObject entry = fields.getAsJsonObject(entryFieldName);
-                        if (entry.getAsJsonPrimitive("name").getAsString().equalsIgnoreCase(fieldName)) {
+                        if (entry.getAsJsonPrimitive("name").getAsString().equalsIgnoreCase(fieldName) 
+                            && entry.getAsJsonArray("allowedValues")!=null) {
                             result.addAll(convertToCascadingSelectOptions(entry.getAsJsonArray("allowedValues")));
                         }
                     }
