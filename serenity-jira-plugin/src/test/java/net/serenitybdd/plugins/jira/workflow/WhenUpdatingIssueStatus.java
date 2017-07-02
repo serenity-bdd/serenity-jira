@@ -11,6 +11,8 @@ import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
 import net.serenitybdd.plugins.jira.JiraStepListener;
 import net.serenitybdd.plugins.jira.model.IssueTracker;
+import net.serenitybdd.plugins.jira.zephyr.client.ZephyrClient;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -69,6 +71,9 @@ public class WhenUpdatingIssueStatus {
 
     @Mock
     IssueTracker issueTracker;
+    
+    @Mock
+    ZephyrClient zephyrClient;
 
     EnvironmentVariables environmentVariables;
     
@@ -84,7 +89,7 @@ public class WhenUpdatingIssueStatus {
         environmentVariables.setProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY,"false");
 
         workflowLoader = new ClasspathWorkflowLoader(ClasspathWorkflowLoader.BUNDLED_WORKFLOW, environmentVariables);
-        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader, zephyrClient);
 
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
@@ -103,7 +108,7 @@ public class WhenUpdatingIssueStatus {
         environmentVariables.setProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY,"");
 
         workflowLoader = new ClasspathWorkflowLoader(ClasspathWorkflowLoader.BUNDLED_WORKFLOW, environmentVariables);
-        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader, zephyrClient);
 
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
@@ -123,7 +128,7 @@ public class WhenUpdatingIssueStatus {
 
         when(issueTracker.getStatusFor("MYPROJECT-123")).thenReturn("Open");
 
-        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader, zephyrClient);
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
@@ -142,7 +147,7 @@ public class WhenUpdatingIssueStatus {
 
         when(issueTracker.getStatusFor("MYPROJECT-123")).thenReturn("In Progress");
 
-        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader, zephyrClient);
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
@@ -162,7 +167,7 @@ public class WhenUpdatingIssueStatus {
 
         when(issueTracker.getStatusFor("MYPROJECT-123")).thenReturn("Reopened");
 
-        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader, zephyrClient);
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
@@ -180,7 +185,7 @@ public class WhenUpdatingIssueStatus {
 
         when(issueTracker.getStatusFor("MYPROJECT-123")).thenReturn("Resolved");
 
-        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader, zephyrClient);
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
@@ -198,7 +203,7 @@ public class WhenUpdatingIssueStatus {
 
         when(issueTracker.getStatusFor("MYPROJECT-123")).thenReturn("Resolved");
 
-        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader, zephyrClient);
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
@@ -216,7 +221,7 @@ public class WhenUpdatingIssueStatus {
 
         when(issueTracker.getStatusFor("MYPROJECT-123")).thenReturn("Closed");
 
-        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader, zephyrClient);
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
@@ -234,7 +239,7 @@ public class WhenUpdatingIssueStatus {
 
         when(issueTracker.getStatusFor("MYPROJECT-123")).thenReturn("Open");
 
-        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader, zephyrClient);
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
@@ -251,7 +256,7 @@ public class WhenUpdatingIssueStatus {
 
         when(issueTracker.getStatusFor("MYPROJECT-123")).thenReturn("Reopen");
 
-        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader, zephyrClient);
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
@@ -268,7 +273,7 @@ public class WhenUpdatingIssueStatus {
 
         when(issueTracker.getStatusFor("MYPROJECT-123")).thenReturn("In Progress");
 
-        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader, zephyrClient);
         listener.testSuiteStarted(SampleTestCase.class);
         listener.testStarted("issue_123_should_be_fixed_now");
         listener.testFinished(result);
@@ -283,7 +288,7 @@ public class WhenUpdatingIssueStatus {
         environmentVariables.setProperty(ClasspathWorkflowLoader.ACTIVATE_WORKFLOW_PROPERTY,"true");
         TestOutcome result = newTestOutcome("issue_123_should_be_fixed_now", TestResult.FAILURE);
 
-        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader);
+        JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader, zephyrClient);
         listener.testSuiteStarted(SampleTestCase.class);
         assertThat(listener.getTestSuiteIssues()).isEmpty();
         listener.testStarted("issue_123_should_be_fixed_now");
