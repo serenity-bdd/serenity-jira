@@ -29,7 +29,7 @@ repositories {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '2.10'
+    gradleVersion = '4.0'
 }
 
 subprojects {
@@ -37,7 +37,7 @@ subprojects {
 }
 
 ext {
-    serenityCoreVersion = "1.2.5-rc.5"
+    serenityCoreVersion = "1.5.3"
 
     // Bintray configuration
     bintrayBaseUrl = 'https://api.bintray.com/maven'
@@ -62,7 +62,8 @@ allprojects {
             failOnVersionConflict()
             force  'commons-collections:commons-collections:3.2.2',
                     "xml-apis:xml-apis:1.4.01",
-                    "commons-codec:commons-codec:1.10"
+                    "commons-codec:commons-codec:1.10",
+                    "com.google.guava:guava:21.0"
         }
     }
 }
@@ -76,8 +77,8 @@ subprojects {
     apply plugin: 'maven-publish'
     apply plugin: 'com.jfrog.bintray'
 
-    sourceCompatibility = 1.7
-    targetCompatibility = 1.7
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
     repositories {
         mavenLocal()
@@ -253,10 +254,10 @@ subprojects {
 
         dependencies {
             compile "net.serenity-bdd:serenity-core:$serenityCoreVersion"
-            compile "com.google.inject:guice:3.0"
+            compile "com.google.inject:guice:4.1.0"
             compile "com.google.guava:guava:21.0"
             compile "org.slf4j:slf4j-api:1.7.21"
-            compile "org.codehaus.groovy:groovy-all:2.4.4"
+            compile "org.codehaus.groovy:groovy-all:2.4.11"
 
             testCompile("ch.qos.logback:logback-classic:1.0.13") {
                 exclude group:"org.slf4j", module:"slf4j-api"
