@@ -1,9 +1,20 @@
 package net.serenitybdd.plugins.jira;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.inject.Inject;
+
 import net.serenitybdd.plugins.jira.guice.Injectors;
 import net.serenitybdd.plugins.jira.model.IssueTracker;
 import net.serenitybdd.plugins.jira.workflow.WorkflowLoader;
+import net.serenitybdd.plugins.jira.zephyr.ZephyrUpdater;
+import net.serenitybdd.plugins.jira.zephyr.client.ZephyrClient;
 import net.thucydides.core.model.DataTable;
 import net.thucydides.core.model.Story;
 import net.thucydides.core.model.TestOutcome;
@@ -12,39 +23,36 @@ import net.thucydides.core.steps.ExecutedStepDescription;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.steps.StepListener;
 import net.thucydides.core.util.EnvironmentVariables;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Updates JIRA issues referenced in a story with a link to the corresponding story report.
  */
 public class JiraStepListener implements StepListener {
 
-
     private static final Logger LOGGER = LoggerFactory.getLogger(JiraStepListener.class);
 
     private final TestResultTally<TestOutcomeSummary> resultTally;
     private Set<String> testSuiteIssues;
     private JiraUpdater jiraUpdater;
+    private ZephyrUpdater zypherUpdater;
 
     @Inject
     public JiraStepListener(IssueTracker issueTracker,
                             EnvironmentVariables environmentVariables,
-                            WorkflowLoader loader) {
+                            WorkflowLoader loader, ZephyrClient zephyrClient) {
         this.resultTally = new TestResultTally<TestOutcomeSummary>();
         this.testSuiteIssues = new HashSet<>();
         jiraUpdater = new JiraUpdater(issueTracker,environmentVariables,loader);
+        
+        // For Zephyr
+        zypherUpdater = new ZephyrUpdater(issueTracker, environmentVariables, zephyrClient);
     }
 
     public JiraStepListener() {
         this(Injectors.getInjector().getInstance(IssueTracker.class),
                 Injectors.getInjector().getProvider(EnvironmentVariables.class).get() ,
-                Injectors.getInjector().getInstance(WorkflowLoader.class));
+                Injectors.getInjector().getInstance(WorkflowLoader.class), 
+                Injectors.getInjector().getInstance(ZephyrClient.class));
     }
 
     public void testSuiteStarted(final Class<?> testCase) {
@@ -64,7 +72,7 @@ public class JiraStepListener implements StepListener {
     }
 
     public void testFinished(TestOutcome result) {
-        if (jiraUpdater.shouldUpdateIssues()) {
+        if (jiraUpdater.shouldUpdateIssues() || zypherUpdater.shouldUpdateZephyrExecution()) {
             List<String> issues = jiraUpdater.getPrefixedIssuesWithoutHashes(new TestOutcomeSummary(result));
             tallyResults(new TestOutcomeSummary(result), issues);
             testSuiteIssues.addAll(issues);
@@ -80,6 +88,11 @@ public class JiraStepListener implements StepListener {
     public void testSuiteFinished() {
         if (jiraUpdater.shouldUpdateIssues()) {
             jiraUpdater.updateIssueStatus(testSuiteIssues, resultTally);
+        }
+        // It seems for cucumber if there are multiple scenarios associated with same story/Test
+        // then serenity invokes this function as many times as we have scenarios.
+        if (zypherUpdater.shouldUpdateZephyrExecution()) {
+        	zypherUpdater.updateZephyrExecutionStatus(testSuiteIssues, resultTally);
         }
     }
 

@@ -187,7 +187,13 @@ public class IssueSummary {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-        return new IssueSummary(self,id, key, null,null, null, null, null);
+        String type = null;
+		if (jsonObject.get("fields") != null && jsonObject.get("fields").getAsJsonObject().get("issuetype") != null
+				&& jsonObject.get("fields").getAsJsonObject().get("issuetype").getAsJsonObject()
+						.getAsJsonPrimitive("name") != null)
+			type = jsonObject.get("fields").getAsJsonObject().get("issuetype").getAsJsonObject()
+					.getAsJsonPrimitive("name").getAsString();
+        return new IssueSummary(self,id, key, null,null, null, type, null);
     }
 
 }

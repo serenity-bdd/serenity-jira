@@ -40,6 +40,10 @@ public class JiraIssueTracker implements IssueTracker {
         this.logger = logger;
         this.jiraConnection = new JIRAConnection(jiraConfiguration);
     }
+    
+    public JIRAConnection getJiraConnection() {
+    	return this.jiraConnection;
+    }
 
     @Override
     public String toString() {

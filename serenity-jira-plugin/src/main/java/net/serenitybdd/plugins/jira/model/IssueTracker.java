@@ -1,6 +1,7 @@
 package net.serenitybdd.plugins.jira.model;
 
 import net.serenitybdd.plugins.jira.domain.IssueComment;
+import net.serenitybdd.plugins.jira.service.JIRAConnection;
 
 import java.util.List;
 
@@ -24,5 +25,6 @@ public interface IssueTracker {
     public String getStatusFor(final String issueKey) throws IssueTrackerUpdateException;
 
     public void doTransition(final String issueKey, final String status) throws IssueTrackerUpdateException;
-
+    
+    public JIRAConnection getJiraConnection();
 }
