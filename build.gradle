@@ -37,7 +37,7 @@ subprojects {
 }
 
 ext {
-    serenityCoreVersion = "1.5.3"
+    serenityCoreVersion = "1.6.9"
 
     // Bintray configuration
     bintrayBaseUrl = 'https://api.bintray.com/maven'
@@ -62,8 +62,9 @@ allprojects {
             failOnVersionConflict()
             force  'commons-collections:commons-collections:3.2.2',
                     "xml-apis:xml-apis:1.4.01",
+                    "org.seleniumhq.selenium:selenium-api:3.5.3",
                     "commons-codec:commons-codec:1.10",
-                    "com.google.guava:guava:21.0"
+                    "com.google.guava:guava:23.0"
         }
     }
 }
@@ -253,16 +254,19 @@ subprojects {
 
 
         dependencies {
-            compile "net.serenity-bdd:serenity-core:$serenityCoreVersion"
+            compile("net.serenity-bdd:serenity-core:$serenityCoreVersion") {
+                exclude group:"org.seleniumhq.selenium", module:"htmlunit-driver"
+            }
             compile "com.google.inject:guice:4.1.0"
-            compile "com.google.guava:guava:21.0"
+            compile "com.google.guava:guava:23.0"
             compile "org.slf4j:slf4j-api:1.7.21"
             compile "org.codehaus.groovy:groovy-all:2.4.11"
-
+            compile("com.googlecode.lambdaj:lambdaj:2.3.3") {
+		        exclude group:"org.objenesis", module:"objenesis"
+            }
             testCompile("ch.qos.logback:logback-classic:1.0.13") {
                 exclude group:"org.slf4j", module:"slf4j-api"
             }
-            testCompile "net.serenity-bdd:serenity-test-utils:$serenityCoreVersion"
 
             testCompile "junit:junit:4.12"
             testCompile("org.spockframework:spock-core:0.7-groovy-2.0") {
