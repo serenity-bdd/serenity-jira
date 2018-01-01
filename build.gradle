@@ -37,7 +37,7 @@ subprojects {
 }
 
 ext {
-    serenityCoreVersion = "1.6.9"
+    serenityCoreVersion = "1.8.17"
 
     // Bintray configuration
     bintrayBaseUrl = 'https://api.bintray.com/maven'
@@ -62,9 +62,11 @@ allprojects {
             failOnVersionConflict()
             force  'commons-collections:commons-collections:3.2.2',
                     "xml-apis:xml-apis:1.4.01",
-                    "org.seleniumhq.selenium:selenium-api:3.5.3",
+                    "org.seleniumhq.selenium:selenium-api:3.8.1",
                     "commons-codec:commons-codec:1.10",
-                    "com.google.guava:guava:23.0"
+                    "com.google.guava:guava:23.0",
+                    "com.google.code.gson:gson:2.8.2"
+
         }
     }
 }
@@ -260,7 +262,7 @@ subprojects {
             compile "com.google.inject:guice:4.1.0"
             compile "com.google.guava:guava:23.0"
             compile "org.slf4j:slf4j-api:1.7.21"
-            compile "org.codehaus.groovy:groovy-all:2.4.11"
+            compile "org.codehaus.groovy:groovy-all:2.4.12"
             compile("com.googlecode.lambdaj:lambdaj:2.3.3") {
 		        exclude group:"org.objenesis", module:"objenesis"
             }
@@ -269,7 +271,7 @@ subprojects {
             }
 
             testCompile "junit:junit:4.12"
-            testCompile("org.spockframework:spock-core:0.7-groovy-2.0") {
+            testCompile("org.spockframework:spock-core:1.1-groovy-2.4") {
                 exclude group: "junit"
                 exclude group:"org.codehaus.groovy", module: "groovy-all"
             }
