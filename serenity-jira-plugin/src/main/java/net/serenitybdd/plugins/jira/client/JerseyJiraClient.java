@@ -1,5 +1,26 @@
 package net.serenitybdd.plugins.jira.client;
 
+import static java.util.Collections.EMPTY_LIST;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import com.beust.jcommander.internal.Maps;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
@@ -8,27 +29,24 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.gson.*;
-import net.serenitybdd.plugins.jira.domain.*;
-import net.serenitybdd.plugins.jira.model.CascadingSelectOption;
-import net.serenitybdd.plugins.jira.model.CustomField;
-import net.serenitybdd.plugins.jira.model.JQLException;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-
-import static java.util.Collections.EMPTY_LIST;
+import net.serenitybdd.plugins.jira.domain.IssueComment;
+import net.serenitybdd.plugins.jira.domain.IssueSummary;
+import net.serenitybdd.plugins.jira.domain.IssueTransition;
+import net.serenitybdd.plugins.jira.domain.Project;
+import net.serenitybdd.plugins.jira.domain.Version;
+import net.serenitybdd.plugins.jira.model.CascadingSelectOption;
+import net.serenitybdd.plugins.jira.model.CustomField;
+import net.serenitybdd.plugins.jira.model.JQLException;
 
 /**
  * A JIRA client using the new REST interface
@@ -545,15 +563,25 @@ public class JerseyJiraClient {
         return response.getStatus() == 400;
     }
 
-    public void checkValid(Response response)  {
+    public void checkValid(Response response) {
         int status = response.getStatus();
-        if (status != OK && (status != CREATE_ISSUE_OK) && (status != DELETE_ISSUE_OK) ){
-            switch(status) {
-                case 400 : return;
-                case 401 : handleAuthenticationError("Authentication error (401) for user " + this.username);
-                case 403 : handleAuthenticationError("Forbidden error (403) for user " + this.username);
-                case 404 : handleConfigurationError("Service not found (404) - try checking the JIRA URL?");
-                case 407 : handleConfigurationError("Proxy authentication required (407)");
+        if (status != OK && (status != CREATE_ISSUE_OK) && (status != DELETE_ISSUE_OK)) {
+            switch (status) {
+                case 301:
+                case 302:
+                case 304:
+                case 307:
+                case 308:
+                case 400:
+                    return;
+                case 401:
+                    handleAuthenticationError("Authentication error (401) for user " + this.username);
+                case 403:
+                    handleAuthenticationError("Forbidden error (403) for user " + this.username);
+                case 404:
+                    handleConfigurationError("Service not found (404) - try checking the JIRA URL?");
+                case 407:
+                    handleConfigurationError("Proxy authentication required (407)");
                 default:
                     throw new JQLException("JIRA query failed: error " + status);
             }
