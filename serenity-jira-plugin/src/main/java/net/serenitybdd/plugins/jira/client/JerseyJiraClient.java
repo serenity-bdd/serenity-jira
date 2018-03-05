@@ -1,20 +1,18 @@
 package net.serenitybdd.plugins.jira.client;
 
-import com.beust.jcommander.internal.Maps;
-import com.google.common.base.Preconditions;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.LoadingCache;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.gson.*;
-import net.serenitybdd.plugins.jira.domain.*;
-import net.serenitybdd.plugins.jira.model.CascadingSelectOption;
-import net.serenitybdd.plugins.jira.model.CustomField;
-import net.serenitybdd.plugins.jira.model.JQLException;
-import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import static java.util.Collections.EMPTY_LIST;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -22,13 +20,34 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
 
-import static java.util.Collections.EMPTY_LIST;
+import com.beust.jcommander.internal.Maps;
+import com.google.common.base.Preconditions;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.LoadingCache;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
+import com.google.common.collect.Lists;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+
+import org.glassfish.jersey.client.ClientProperties;
+import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import net.serenitybdd.plugins.jira.domain.IssueComment;
+import net.serenitybdd.plugins.jira.domain.IssueSummary;
+import net.serenitybdd.plugins.jira.domain.IssueTransition;
+import net.serenitybdd.plugins.jira.domain.Project;
+import net.serenitybdd.plugins.jira.domain.Version;
+import net.serenitybdd.plugins.jira.model.CascadingSelectOption;
+import net.serenitybdd.plugins.jira.model.CustomField;
+import net.serenitybdd.plugins.jira.model.JQLException;
 
 /**
  * A JIRA client using the new REST interface
@@ -513,7 +532,10 @@ public class JerseyJiraClient {
     }
 
     public Client restClient() {
-        return ClientBuilder.newBuilder().register(HttpAuthenticationFeature.basic(username, password)).build();
+        return ClientBuilder.newBuilder()
+                            .register(HttpAuthenticationFeature.basic(username, password))
+                            .property(ClientProperties.FOLLOW_REDIRECTS, Boolean.TRUE)
+                            .build();
     }
 
     private String stringValueOf(JsonElement field) {
