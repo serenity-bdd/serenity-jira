@@ -2,7 +2,6 @@ package net.serenitybdd.plugins.jira.requirements;
 
 import ch.lambdaj.function.convert.Converter;
 import com.beust.jcommander.internal.Maps;
-import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -201,7 +200,7 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
         if (!issueKeys.isEmpty()) {
             return getParentRequirementByIssueKey(issueKeys.get(0));
         } else {
-            return Optional.absent();
+            return Optional.empty();
         }
     }
 
@@ -212,7 +211,7 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
                 return Optional.of(candidateParent);
             }
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     private Optional<Requirement> getParentRequirementByIssueKey(String issueKey) {
@@ -222,7 +221,7 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
             if (parentIssue.isPresent()  && parentRequirementsField.isPresent()) {
                 if((parentRequirementsField.get().value() instanceof String) && ((String) parentRequirementsField.get().value()).isEmpty())
                 {
-                    return Optional.absent();
+                    return Optional.empty();
                 }
                 List<String> requirementNames = parentRequirementsField.get().asListOf(STRINGS);
                 List<Requirement> requirements = requirementsCalled(requirementNames);
@@ -232,12 +231,12 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
             }
         } catch (JQLException e) {
             if (noSuchIssue(e)) {
-                return Optional.absent();
+                return Optional.empty();
             } else {
                 throw new IllegalArgumentException(e);
             }
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     public List<Requirement> getAssociatedRequirements(TestOutcome testOutcome) {
@@ -282,7 +281,7 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
                 return Optional.of(requirement);
             }
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     @Override
@@ -299,7 +298,7 @@ public class JIRACustomFieldsRequirementsProvider implements RequirementsTagProv
 
         List<TestTag> matchingTags = getRequirementsTags(issueKey);
 
-        Optional<IssueSummary> issue = Optional.absent();
+        Optional<IssueSummary> issue = Optional.empty();
         try {
             issue = jiraClient.findByKey(issueKey);
         } catch (JQLException e) {

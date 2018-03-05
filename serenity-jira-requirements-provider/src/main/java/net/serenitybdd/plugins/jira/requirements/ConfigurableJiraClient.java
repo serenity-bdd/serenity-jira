@@ -1,24 +1,25 @@
 package net.serenitybdd.plugins.jira.requirements;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.Lists;
-import net.serenitybdd.plugins.jira.model.JQLException;
-import net.thucydides.core.guice.Injectors;
-import net.thucydides.core.util.EnvironmentVariables;
 import net.serenitybdd.plugins.jira.client.JIRAAuthenticationError;
 import net.serenitybdd.plugins.jira.client.JIRAConfigurationError;
 import net.serenitybdd.plugins.jira.client.JerseyJiraClient;
 import net.serenitybdd.plugins.jira.domain.IssueSummary;
+import net.serenitybdd.plugins.jira.model.JQLException;
+import net.thucydides.core.guice.Injectors;
+import net.thucydides.core.util.EnvironmentVariables;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ConfigurableJiraClient extends JerseyJiraClient {
 
     private static final String FAIL_ON_JIRA_ERROR = "thucydides.fail.on.jira.error";
     private final EnvironmentVariables environmentVariables;
 
-    private final org.slf4j.Logger logger = LoggerFactory.getLogger(JIRARequirementsProvider.class);
+    private final Logger logger = LoggerFactory.getLogger(JIRARequirementsProvider.class);
 
     public ConfigurableJiraClient(String url, String username, String password, String project) {
         super(url, username, password, project, customFields());
@@ -65,6 +66,6 @@ public class ConfigurableJiraClient extends JerseyJiraClient {
         } catch(JIRAConfigurationError configurationError) {
 
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 }

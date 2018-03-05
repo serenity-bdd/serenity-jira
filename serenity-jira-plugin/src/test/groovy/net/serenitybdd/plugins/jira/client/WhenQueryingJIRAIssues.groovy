@@ -1,6 +1,5 @@
 package net.serenitybdd.plugins.jira.client
 
-import com.google.common.base.Optional
 import net.serenitybdd.plugins.jira.domain.IssueSummary
 import spock.lang.Specification
 

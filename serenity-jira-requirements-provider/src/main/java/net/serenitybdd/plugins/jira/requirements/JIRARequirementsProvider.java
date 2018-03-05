@@ -1,6 +1,5 @@
 package net.serenitybdd.plugins.jira.requirements;
 
-import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -21,6 +20,7 @@ import net.thucydides.core.requirements.model.Requirement;
 import net.thucydides.core.util.EnvironmentVariables;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
@@ -41,7 +41,7 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
 
     private final String EPIC_LINK = "Epic Link";
 
-    private final org.slf4j.Logger logger = LoggerFactory.getLogger(JIRARequirementsProvider.class);
+    private final Logger logger = LoggerFactory.getLogger(JIRARequirementsProvider.class);
 
     public JIRARequirementsProvider() {
         this(new SystemPropertiesJIRAConfiguration(Injectors.getInjector().getProvider(EnvironmentVariables.class).get() ),
@@ -177,9 +177,9 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
     }
 
     private String narativeTextFrom(IssueSummary issue) {
-        Optional<String> customFieldName = Optional.fromNullable(environmentVariables.getProperty(JIRA_CUSTOM_NARRATIVE_FIELD.getName()));
+        Optional<String> customFieldName = Optional.ofNullable(environmentVariables.getProperty(JIRA_CUSTOM_NARRATIVE_FIELD.getName()));
         if (customFieldName.isPresent()) {
-            return customFieldNameFor(issue, customFieldName.get()).or(ObjectUtils.firstNonNull(issue.getRendered().getDescription(), ""));
+            return customFieldNameFor(issue, customFieldName.get()).orElse(ObjectUtils.firstNonNull(issue.getRendered().getDescription(), ""));
         } else {
             return issue.getRendered().getDescription();
         }
@@ -190,7 +190,7 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
         if (issue.customField(customFieldName).isPresent()) {
             return Optional.of(issue.customField(customFieldName).get().asString());
         } else {
-            return Optional.absent();
+            return Optional.empty();
         }
     }
 
@@ -252,22 +252,22 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
         List<String> issueKeys = testOutcome.getIssueKeys();
         if (!issueKeys.isEmpty() && providerActivated()) {
             try {
-                Optional<IssueSummary> parentIssue = jiraClient.findByKey(issueKeys.get(0));
+                java.util.Optional<IssueSummary> parentIssue = jiraClient.findByKey(issueKeys.get(0));
                 if (parentIssue.isPresent()) {
                     logger.debug("Parent found: " + parentIssue.get());
                     return Optional.of(requirementFrom(parentIssue.get()));
                 } else {
-                    return Optional.absent();
+                    return Optional.empty();
                 }
             } catch (JQLException e) {
                 if (noSuchIssue(e)) {
-                    return Optional.absent();
+                    return Optional.empty();
                 } else {
                     throw new IllegalArgumentException(e);
                 }
             }
         } else {
-            return Optional.absent();
+            return Optional.empty();
         }
     }
 
@@ -278,7 +278,7 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
                 return Optional.of(candidateParent);
             }
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     private boolean noSuchIssue(JQLException e) {
@@ -292,7 +292,7 @@ public class JIRARequirementsProvider implements RequirementsTagProvider {
                 return Optional.of(requirement);
             }
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     @Override

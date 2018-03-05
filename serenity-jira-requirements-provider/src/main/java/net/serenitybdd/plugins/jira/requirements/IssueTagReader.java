@@ -1,21 +1,22 @@
 package net.serenitybdd.plugins.jira.requirements;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import net.serenitybdd.plugins.jira.client.JerseyJiraClient;
+import net.serenitybdd.plugins.jira.domain.IssueSummary;
 import net.serenitybdd.plugins.jira.model.JQLException;
 import net.thucydides.core.model.TestTag;
 import net.thucydides.core.requirements.model.Requirement;
-import net.serenitybdd.plugins.jira.client.JerseyJiraClient;
-import net.serenitybdd.plugins.jira.domain.IssueSummary;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Optional;
 
 public class IssueTagReader {
 
-    private final org.slf4j.Logger logger = LoggerFactory.getLogger(IssueTagReader.class);
+    private final Logger logger = LoggerFactory.getLogger(IssueTagReader.class);
 
     private final List<Requirement> flattenedRequirements;
     private final JerseyJiraClient jiraClient;
@@ -31,7 +32,7 @@ public class IssueTagReader {
     public IssueTagReader addVersionTags(String issueKey) {
         String decodedIssueKey = decoded(issueKey);
         try {
-            Optional<IssueSummary> issue = jiraClient.findByKey(issueKey);
+            java.util.Optional<IssueSummary> issue = jiraClient.findByKey(issueKey);
             if (issue.isPresent()) {
                 addVersionTags(issue.get().getFixVersions());
             }
@@ -59,7 +60,7 @@ public class IssueTagReader {
 
     public IssueTagReader addIssueTags(String issueKey) {
         String decodedIssueKey = decoded(issueKey);
-        Optional<IssueSummary> behaviourIssue = Optional.absent();
+        java.util.Optional<IssueSummary> behaviourIssue = java.util.Optional.empty();
         try {
             behaviourIssue = jiraClient.findByKey(decodedIssueKey);
         } catch (JQLException e) {
@@ -104,7 +105,7 @@ public class IssueTagReader {
                 return Optional.of(requirement);
             }
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     private boolean containsRequirementWithId(String key, List<Requirement> requirements) {

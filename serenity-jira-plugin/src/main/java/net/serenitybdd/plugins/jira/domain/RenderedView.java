@@ -1,8 +1,7 @@
 package net.serenitybdd.plugins.jira.domain;
 
-import com.google.common.base.Optional;
-
 import java.util.Map;
+import java.util.Optional;
 
 public class RenderedView {
     private static final String RENDERED_DESCRIPTION_FIELD = "Description";
@@ -24,6 +23,6 @@ public class RenderedView {
     }
 
     public Optional<String> customField(String field) {
-        return Optional.fromNullable(renderedFieldValues.get(field));
+        return Optional.ofNullable(renderedFieldValues.get(field));
     }
 }

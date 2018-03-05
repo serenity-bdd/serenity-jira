@@ -37,7 +37,7 @@ subprojects {
 }
 
 ext {
-    serenityCoreVersion = "1.8.17"
+    serenityCoreVersion = "1.9.1"
 
     // Bintray configuration
     bintrayBaseUrl = 'https://api.bintray.com/maven'
@@ -60,12 +60,25 @@ allprojects {
         resolutionStrategy {
             // fail fast on dependency convergence problems
             failOnVersionConflict()
-            force  'commons-collections:commons-collections:3.2.2',
+            force 'commons-collections:commons-collections:3.2.2',
                     "xml-apis:xml-apis:1.4.01",
-                    "org.seleniumhq.selenium:selenium-api:3.8.1",
+                    "org.seleniumhq.selenium:selenium-api:3.9.1",
                     "commons-codec:commons-codec:1.10",
                     "com.google.guava:guava:23.0",
-                    "com.google.code.gson:gson:2.8.2"
+                    "com.google.code.gson:gson:2.8.2",
+                    'net.bytebuddy:byte-buddy:1.7.9',
+                    'org.eclipse.jetty:jetty-http:9.4.8.v20171121',
+                    'org.eclipse.jetty:jetty-util:9.4.8.v20171121',
+                    'org.eclipse.jetty:jetty-io:9.4.8.v20171121',
+                    'org.eclipse.jetty.websocket:websocket-client:9.4.8.v20171121',
+                    'org.eclipse.jetty.websocket:websocket-common:9.4.8.v20171121',
+                    'org.eclipse.jetty.websocket:websocket-api:9.4.8.v20171121',
+                    'org.eclipse.jetty:jetty-client:9.4.8.v20171121',
+                    'org.eclipse.jetty:jetty-xml:9.4.8.v20171121',
+                    'org.apache.httpcomponents:httpcore:4.4.7',
+                    'org.apache.httpcomponents:httpmime:4.5.4',
+                    'org.apache.commons:commons-text:1.2',
+                    'org.apache.httpcomponents:httpclient:4.5.4'
 
         }
     }
@@ -257,23 +270,23 @@ subprojects {
 
         dependencies {
             compile("net.serenity-bdd:serenity-core:$serenityCoreVersion") {
-                exclude group:"org.seleniumhq.selenium", module:"htmlunit-driver"
+                exclude group: "org.seleniumhq.selenium", module: "htmlunit-driver"
             }
             compile "com.google.inject:guice:4.1.0"
             compile "com.google.guava:guava:23.0"
             compile "org.slf4j:slf4j-api:1.7.21"
             compile "org.codehaus.groovy:groovy-all:2.4.12"
             compile("com.googlecode.lambdaj:lambdaj:2.3.3") {
-		        exclude group:"org.objenesis", module:"objenesis"
+                exclude group: "org.objenesis", module: "objenesis"
             }
             testCompile("ch.qos.logback:logback-classic:1.0.13") {
-                exclude group:"org.slf4j", module:"slf4j-api"
+                exclude group: "org.slf4j", module: "slf4j-api"
             }
 
             testCompile "junit:junit:4.12"
             testCompile("org.spockframework:spock-core:1.1-groovy-2.4") {
                 exclude group: "junit"
-                exclude group:"org.codehaus.groovy", module: "groovy-all"
+                exclude group: "org.codehaus.groovy", module: "groovy-all"
             }
         }
 

@@ -1,6 +1,5 @@
 package net.serenitybdd.plugins.jira.domain;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.JsonObject;
@@ -8,10 +7,7 @@ import com.google.gson.JsonParser;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class IssueSummary {
 
@@ -166,7 +162,7 @@ public class IssueSummary {
 
     public Optional<CustomFieldCast> customField(String fieldName) {
         if (customFieldValues.get(fieldName) == null) {
-            return Optional.absent();
+            return Optional.empty();
         } else {
             return Optional.of(new CustomFieldCast(customFieldValues.get(fieldName)));
         }

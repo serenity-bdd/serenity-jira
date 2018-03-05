@@ -1,6 +1,5 @@
 package net.serenitybdd.plugins.jira
 
-import com.google.common.base.Optional
 import net.thucydides.core.model.TestOutcome
 import net.thucydides.core.model.TestTag
 import net.thucydides.core.requirements.RequirementsTagProvider
@@ -20,7 +19,7 @@ class WhenReadingCustomFieldRequirementsFromJIRA extends Specification {
 
     def setup() {
         environmentVariables.setProperty('jira.url','https://wakaleo.atlassian.net')
-        environmentVariables.setProperty('jira.username','bruce')
+        environmentVariables.setProperty('jira.username','bruce')git
         environmentVariables.setProperty('jira.password','batm0bile')
         environmentVariables.setProperty('jira.project','DEMO')
         environmentVariables.setProperty('thucydides.requirement.types','capability,feature')

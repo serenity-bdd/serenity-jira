@@ -1,7 +1,6 @@
 package net.serenitybdd.plugins.jira.service;
 
 
-import com.google.common.base.Optional;
 import com.google.inject.Inject;
 import net.serenitybdd.plugins.jira.domain.IssueTransition;
 import net.serenitybdd.plugins.jira.domain.IssueSummary;
@@ -18,6 +17,7 @@ import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Update comments in JIRA issues with links to Thucydides reports.

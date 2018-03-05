@@ -1,9 +1,9 @@
 package net.serenitybdd.plugins.jira.model;
 
-import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableList;
 
 import java.util.List;
+import java.util.Optional;
 
 public class CascadingSelectOption {
     private final String option;
@@ -18,7 +18,7 @@ public class CascadingSelectOption {
 
     public CascadingSelectOption(String option, CascadingSelectOption parentOption, List<CascadingSelectOption> nestedOptions) {
         this.option = option;
-        this.parentOption = Optional.fromNullable(parentOption);
+        this.parentOption = Optional.ofNullable(parentOption);
         this.nestedOptions = nestedOptions;
     }
 

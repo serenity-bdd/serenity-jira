@@ -1,7 +1,6 @@
 package net.serenitybdd.plugins.jira.client;
 
 import com.beust.jcommander.internal.Maps;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.LoadingCache;
@@ -14,6 +13,7 @@ import net.serenitybdd.plugins.jira.model.CascadingSelectOption;
 import net.serenitybdd.plugins.jira.model.CustomField;
 import net.serenitybdd.plugins.jira.model.JQLException;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
@@ -60,7 +60,7 @@ public class JerseyJiraClient {
 
     private Map<LoadingStrategy, LoadingCache<String, List<IssueSummary>>> issueQueryCachePerStrategy;
 
-    private final org.slf4j.Logger logger = LoggerFactory.getLogger(JerseyJiraClient.class);
+    private final Logger logger = LoggerFactory.getLogger(JerseyJiraClient.class);
 
     private final static int DEFAULT_BATCH_SIZE = 100;
     private final static int OK = 200;
@@ -228,7 +228,7 @@ public class JerseyJiraClient {
         return response.readEntity(String.class);
     }
 
-    public Optional<IssueSummary> findByKey(String key) throws JQLException{
+    public java.util.Optional<IssueSummary> findByKey(String key) throws JQLException{
         try {
             Preconditions.checkNotNull(key,"JIRA key cannot be null");
             return issueSummaryCache.get(key);
@@ -246,7 +246,7 @@ public class JerseyJiraClient {
             JsonObject responseObject = new JsonParser().parse(jsonResponse.get()).getAsJsonObject();
             return Optional.of(convertToIssueSummary(responseObject));
         }
-        return Optional.absent();
+        return Optional.empty();
     }
 
     private Version convertToVersion(JsonObject issueObject) {
@@ -483,7 +483,7 @@ public class JerseyJiraClient {
         }
 
         if (resourceDoesNotExist(response)) {
-            return Optional.absent();
+            return Optional.empty();
         } else {
             checkValid(response);
             return Optional.of(response.readEntity(String.class));
@@ -505,7 +505,7 @@ public class JerseyJiraClient {
         }
 
         if (resourceDoesNotExist(response)) {
-            return Optional.absent();
+            return Optional.empty();
         } else {
             checkValid(response);
             return Optional.of(response.readEntity(String.class));
