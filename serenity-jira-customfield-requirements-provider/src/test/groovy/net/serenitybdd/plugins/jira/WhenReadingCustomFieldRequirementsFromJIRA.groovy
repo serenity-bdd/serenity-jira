@@ -19,7 +19,7 @@ class WhenReadingCustomFieldRequirementsFromJIRA extends Specification {
 
     def setup() {
         environmentVariables.setProperty('jira.url','https://wakaleo.atlassian.net')
-        environmentVariables.setProperty('jira.username','bruce')git
+        environmentVariables.setProperty('jira.username','bruce')
         environmentVariables.setProperty('jira.password','batm0bile')
         environmentVariables.setProperty('jira.project','DEMO')
         environmentVariables.setProperty('thucydides.requirement.types','capability,feature')
