@@ -10,6 +10,7 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.steps.ExecutedStepDescription;
+import net.thucydides.core.steps.StepEventBus;
 import net.thucydides.core.steps.StepFailure;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
@@ -78,6 +79,7 @@ public class WhenUpdatingCommentsInJIRA {
     @Before
     public void initMocks() {
         MockitoAnnotations.initMocks(this);
+        StepEventBus.getEventBus().clear();
 
         environmentVariables = new MockEnvironmentVariables();
         environmentVariables.setProperty("jira.url", "http://my.jira.server");
