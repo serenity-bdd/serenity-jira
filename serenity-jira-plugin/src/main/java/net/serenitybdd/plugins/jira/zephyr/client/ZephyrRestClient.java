@@ -1,21 +1,10 @@
 package net.serenitybdd.plugins.jira.zephyr.client;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.joda.time.DateTime;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.inject.Inject;
-
 import net.serenitybdd.plugins.jira.service.JIRAConfiguration;
 import net.serenitybdd.plugins.jira.service.JIRAConnection;
 import net.serenitybdd.plugins.jira.service.JiraIssueTracker;
@@ -24,6 +13,15 @@ import net.serenitybdd.plugins.jira.zephyr.ZephyrUpdater;
 import net.serenitybdd.plugins.jira.zephyr.ZephyrUpdater.Status;
 import net.serenitybdd.plugins.jira.zephyr.domain.ZephyrCycle;
 import net.serenitybdd.plugins.jira.zephyr.domain.ZephyrExecutionDetails;
+import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ZephyrRestClient implements ZephyrClient {
 

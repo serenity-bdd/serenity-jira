@@ -1,14 +1,13 @@
 package net.serenitybdd.plugins.jira.zephyr.client;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
 import com.google.gson.JsonObject;
-
 import net.serenitybdd.plugins.jira.zephyr.ZephyrUpdater.Status;
 import net.serenitybdd.plugins.jira.zephyr.domain.ZephyrCycle;
 import net.serenitybdd.plugins.jira.zephyr.domain.ZephyrExecutionDetails;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public interface ZephyrClient {
 

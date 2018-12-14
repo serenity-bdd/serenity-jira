@@ -13,9 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
-import static ch.lambdaj.Lambda.convert;
-import static ch.lambdaj.Lambda.index;
-import static ch.lambdaj.Lambda.on;
+import static ch.lambdaj.Lambda.*;
 
 public class TestResultComment {
 

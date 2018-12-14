@@ -1,7 +1,7 @@
 package net.serenitybdd.plugins.jira.workflow
 
-import net.thucydides.core.util.EnvironmentVariables
 import net.serenitybdd.plugins.jira.guice.Injectors
+import net.thucydides.core.util.EnvironmentVariables
 import spock.lang.Specification
 
 class WhenLoadingTheWorkflow extends Specification {

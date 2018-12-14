@@ -1,20 +1,5 @@
 package net.serenitybdd.plugins.jira.client;
 
-import static java.util.Collections.EMPTY_LIST;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.text.ParseException;
-import java.util.*;
-import java.util.concurrent.ExecutionException;
-
-import javax.ws.rs.client.Client;
-import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
-import javax.ws.rs.client.WebTarget;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
 import com.beust.jcommander.internal.Maps;
 import com.google.common.base.Preconditions;
 import com.google.common.cache.CacheBuilder;
@@ -22,26 +7,29 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
-
+import com.google.gson.*;
+import net.serenitybdd.plugins.jira.domain.*;
+import net.serenitybdd.plugins.jira.model.CascadingSelectOption;
+import net.serenitybdd.plugins.jira.model.CustomField;
+import net.serenitybdd.plugins.jira.model.JQLException;
 import org.glassfish.jersey.client.ClientProperties;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import net.serenitybdd.plugins.jira.domain.IssueComment;
-import net.serenitybdd.plugins.jira.domain.IssueSummary;
-import net.serenitybdd.plugins.jira.domain.IssueTransition;
-import net.serenitybdd.plugins.jira.domain.Project;
-import net.serenitybdd.plugins.jira.domain.Version;
-import net.serenitybdd.plugins.jira.model.CascadingSelectOption;
-import net.serenitybdd.plugins.jira.model.CustomField;
-import net.serenitybdd.plugins.jira.model.JQLException;
+import javax.ws.rs.client.Client;
+import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.client.WebTarget;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.util.*;
+import java.util.concurrent.ExecutionException;
+
+import static java.util.Collections.EMPTY_LIST;
 
 /**
  * A JIRA client using the new REST interface
@@ -155,7 +143,7 @@ public class JerseyJiraClient {
 
     protected List<IssueSummary> loadByJQLBatches(String query)  {
         int total = countByJQL(query);
-        List<IssueSummary> issues = Lists.newArrayList();
+        List<IssueSummary> issues = new ArrayList<>();
         int startAt = 0;
         while(issues.size() < total) {
             String jsonResponse = getJSONResponse(query, startAt, batchSize);
@@ -171,7 +159,7 @@ public class JerseyJiraClient {
     }
 
     protected List<IssueSummary> loadByJQL(String query)  {
-        List<IssueSummary> issues = Lists.newArrayList();
+        List<IssueSummary> issues =new ArrayList<>();
         String jsonResponse = getJSONResponse(query, 0, WITH_NO_BATCHES);
         JsonObject responseObject = new JsonParser().parse(jsonResponse).getAsJsonObject();
         JsonArray issueEntries = (JsonArray) responseObject.get("issues");
@@ -191,7 +179,7 @@ public class JerseyJiraClient {
     }
 
     private List<Version> convertJSONVersions(String versionData)  {
-        List<Version> versions = Lists.newArrayList();
+        List<Version> versions = new ArrayList<>();
         JsonArray versionEntries = new JsonParser().parse(versionData).getAsJsonArray();
         for (int i = 0; i < versionEntries.size(); i++) {
             JsonObject issueObject = versionEntries.get(i).getAsJsonObject();

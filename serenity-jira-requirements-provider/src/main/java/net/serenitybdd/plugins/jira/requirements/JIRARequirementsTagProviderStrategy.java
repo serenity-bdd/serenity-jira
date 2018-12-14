@@ -1,8 +1,9 @@
 package net.serenitybdd.plugins.jira.requirements;
 
-import com.google.common.collect.ImmutableSet;
 import net.thucydides.core.statistics.service.TagProvider;
 import net.thucydides.core.statistics.service.TagProviderStrategy;
+
+import java.util.Collections;
 
 
 public class JIRARequirementsTagProviderStrategy implements TagProviderStrategy {
@@ -14,7 +15,7 @@ public class JIRARequirementsTagProviderStrategy implements TagProviderStrategy 
 
     @Override
     public Iterable<? extends TagProvider> getTagProviders() {
-        return ImmutableSet.of(new JIRARequirementsProvider());
+        return Collections.singletonList(new JIRARequirementsProvider());
     }
 
 

@@ -1,9 +1,9 @@
 package net.serenitybdd.plugins.jira;
 
+import net.serenitybdd.plugins.jira.service.JIRAConfiguration;
 import net.serenitybdd.plugins.jira.service.SystemPropertiesJIRAConfiguration;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
-import net.serenitybdd.plugins.jira.service.JIRAConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 

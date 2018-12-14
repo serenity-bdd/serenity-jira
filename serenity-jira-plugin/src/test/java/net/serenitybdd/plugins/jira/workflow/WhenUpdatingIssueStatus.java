@@ -1,5 +1,8 @@
 package net.serenitybdd.plugins.jira.workflow;
 
+import net.serenitybdd.plugins.jira.JiraStepListener;
+import net.serenitybdd.plugins.jira.model.IssueTracker;
+import net.serenitybdd.plugins.jira.zephyr.client.ZephyrClient;
 import net.thucydides.core.annotations.Feature;
 import net.thucydides.core.annotations.Issue;
 import net.thucydides.core.annotations.Issues;
@@ -9,10 +12,6 @@ import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestStep;
 import net.thucydides.core.util.EnvironmentVariables;
 import net.thucydides.core.util.MockEnvironmentVariables;
-import net.serenitybdd.plugins.jira.JiraStepListener;
-import net.serenitybdd.plugins.jira.model.IssueTracker;
-import net.serenitybdd.plugins.jira.zephyr.client.ZephyrClient;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InOrder;
@@ -22,10 +21,7 @@ import org.mockito.MockitoAnnotations;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class WhenUpdatingIssueStatus {
 

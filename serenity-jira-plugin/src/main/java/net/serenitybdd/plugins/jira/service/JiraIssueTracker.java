@@ -2,9 +2,9 @@ package net.serenitybdd.plugins.jira.service;
 
 
 import com.google.inject.Inject;
-import net.serenitybdd.plugins.jira.domain.IssueTransition;
-import net.serenitybdd.plugins.jira.domain.IssueSummary;
 import net.serenitybdd.plugins.jira.domain.IssueComment;
+import net.serenitybdd.plugins.jira.domain.IssueSummary;
+import net.serenitybdd.plugins.jira.domain.IssueTransition;
 import net.serenitybdd.plugins.jira.model.IssueTracker;
 import net.serenitybdd.plugins.jira.model.IssueTrackerUpdateException;
 import org.slf4j.Logger;
