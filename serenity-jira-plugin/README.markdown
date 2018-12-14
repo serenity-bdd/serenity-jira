@@ -107,4 +107,13 @@ Serenity will then use this workflow. In both these cases, you don't need to exp
 property.
 
 
+If you want Serenity to add a new Jira comment with the test results every time the test is run, you can set serenity.jira.alwaysnewcomment to true e.g
+
+    $mvn verify -Dserenity.jira.alwaysnewcomment=true
+
+or
+
+    set serenity.jira.alwaysnewcomment=true in serenity.properties
+
+This will simply add a new comment to the JIRA issue regardless of if there is already another comment existing.
 

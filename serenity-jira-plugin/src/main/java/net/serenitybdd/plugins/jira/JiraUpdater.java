@@ -38,6 +38,7 @@ public class JiraUpdater {
 
     private static final String BUILD_ID_PROPERTY = "build.id";
     public static final String SKIP_JIRA_UPDATES = "serenity.skip.jira.updates";
+    public static final String ADD_NEW_JIRA_COMMENT = "serenity.jira.alwaysnewcomment";
 
     static int DEFAULT_MAX_THREADS = 4;
     private final IssueTracker issueTracker;
@@ -171,22 +172,33 @@ public class JiraUpdater {
         String testRunNumber = environmentVariables.getProperty(BUILD_ID_PROPERTY);
         TestResultComment testResultComment;
         List<NamedTestResult> newTestResults = namedTestResultsFrom(testOutcomes);
-        if (existingComment == null) {
+        if (Boolean.valueOf(environmentVariables.getProperty(ADD_NEW_JIRA_COMMENT)))
+        {
             testResultComment = TestResultComment.comment(isWikiRenderedActive())
                     .withResults(namedTestResultsFrom(testOutcomes))
                     .withReportUrl(linkToReport(testOutcomes))
                     .withTestRun(testRunNumber).asComment();
 
             issueTracker.addComment(issueId, testResultComment.asText());
-        } else {
-            testResultComment = TestResultComment.fromText(existingComment.getBody())
-                    .withWikiRendering(isWikiRenderedActive())
-                    .withUpdatedTestResults(newTestResults)
-                    .withUpdatedReportUrl(linkToReport(testOutcomes))
-                    .withUpdatedTestRunNumber(testRunNumber);
+        }
+        else {
+            if (existingComment == null) {
+                testResultComment = TestResultComment.comment(isWikiRenderedActive())
+                        .withResults(namedTestResultsFrom(testOutcomes))
+                        .withReportUrl(linkToReport(testOutcomes))
+                        .withTestRun(testRunNumber).asComment();
 
-            IssueComment updatedComment = existingComment.withText(testResultComment.asText());
-            issueTracker.updateComment(issueId,updatedComment);
+                issueTracker.addComment(issueId, testResultComment.asText());
+            } else {
+                testResultComment = TestResultComment.fromText(existingComment.getBody())
+                        .withWikiRendering(isWikiRenderedActive())
+                        .withUpdatedTestResults(newTestResults)
+                        .withUpdatedReportUrl(linkToReport(testOutcomes))
+                        .withUpdatedTestRunNumber(testRunNumber);
+
+                IssueComment updatedComment = existingComment.withText(testResultComment.asText());
+                issueTracker.updateComment(issueId, updatedComment);
+            }
         }
         return testResultComment;
     }
