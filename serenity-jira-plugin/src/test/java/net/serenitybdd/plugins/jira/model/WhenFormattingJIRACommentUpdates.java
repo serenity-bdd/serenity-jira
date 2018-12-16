@@ -82,11 +82,11 @@ public class WhenFormattingJIRACommentUpdates {
     public void should_include_identifiable_title_in_comment_heading() {
 
         String updatedComment = TestResultComment.comment(true).asText();
-        assertThat(updatedComment, containsString("Thucydides Test Results"));
+        assertThat(updatedComment, containsString("Serenity BDD Automated Acceptance Tests"));
     }
 
     /*
-      Thucydides Test Results
+      Serenity BDD Test Results
       Report: http://my.server/myproject/thucydides/my_test.html
       Build Job: 2012-01-17_15-39-03
       should_do_this: SUCCESS
@@ -103,13 +103,13 @@ public class WhenFormattingJIRACommentUpdates {
                 .withTestRun("2012-01-17_15-39-03")
                 .asText();
 
-        assertThat(updatedComment, containsString("Thucydides Test Results"));
+        assertThat(updatedComment, containsString("Serenity BDD Automated Acceptance Tests"));
     }
 
     @Test
     public void should_be_able_to_fix_invalid_comments() {
 
-        TestResultComment testReport = TestResultComment.fromText("Thucydides Test Report");
+        TestResultComment testReport = TestResultComment.fromText("Serenity BDD Automated Acceptance Tests");
 
         String updatedComment = testReport
                                     .withUpdatedTestResults(namedTestResults)

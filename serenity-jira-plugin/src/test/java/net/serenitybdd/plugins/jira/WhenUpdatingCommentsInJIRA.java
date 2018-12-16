@@ -92,7 +92,7 @@ public class WhenUpdatingCommentsInJIRA {
 
     @After
     public void resetPluginSpecificProperties() {
-        System.clearProperty(JiraUpdater.SKIP_JIRA_UPDATES);
+        System.clearProperty(JiraPluginConfigurationOptions.SKIP_JIRA_UPDATES);
     }
 
     @Mock
@@ -240,7 +240,7 @@ public class WhenUpdatingCommentsInJIRA {
     public void should_update_existing_thucydides_report_comments_if_present() {
 
         List<IssueComment> existingComments = Arrays.asList(new IssueComment("",1L,"a comment", "bruce"),
-                                                            new IssueComment("",2L,"Thucydides Test Results", "bruce"));
+                                                            new IssueComment("",2L,"Serenity BDD Automated Acceptance Tests", "bruce"));
         when(issueTracker.getCommentsFor("MYPROJECT-123")).thenReturn(existingComments);
 
         JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader, zephyrClient);
@@ -284,7 +284,7 @@ public class WhenUpdatingCommentsInJIRA {
     @Test
     public void should_skip_JIRA_updates_if_requested() {
         MockEnvironmentVariables environmentVariables = prepareMockEnvironment();
-        environmentVariables.setProperty(JiraUpdater.SKIP_JIRA_UPDATES,"true");
+        environmentVariables.setProperty(JiraPluginConfigurationOptions.SKIP_JIRA_UPDATES,"true");
 
         JiraStepListener listener = new JiraStepListener(issueTracker, environmentVariables, workflowLoader, zephyrClient);
         listener.testSuiteStarted(SampleTestSuite.class);

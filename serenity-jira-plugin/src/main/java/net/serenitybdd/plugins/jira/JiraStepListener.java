@@ -21,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * Updates JIRA issues referenced in a story with a link to the corresponding story report.
@@ -29,8 +30,8 @@ public class JiraStepListener implements StepListener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JiraStepListener.class);
 
-    private final TestResultTally<TestOutcomeSummary> resultTally;
-    private Set<String> testSuiteIssues;
+    private static TestResultTally<TestOutcomeSummary> resultTally = new TestResultTally<>();
+    private static Set<String> testSuiteIssues = new CopyOnWriteArraySet();
     private JiraUpdater jiraUpdater;
     private ZephyrUpdater zypherUpdater;
 
@@ -38,8 +39,8 @@ public class JiraStepListener implements StepListener {
     public JiraStepListener(IssueTracker issueTracker,
                             EnvironmentVariables environmentVariables,
                             WorkflowLoader loader, ZephyrClient zephyrClient) {
-        this.resultTally = new TestResultTally<TestOutcomeSummary>();
-        this.testSuiteIssues = new HashSet<>();
+//        this.resultTally = new TestResultTally<>();
+        //this.testSuiteIssues = new HashSet<>();
         jiraUpdater = new JiraUpdater(issueTracker,environmentVariables,loader);
         
         // For Zephyr

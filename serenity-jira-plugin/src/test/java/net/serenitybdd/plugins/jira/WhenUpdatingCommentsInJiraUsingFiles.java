@@ -57,7 +57,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
 
     @After
     public void resetPluginSpecificProperties() {
-        System.clearProperty(JiraUpdater.SKIP_JIRA_UPDATES);
+        System.clearProperty(JiraPluginConfigurationOptions.SKIP_JIRA_UPDATES);
     }
 
     private MockEnvironmentVariables prepareMockEnvironment() {
@@ -156,7 +156,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
     public void should_update_existing_thucydides_report_comments_if_present() throws IOException {
 
         List<IssueComment> existingComments = Arrays.asList(new IssueComment("", 1L, "a comment", "bruce"),
-                new IssueComment("", 2L, "Thucydides Test Results", "bruce"));
+                new IssueComment("", 2L, "Serenity BDD Automated Acceptance Tests", "bruce"));
         when(issueTracker.getCommentsFor("MYPROJECT-123")).thenReturn(existingComments);
 
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
@@ -194,7 +194,7 @@ public class WhenUpdatingCommentsInJiraUsingFiles {
     @Test
     public void should_skip_JIRA_updates_if_requested() throws IOException {
         MockEnvironmentVariables environmentVariables = prepareMockEnvironment();
-        environmentVariables.setProperty(JiraUpdater.SKIP_JIRA_UPDATES, "true");
+        environmentVariables.setProperty(JiraPluginConfigurationOptions.SKIP_JIRA_UPDATES, "true");
 
         JiraFileServiceUpdater jiraUpdater = new JiraFileServiceUpdater(issueTracker, environmentVariables, workflowLoader);
         Path directory = FileSystemUtils.getResourceAsFile("/fileservice/sampletestsuitetestfailure").toPath();

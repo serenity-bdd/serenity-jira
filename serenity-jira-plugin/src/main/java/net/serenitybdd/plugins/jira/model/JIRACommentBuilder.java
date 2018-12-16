@@ -4,14 +4,18 @@ import ch.lambdaj.function.convert.Converter;
 import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import static ch.lambdaj.Lambda.convert;
 
 public class JIRACommentBuilder {
+    public static final String SERENITY_COMMENT_HEADING = "Serenity BDD Automated Acceptance Tests";
     private final boolean wikiRendering;
     private final String testRunNumber;
     private final String reportUrl;
+    private final LocalDateTime executionTime;
     private final List<NamedTestResult> namedTestResults;
 
     private final static String NEW_LINE = System.getProperty("line.separator");
@@ -21,13 +25,13 @@ public class JIRACommentBuilder {
     }
 
     public JIRACommentBuilder(final boolean wikiRendering, final String reportUrl) {
-        this(wikiRendering, reportUrl, null, null);
+        this(wikiRendering, reportUrl, null, null, LocalDateTime.now());
     }
 
     public JIRACommentBuilder(final boolean wikiRendering,
                               final String reportUrl,
                               final List<NamedTestResult> testOutcomes) {
-        this(wikiRendering, testOutcomes, reportUrl, null);
+        this(wikiRendering, reportUrl, testOutcomes,null, LocalDateTime.now());
     }
 
 
@@ -35,9 +39,8 @@ public class JIRACommentBuilder {
                               final List<NamedTestResult> testOutcomes,
                               final String reportUrl,
                               final String testRunNumber) {
-        this(wikiRendering, reportUrl, testOutcomes, testRunNumber);
+        this(wikiRendering, reportUrl, testOutcomes, testRunNumber, LocalDateTime.now());
     }
-
 
 
     private static List<NamedTestResult> namedTestResultsFrom(List<TestOutcome> testOutcomes) {
@@ -56,22 +59,27 @@ public class JIRACommentBuilder {
     public JIRACommentBuilder(boolean wikiRendering,
                               String reportUrl,
                               List<NamedTestResult> namedTestResults,
-                              String testRunNumber) {
+                              String testRunNumber,
+                              LocalDateTime executionTime) {
         this.reportUrl = reportUrl;
         this.namedTestResults = namedTestResults;
         this.testRunNumber = testRunNumber;
         this.wikiRendering = wikiRendering;
+        this.executionTime = executionTime;
     }
 
 
     public String asText() {
         StringBuilder commentBuilder = new StringBuilder();
-        addLine(commentBuilder, bold("Thucydides Test Results"));
+        addLine(commentBuilder, bold(SERENITY_COMMENT_HEADING));
+
+        String executionTimestamp = "Tests run: "
+                + executionTime.format(DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a"));
 
         if (wikiRendering) {
-            addLine(commentBuilder, "[Test report|" + reportUrl + "]");
+            addLine(commentBuilder, executionTimestamp + " - [full report|" + reportUrl + "]");
         } else {
-            addLine(commentBuilder, "Test Report: " + reportUrl);
+            addLine(commentBuilder, executionTimestamp + " - full report: " + reportUrl);
         }
         if (testRunNumber != null) {
             addLine(commentBuilder, "Test Run: " + testRunNumber);
@@ -119,18 +127,22 @@ public class JIRACommentBuilder {
     }
 
     public JIRACommentBuilder withTestRun(final String testRunNumber) {
-        return new JIRACommentBuilder(this.wikiRendering, this.reportUrl, this.namedTestResults, testRunNumber);
+        return new JIRACommentBuilder(this.wikiRendering, this.reportUrl, this.namedTestResults, testRunNumber, executionTime);
     }
 
     public JIRACommentBuilder withReportUrl(final String reportUrl) {
-        return new JIRACommentBuilder(this.wikiRendering, reportUrl, this.namedTestResults, this.testRunNumber);
+        return new JIRACommentBuilder(this.wikiRendering, reportUrl, this.namedTestResults, this.testRunNumber, executionTime);
     }
 
     public JIRACommentBuilder withNamedResults(List<NamedTestResult> namedTestResults) {
-        return new JIRACommentBuilder(this.wikiRendering, this.reportUrl, namedTestResults, this.testRunNumber);
+        return new JIRACommentBuilder(this.wikiRendering, this.reportUrl, namedTestResults, this.testRunNumber, executionTime);
+    }
+
+    public JIRACommentBuilder forTestsExecutedAt(LocalDateTime executionTime) {
+        return new JIRACommentBuilder(this.wikiRendering, this.reportUrl, namedTestResults, this.testRunNumber, executionTime);
     }
 
     public TestResultComment asComment() {
-        return new TestResultComment(reportUrl, testRunNumber, namedTestResults, wikiRendering);
+        return new TestResultComment(reportUrl, testRunNumber, namedTestResults, wikiRendering, executionTime);
     }
 }

@@ -53,6 +53,8 @@ ext {
     }
 }
 
+group = 'net.serenity-bdd'
+
 allprojects {
     apply plugin: 'project-report'
 

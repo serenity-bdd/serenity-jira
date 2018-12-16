@@ -44,11 +44,7 @@ public class TestResultTally<T> {
     }
 
     private Converter<TestOutcome, TestResult> toTestResults() {
-        return new Converter<TestOutcome, TestResult>() {
-            public TestResult convert(TestOutcome from) {
-                return from.getResult();
-            }
-        };
+        return from -> from.getResult();
     }
 
     public Set<String> getIssues() {

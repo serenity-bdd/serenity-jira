@@ -8,6 +8,7 @@ import net.thucydides.core.model.TestOutcome;
 import net.thucydides.core.model.TestResult;
 import net.thucydides.core.model.TestResultList;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ public class TestResultComment {
     private final SortedMap<String, NamedTestResult> namedTestResults;
     private final String reportUrl;
     private final boolean wikiRenderingActive;
+    private final LocalDateTime executionTime;
 
     private final static int REPORT_URL_LINE = 1;
     private final static int TEXT_NUMBER_LINE = 2;
@@ -32,14 +34,20 @@ public class TestResultComment {
         testRunNumber = findTestRunNumber(commentLines);
         namedTestResults = findTestResults(commentLines);
         wikiRenderingActive = true;
+        executionTime = LocalDateTime.now();
 
     }
 
-    protected TestResultComment(String reportUrl, String testRunNumber, List<NamedTestResult> namedTestResults, boolean wikiRenderingActive) {
+    protected TestResultComment(String reportUrl,
+                                String testRunNumber,
+                                List<NamedTestResult> namedTestResults,
+                                boolean wikiRenderingActive,
+                                LocalDateTime executionTime) {
         this.reportUrl = reportUrl;
         this.testRunNumber = testRunNumber;
         this.namedTestResults = indexByTestName(namedTestResults);
         this.wikiRenderingActive = wikiRenderingActive;
+        this.executionTime = executionTime;
     }
 
     public static JIRACommentBuilder comment(boolean wikiRenderingActive) {
@@ -74,13 +82,10 @@ public class TestResultComment {
     }
 
     private Converter<String, NamedTestResult> toNamedTestResults() {
-        return new Converter<String, NamedTestResult>() {
-
-            public NamedTestResult convert(String commentLine) {
-                String testName = stripInitialDash(textBeforeColon(commentLine));
-                TestResult result = getTestResult(commentLine);
-                return new NamedTestResult(testName, result);
-            }
+        return commentLine -> {
+            String testName = stripInitialDash(textBeforeColon(commentLine));
+            TestResult result = getTestResult(commentLine);
+            return new NamedTestResult(testName, result);
         };
     }
 
@@ -174,24 +179,11 @@ public class TestResultComment {
     }
 
     private Converter<Map.Entry<String, NamedTestResult>, NamedTestResult> fromMapEntriesToNamedTestResults() {
-        return new Converter<Map.Entry<String, NamedTestResult>, NamedTestResult>() {
-            public NamedTestResult convert(Map.Entry<String, NamedTestResult> from) {
-                return from.getValue();
-            }
-        };
+        return Map.Entry::getValue;
     }
 
     public TestResult getOverallResult() {
-        return TestResultList.overallResultFrom(convert(namedTestResults, toTestResults()));
-    }
-
-    private Converter<NamedTestResult, TestResult> toTestResults() {
-        return new Converter<NamedTestResult, TestResult>() {
-
-            public TestResult convert(NamedTestResult namedTestResult) {
-                return namedTestResult.getTestResult();
-            }
-        };
+        return TestResultList.overallResultFrom(convert(namedTestResults, NamedTestResult::getTestResult));
     }
 
     public String asText() {
@@ -221,23 +213,20 @@ public class TestResultComment {
                 .withNamedResults(mergedTestResults).asComment();
     }
 
-    private Converter<TestOutcome, NamedTestResult> fromTestOutcomesToNamedTestResults() {
-        return new Converter<TestOutcome, NamedTestResult>() {
-            public NamedTestResult convert(TestOutcome testOutcome) {
-                return new NamedTestResult(testOutcome.getTitle(), testOutcome.getResult());
-            }
-        };
-    }
-
     public TestResultComment withUpdatedReportUrl(String newReportUrl) {
-        return new TestResultComment(newReportUrl, this.testRunNumber, getNamedTestResults(),wikiRenderingActive);
+        return new TestResultComment(newReportUrl, this.testRunNumber, getNamedTestResults(),wikiRenderingActive, executionTime);
     }
 
     public TestResultComment withUpdatedTestRunNumber(String newTestRunNumber) {
-        return new TestResultComment(this.reportUrl, newTestRunNumber, getNamedTestResults(),wikiRenderingActive);
+        return new TestResultComment(this.reportUrl, newTestRunNumber, getNamedTestResults(),wikiRenderingActive, executionTime);
     }
 
     public TestResultComment withWikiRendering(boolean isWikiRenderedActive) {
-        return new TestResultComment(this.reportUrl, this.testRunNumber, getNamedTestResults(), isWikiRenderedActive);
+        return new TestResultComment(this.reportUrl, this.testRunNumber, getNamedTestResults(), isWikiRenderedActive, executionTime);
     }
+
+    public TestResultComment forTestsExecutedAt(LocalDateTime executionTime) {
+        return new TestResultComment(this.reportUrl, this.testRunNumber, getNamedTestResults(), wikiRenderingActive, executionTime);
+    }
+
 }
