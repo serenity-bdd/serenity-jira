@@ -37,7 +37,7 @@ subprojects {
 }
 
 ext {
-    serenityCoreVersion = "2.0.23"
+    serenityCoreVersion = "2.0.42"
 
     // Bintray configuration
     bintrayBaseUrl = 'https://api.bintray.com/maven'
@@ -274,7 +274,7 @@ subprojects {
             compile("net.serenity-bdd:serenity-core:$serenityCoreVersion") {
                 exclude group: "org.seleniumhq.selenium", module: "htmlunit-driver"
             }
-            compile "com.google.inject:guice:4.2.0"
+            compile "com.google.inject:guice:4.2.2"
             compile "com.google.guava:guava:23.0"
             compile "org.slf4j:slf4j-api:1.7.25"
             compile "org.codehaus.groovy:groovy-all:2.4.12"
