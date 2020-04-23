@@ -2,8 +2,6 @@ package net.serenitybdd.plugins.jira;
 
 
 import ch.lambdaj.function.convert.Converter;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
 import net.serenitybdd.plugins.jira.domain.IssueComment;
 import net.serenitybdd.plugins.jira.guice.Injectors;
 import net.serenitybdd.plugins.jira.model.IssueTracker;
@@ -26,8 +24,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static ch.lambdaj.Lambda.convert;
 import static net.serenitybdd.plugins.jira.JiraPluginConfigurationOptions.*;
@@ -77,13 +73,14 @@ public class JiraUpdater {
     }
 
     public boolean shouldUpdateIssues() {
-
+        if (dryRun()) {
+            return false;
+        }
         String jiraUrl = environmentVariables.getProperty(ThucydidesSystemProperty.JIRA_URL.getPropertyName());
         String reportUrl = ThucydidesSystemProperty.SERENITY_PUBLIC_URL.from(environmentVariables, "");
         if (workflow.isActive()) {
             LOGGER.debug("WORKFLOW TRANSITIONS: {}", workflow.getTransitions());
         }
-
         return !(StringUtils.isEmpty(jiraUrl) || StringUtils.isEmpty(reportUrl));
     }
 
@@ -130,7 +127,6 @@ public class JiraUpdater {
         String testRunNumber = environmentVariables.getProperty(BUILD_ID_PROPERTY);
         TestResultComment testResultComment;
         List<NamedTestResult> newTestResults = namedTestResultsFrom(testOutcomes);
-
         if (!existingComment.isPresent() || createNewCommentForEachUpdate()) {
             testResultComment = TestResultComment.comment(isWikiRenderedActive())
                     .withResults(namedTestResultsFrom(testOutcomes))
@@ -176,7 +172,7 @@ public class JiraUpdater {
     }
 
     private boolean dryRun() {
-        return Boolean.valueOf(environmentVariables.getProperty(SKIP_JIRA_UPDATES));
+        return Boolean.parseBoolean(environmentVariables.getProperty(SKIP_JIRA_UPDATES));
     }
 
     private String linkToReport(List<TestOutcomeSummary> testOutcomes) {
