@@ -3,6 +3,9 @@ package net.serenitybdd.plugins.jira.domain;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.JsonPrimitive;
+
+import java.util.Optional;
 
 public class Author {
 
@@ -16,7 +19,7 @@ public class Author {
     private String displayName;
     private boolean active;
 
-    public Author(String self, String name,String displayName,boolean active) {
+    public Author(String self, String name, String displayName, boolean active) {
         this.self = self;
         this.name = name;
         this.displayName = displayName;
@@ -26,10 +29,10 @@ public class Author {
     public static Author fromJsonString(String jsonIssueRepresentation) {
         JsonObject authorJson = new JsonParser().parse(jsonIssueRepresentation).getAsJsonObject();
         String self = authorJson.getAsJsonPrimitive(SELF_KEY).getAsString();
-        String name = authorJson.getAsJsonPrimitive(NAME_KEY).getAsString();
+        String name = Optional.ofNullable(authorJson.getAsJsonPrimitive(NAME_KEY)).orElse(new JsonPrimitive("")).getAsString();
         String displayName = authorJson.getAsJsonPrimitive(DISPLAY_NAME_KEY).getAsString();
-        Boolean active = authorJson.getAsJsonPrimitive(ACTIVE_KEY).getAsBoolean();
-        return new Author(self,name,displayName,active);
+        boolean active = authorJson.getAsJsonPrimitive(ACTIVE_KEY).getAsBoolean();
+        return new Author(self, name.isEmpty() ? displayName : name, displayName, active);
     }
 
     public String getSelf() {
