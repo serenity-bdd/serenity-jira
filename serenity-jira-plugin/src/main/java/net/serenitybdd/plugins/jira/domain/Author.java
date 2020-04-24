@@ -3,25 +3,22 @@ package net.serenitybdd.plugins.jira.domain;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
-
-import java.util.Optional;
 
 public class Author {
 
     public static final String SELF_KEY = "self";
-    public static final String NAME_KEY = "name";
+    public static final String ACCOUNT_ID_KEY = "accountId";
     public static final String DISPLAY_NAME_KEY = "displayName";
     public static final String ACTIVE_KEY = "active";
 
     private String self;
-    private String name;
+    private String accountId;
     private String displayName;
     private boolean active;
 
-    public Author(String self, String name, String displayName, boolean active) {
+    public Author(String self, String accountId, String displayName, boolean active) {
         this.self = self;
-        this.name = name;
+        this.accountId = accountId;
         this.displayName = displayName;
         this.active = active;
     }
@@ -29,10 +26,10 @@ public class Author {
     public static Author fromJsonString(String jsonIssueRepresentation) {
         JsonObject authorJson = new JsonParser().parse(jsonIssueRepresentation).getAsJsonObject();
         String self = authorJson.getAsJsonPrimitive(SELF_KEY).getAsString();
-        String name = Optional.ofNullable(authorJson.getAsJsonPrimitive(NAME_KEY)).orElse(new JsonPrimitive("")).getAsString();
+        String accountId = authorJson.getAsJsonPrimitive(ACCOUNT_ID_KEY).getAsString();
         String displayName = authorJson.getAsJsonPrimitive(DISPLAY_NAME_KEY).getAsString();
         boolean active = authorJson.getAsJsonPrimitive(ACTIVE_KEY).getAsBoolean();
-        return new Author(self, name.isEmpty() ? displayName : name, displayName, active);
+        return new Author(self, accountId, displayName, active);
     }
 
     public String getSelf() {
@@ -43,12 +40,12 @@ public class Author {
         this.self = self;
     }
 
-    public String getName() {
-        return name;
+    public String getAccountId() {
+        return accountId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setAccountId(String accountId) {
+        this.accountId = accountId;
     }
 
     public String getDisplayName() {
