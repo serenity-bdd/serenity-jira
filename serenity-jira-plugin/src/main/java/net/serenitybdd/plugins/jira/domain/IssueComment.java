@@ -223,6 +223,6 @@ public class IssueComment {
         createdCalendar.setTime(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").parse(createdDate));
         Calendar updatedCalendar =  GregorianCalendar.getInstance();
         updatedCalendar.setTime(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").parse(updatedDate));
-        return new IssueComment(self, author.getName(),body,createdCalendar , "", 0L,"",updateAuthor.getName(),updatedCalendar);
+        return new IssueComment(self, author.getAccountId(),body,createdCalendar , "", 0L,"",updateAuthor.getAccountId(),updatedCalendar);
     }
 }

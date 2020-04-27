@@ -118,7 +118,7 @@ public class JiraIssueTracker implements IssueTracker {
         try {
             Optional<IssueSummary> issue = jiraConnection.getRestJiraClient().loadByKey(issueKey);
             if(issue.isPresent()) {
-                String actionId = getAvailableActions(issueKey).get(workflowAction);
+                String actionId = getAvailableActions(issueKey).get(workflowAction.toLowerCase());
                 if (actionId != null) {
                     jiraConnection.getRestJiraClient().progressWorkflowTransition(issueKey, actionId);
                 }
@@ -136,7 +136,7 @@ public class JiraIssueTracker implements IssueTracker {
         Map<String, String> availableActionMap = new HashMap<String, String>();
         List<IssueTransition> actions = jiraConnection.getRestJiraClient().getAvailableTransitions(issueKey);
         for(IssueTransition action : actions) {
-            availableActionMap.put(action.getName(), action.getId());
+            availableActionMap.put(action.getName().toLowerCase(), action.getId());
         }
         return availableActionMap;
     }
