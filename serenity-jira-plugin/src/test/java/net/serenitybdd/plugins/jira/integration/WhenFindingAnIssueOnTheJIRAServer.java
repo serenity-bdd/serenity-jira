@@ -16,18 +16,21 @@ import static org.junit.Assert.assertThat;
 
 public class WhenFindingAnIssueOnTheJIRAServer {
 
-    //private static final String JIRA_WEBSERVICE_URL = "https://wakaleo.atlassian.net/rpc/soap/jirasoapservice-v2";
+    private final static String JIRA_WEBSERVICE_URL = "https://thucydides.atlassian.net/";
+    private final static String USER_NAME = "serenity.jira@gmail.com";
+    private final static String USER_API_TOKEN = "sZePVVAsoFW7E7bzZuZy43BF";
+
 
     private String issueKey;
 
     private IssueHarness testIssueHarness;
 
-    private JerseyJiraClient jiraClient = new JerseyJiraClient("https://wakaleo.atlassian.net","bruce","batm0bile","DEMO") ;
+    private JerseyJiraClient jiraClient = new JerseyJiraClient(JIRA_WEBSERVICE_URL,USER_NAME, USER_API_TOKEN,IssueHarness.PROJECT) ;
 
     @Before
     public void createTestIssue() throws Exception {
 
-        testIssueHarness = new IssueHarness("https://wakaleo.atlassian.net","bruce","batm0bile","DEMO");
+        testIssueHarness = new IssueHarness(JIRA_WEBSERVICE_URL,USER_NAME, USER_API_TOKEN,IssueHarness.PROJECT);
         issueKey = testIssueHarness.createTestIssue();
     }
 
@@ -39,7 +42,7 @@ public class WhenFindingAnIssueOnTheJIRAServer {
 
     @Test
     public void should_be_able_to_find_a_project_by_key() throws Exception {
-        Project project = jiraClient.getProjectByKey("DEMO");
+        Project project = jiraClient.getProjectByKey(IssueHarness.PROJECT);
         assertThat(project, is(not(nullValue())));
     }
     @Test

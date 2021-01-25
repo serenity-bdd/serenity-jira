@@ -3,7 +3,6 @@ import org.ajoberstar.grgit.Grgit
 
 buildscript {
     repositories {
-        mavenLocal()
         jcenter()
     }
     dependencies {
@@ -28,7 +27,7 @@ repositories {
     }
 }
 
-task wrapper(type: Wrapper) {
+task wrapper1(type: Wrapper) {
     gradleVersion = '4.0'
 }
 
@@ -37,7 +36,7 @@ subprojects {
 }
 
 ext {
-    serenityCoreVersion = "2.0.42"
+    serenityCoreVersion = "2.3.13-SNAPSHOT"
 
     // Bintray configuration
     bintrayBaseUrl = 'https://api.bintray.com/maven'
@@ -68,7 +67,7 @@ allprojects {
                     "commons-codec:commons-codec:1.10",
                     "com.google.guava:guava:23.0",
                     "com.google.code.gson:gson:2.8.2",
-                    'net.bytebuddy:byte-buddy:1.7.9',
+                    'net.bytebuddy:byte-buddy:1.10.10',
                     'org.eclipse.jetty:jetty-http:9.4.8.v20171121',
                     'org.eclipse.jetty:jetty-util:9.4.8.v20171121',
                     'org.eclipse.jetty:jetty-io:9.4.8.v20171121',
@@ -80,7 +79,10 @@ allprojects {
                     'org.apache.httpcomponents:httpcore:4.4.7',
                     'org.apache.httpcomponents:httpmime:4.5.4',
                     'org.apache.commons:commons-text:1.2',
-                    'org.apache.httpcomponents:httpclient:4.5.4'
+                    'org.apache.httpcomponents:httpclient:4.5.4',
+                    'org.slf4j:slf4j-api:1.7.25',
+                    'commons-net:commons-net:3.7.1',
+                    'org.javassist:javassist:3.20.0-GA'
 
         }
     }
@@ -98,6 +100,8 @@ subprojects {
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
+    group = 'net.serenity-bdd'
+
     repositories {
         mavenLocal()
         jcenter()
@@ -108,17 +112,6 @@ subprojects {
         from sourceSets.main.allSource
     }
 
-    task javadoc(type: Javadoc, overwrite: true) {
-        source = sourceSets.main.allJava
-        options.memberLevel = JavadocMemberLevel.PUBLIC
-        options.addStringOption('views')
-        options.addStringOption('all')
-        options.addStringOption('quiet')
-        options.addStringOption('qualify')
-        options.addStringOption('Xdoclint:none')
-        options.encoding = 'UTF-8'
-        classpath = configurations.compile
-    }
 
     task javadocJar(type: Jar, dependsOn: javadoc) {
         classifier = 'javadoc'
@@ -234,8 +227,8 @@ subprojects {
             exclude '**/integration/browsers**'
             exclude '**/localhost/**'
             include '**/integration/**'
-            reports.junitXml.destination = "${buildDir}/reports/integration-tests"
-            reports.html.destination = "${buildDir}/reports/integration-tests"
+            //test.reports.junitXml.destination = "${buildDir}/reports/integration-tests"
+            //test.reports.html.destination = "${buildDir}/reports/integration-tests"
             minHeapSize = "128m"
             maxHeapSize = "2048m"
             jvmArgs '-XX:MaxPermSize=256m'
@@ -253,18 +246,6 @@ subprojects {
             testLogging {
                 exceptionFormat = 'full'
             }
-        }
-
-        task javadoc(type: Javadoc, overwrite: true) {
-            source = sourceSets.main.allJava
-            options.memberLevel = JavadocMemberLevel.PUBLIC
-            options.addStringOption('views')
-            options.addStringOption('all')
-            options.addStringOption('quiet')
-            options.addStringOption('qualify')
-            options.addStringOption('Xdoclint:none')
-            options.encoding = 'UTF-8'
-            classpath = configurations.compile
         }
 
         check.dependsOn -= integrationTests
@@ -285,7 +266,7 @@ subprojects {
                 exclude group: "org.slf4j", module: "slf4j-api"
             }
 
-            testCompile "junit:junit:4.12"
+            testCompile "junit:junit:4.13"
             testCompile("org.spockframework:spock-core:1.1-groovy-2.4") {
                 exclude group: "junit"
                 exclude group: "org.codehaus.groovy", module: "groovy-all"

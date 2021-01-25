@@ -1,5 +1,6 @@
 package net.serenitybdd.plugins.jira.client
 
+import net.serenitybdd.plugins.jira.JiraConnectionSettings
 import net.serenitybdd.plugins.jira.domain.IssueComment
 import net.serenitybdd.plugins.jira.domain.IssueSummary
 import spock.lang.Specification
@@ -8,7 +9,7 @@ class WhenUpdatingJIRAIssues extends Specification {
 
     def "should be able to add a comment to an issue"() {
         given:
-            def jiraClient = new JerseyJiraClient("https://wakaleo.atlassian.net", "bruce", "batm0bile","DEMO")
+        def jiraClient = new JerseyJiraClient(JiraConnectionSettings.getJIRAWebserviceURL(),JiraConnectionSettings.getJIRAUserName(),JiraConnectionSettings.getJIRAUserApiToken(),"DEMO")
             IssueSummary issue = jiraClient.findByKey("DEMO-2").get()
             int commentCount = issue.comments.size()
         when:
@@ -21,7 +22,7 @@ class WhenUpdatingJIRAIssues extends Specification {
 
     def "should be able to update a comment"() {
         given:
-            def jiraClient = new JerseyJiraClient("https://wakaleo.atlassian.net", "bruce", "batm0bile","DEMO")
+        def jiraClient = new JerseyJiraClient(JiraConnectionSettings.getJIRAWebserviceURL(),JiraConnectionSettings.getJIRAUserName(),JiraConnectionSettings.getJIRAUserApiToken(),"DEMO")
             IssueSummary issue = jiraClient.findByKey("DEMO-2").get()
         when:
             IssueComment updatedComment = issue.comments[0].withText("Updated integration test comment")

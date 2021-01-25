@@ -17,10 +17,10 @@ class WhenReadingStoriesFromJira extends Specification {
     def requirementsProvider
 
     def setup() {
-        environmentVariables.setProperty('jira.url','https://wakaleo.atlassian.net')
-        environmentVariables.setProperty('jira.username','bruce')
-        environmentVariables.setProperty('jira.password','batm0bile')
-        environmentVariables.setProperty('jira.project','TRAD')
+        environmentVariables.setProperty('jira.url',JiraConnectionSettings.getJIRAWebserviceURL())
+        environmentVariables.setProperty('jira.username',JiraConnectionSettings.getJIRAUserName())
+        environmentVariables.setProperty('jira.password',JiraConnectionSettings.getJIRAUserApiToken())
+        environmentVariables.setProperty('jira.project','DEMO')
 
         configuration = new SystemPropertiesJIRAConfiguration(environmentVariables)
         requirementsProvider = new JIRARequirementsProvider(configuration,environmentVariables)
@@ -48,25 +48,26 @@ class WhenReadingStoriesFromJira extends Specification {
         given:
             def requirementsProvider = new JIRARequirementsProvider(configuration)
         when:
-            def requirement = requirementsProvider.getRequirementFor(TestTag.withName("Bring premium listings to the attention of buyers").andType("Epic"))
+            def requirement = requirementsProvider.getRequirementFor(TestTag.withName("Epic 1 Test Serenity JIRA Plugin").andType("Epic"))
         then:
-            requirement.isPresent() && requirement.get().getCardNumber() == "TRAD-6"
+            requirement.isPresent() && requirement.get().getCardNumber() == "DEMO-1"
     }
 
     def "should get the story description from the description field by default"() {
         given:
             def requirementsProvider = new JIRARequirementsProvider(configuration)
             def testOutcome = Mock(TestOutcome)
-            testOutcome.getIssueKeys() >> ["TRAD-5"]
+            testOutcome.getIssueKeys() >> ["DEMO-1"]
         when:
             environmentVariables.setProperty("jira.narrative.field","User Story")
         and:
             def requirement = requirementsProvider.getParentRequirementOf(testOutcome);
         then:
-            requirement.isPresent() && requirement.get().narrative.text.contains("In order to let buyers view and purchase my items")
+            requirement.isPresent() && requirement.get().narrative.text.contains("The Issue is used for integration tests.")
     }
 
-    def "should get the story description from a custom field if required"() {
+    /* TODO
+       def "should get the story description from a custom field if required"() {
         given:
             def requirementsProvider = new JIRARequirementsProvider(configuration,environmentVariables)
             def testOutcome = Mock(TestOutcome)
@@ -77,10 +78,11 @@ class WhenReadingStoriesFromJira extends Specification {
             def requirement = requirementsProvider.getParentRequirementOf(testOutcome);
         then:
             requirement.isPresent() && requirement.get().narrative.text.contains("As a seller")
-    }
+    }*/
 
 
-    def "should store custom custom field values in requirements"() {
+    /* TODO
+     def "should store custom custom field values in requirements"() {
         given:
             def testOutcome = Mock(TestOutcome)
             testOutcome.getIssueKeys() >> ["TRAD-5"]
@@ -101,18 +103,18 @@ class WhenReadingStoriesFromJira extends Specification {
             acText.contains("- buyers should be able to buy my stuff") &&
             acText.contains("- I should be able to get paid")
 
-    }
+    }*/
 
 
     def "should find the parent requirement from a given issue"() {
         given:
             def requirementsProvider = new JIRARequirementsProvider(configuration,environmentVariables)
             def testOutcome = Mock(TestOutcome)
-            testOutcome.getIssueKeys() >> ["TRAD-1"]
+            testOutcome.getIssueKeys() >> ["DEMO-1"]
         when:
             def parentRequirement = requirementsProvider.getParentRequirementOf(testOutcome)
         then:
-            parentRequirement.isPresent() && parentRequirement.get().cardNumber == "TRAD-1"
+            parentRequirement.isPresent() && parentRequirement.get().cardNumber == "DEMO-1"
     }
 
     def "should return Optional.absent() when no issues are specified"() {
@@ -141,23 +143,23 @@ class WhenReadingStoriesFromJira extends Specification {
         given:
             def requirementsProvider = new JIRARequirementsProvider(configuration, environmentVariables)
             def testOutcome = Mock(TestOutcome)
-            testOutcome.getIssueKeys() >> ["TRAD-5"]
+            testOutcome.getIssueKeys() >> ["DEMO-31"]
         when:
             def tags = requirementsProvider.getTagsFor(testOutcome)
         then:
-            tags.contains(TestTag.withName("Post item for sale").andType("Story")) &&
-            tags.contains(TestTag.withName("Selling stuff").andType("Epic"))
+            tags.contains(TestTag.withName("Epic 2 Story 1").andType("Story")) &&
+            tags.contains(TestTag.withName("Epic 2 integration tests").andType("Epic"))
     }
 
     def "should find tags for a story card"() {
         given:
         def requirementsProvider = new JIRARequirementsProvider(configuration, environmentVariables)
         def testOutcome = Mock(TestOutcome)
-        testOutcome.getIssueKeys() >> ["TRAD-9"]
+        testOutcome.getIssueKeys() >> ["DEMO-31"]
         when:
         def tags = requirementsProvider.getTagsFor(testOutcome)
         then:
-        tags.contains(TestTag.withName("Maintaining a watchlist").andType("Story"))
+        tags.contains(TestTag.withName("Epic 2 Story 1").andType("Story"))
     }
 
 }
