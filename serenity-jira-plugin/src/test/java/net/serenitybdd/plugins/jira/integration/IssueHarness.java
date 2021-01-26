@@ -8,6 +8,8 @@ import java.util.List;
 
 class IssueHarness {
 
+    public final static String PROJECT = "DEMO";
+    private final static String USER_NAME = "serenity.jira@gmail.com";
 
     private JerseyJiraClient jiraClient;
     private List<IssueSummary> testIssues = new ArrayList<IssueSummary>();
@@ -20,7 +22,7 @@ class IssueHarness {
         IssueSummary issue =  new IssueSummary();
         issue.setProject("DEMO");
         issue.setDescription("A new test issue");
-        issue.setReporter("bruce");
+        issue.setReporter(USER_NAME);
         issue.setType("1");
         issue.setSummary("A test issue");
         issue.setKey("DEMO-1");

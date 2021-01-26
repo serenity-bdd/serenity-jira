@@ -42,11 +42,12 @@ public class Project  {
     public static Project fromJsonString(String jsonStringRepresentation) {
         JsonParser parser = new JsonParser();
         JsonObject jsonObject = parser.parse(jsonStringRepresentation).getAsJsonObject();
+        System.out.println("JSON object"  + jsonObject) ;
         String id = jsonObject.getAsJsonPrimitive("id").getAsString();
         String name = jsonObject.getAsJsonPrimitive("name").getAsString();
         String description = jsonObject.getAsJsonPrimitive("description").getAsString();
         String key = jsonObject.getAsJsonPrimitive("key").getAsString();
-        String lead = jsonObject.getAsJsonObject("lead").getAsJsonPrimitive("name").getAsString();
+        String lead = jsonObject.getAsJsonObject("lead").getAsJsonPrimitive("displayName").getAsString();
         //setUrl(jsonObject.getAsJsonPrimitive("url").getAsString());
         return new Project(id, name, description, key,lead,"","");
     }

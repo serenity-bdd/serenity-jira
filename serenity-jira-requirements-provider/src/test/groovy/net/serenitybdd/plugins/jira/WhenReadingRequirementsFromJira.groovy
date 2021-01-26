@@ -15,10 +15,10 @@ class WhenReadingRequirementsFromJira extends Specification {
     def requirementsProvider
 
     def setup() {
-        environmentVariables.setProperty('jira.url','https://wakaleo.atlassian.net')
-        environmentVariables.setProperty('jira.username','bruce')
-        environmentVariables.setProperty('jira.password','batm0bile')
-        environmentVariables.setProperty('jira.project','TRAD')
+        environmentVariables.setProperty('jira.url',JiraConnectionSettings.getJIRAWebserviceURL())
+        environmentVariables.setProperty('jira.username',JiraConnectionSettings.getJIRAUserName())
+        environmentVariables.setProperty('jira.password',JiraConnectionSettings.getJIRAUserApiToken())
+        environmentVariables.setProperty('jira.project',"DEMO")
 
         configuration = new SystemPropertiesJIRAConfiguration(environmentVariables)
         requirementsProvider = new JIRARequirementsProvider(configuration)
@@ -30,9 +30,9 @@ class WhenReadingRequirementsFromJira extends Specification {
         when:
             def requirements = requirementsProvider.getRequirements();
         then:
-            requirements.size() == 5
+            requirements.size() == 2
         and:
-            totalNumberOf(requirements) == 27
+            totalNumberOf(requirements) == 8
     }
 
     def "Child requirements should have parents"() {
@@ -55,7 +55,7 @@ class WhenReadingRequirementsFromJira extends Specification {
         when:
         def requirements = requirementsProvider.getRequirements();
         then:
-        totalNumberOf(requirements) == 29
+        totalNumberOf(requirements) == 8
     }
 
     def "when setting story root issue type"() {
@@ -67,7 +67,7 @@ class WhenReadingRequirementsFromJira extends Specification {
         def requirements = requirementsProvider.getRequirements();
         then:
         requirementsProvider.rootIssueType.is("story")
-        totalNumberOf(requirements) == 21
+        totalNumberOf(requirements) == 4
     }
 
     def totalNumberOf(List<Requirement> requirements) {

@@ -28,7 +28,9 @@ public class WhenUpdateingIssuesUsingTheJiraTracker {
 
     IssueTracker tracker;
 
-    private static final String JIRA_WEBSERVICE_URL = "https://wakaleo.atlassian.net/";
+    private static final String JIRA_WEBSERVICE_URL = "https://thucydides.atlassian.net/";
+    private final static String USER_NAME = "serenity.jira@gmail.com";
+    private final static String USER_PWD = "sZePVVAsoFW7E7bzZuZy43BF";
 
     private String issueKey;
 
@@ -46,13 +48,13 @@ public class WhenUpdateingIssuesUsingTheJiraTracker {
     public void prepareIssueTracker() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        when(configuration.getJiraUser()).thenReturn("bruce");
-        when(configuration.getJiraPassword()).thenReturn("batm0bile");
+        when(configuration.getJiraUser()).thenReturn(USER_NAME);
+        when(configuration.getJiraPassword()).thenReturn(USER_PWD);
         when(configuration.getJiraWebserviceUrl()).thenReturn(JIRA_WEBSERVICE_URL);
         when(configuration.getProject()).thenReturn("DEMO");
 
 
-        testIssueHarness = new IssueHarness("https://wakaleo.atlassian.net","bruce","batm0bile","DEMO");
+        testIssueHarness = new IssueHarness(JIRA_WEBSERVICE_URL,USER_NAME,USER_PWD,"DEMO");
         issueKey = testIssueHarness.createTestIssue();
         tracker = new JiraIssueTracker(logger, configuration);
     }

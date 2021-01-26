@@ -16,9 +16,9 @@ class WhenReadingVersionsFromJira extends Specification {
     def requirementsProvider
 
     def setup() {
-        environmentVariables.setProperty('jira.url','https://wakaleo.atlassian.net')
-        environmentVariables.setProperty('jira.username','bruce')
-        environmentVariables.setProperty('jira.password','batm0bile')
+        environmentVariables.setProperty('jira.url',JiraConnectionSettings.getJIRAWebserviceURL())
+        environmentVariables.setProperty('jira.username',JiraConnectionSettings.getJIRAUserName())
+        environmentVariables.setProperty('jira.password',JiraConnectionSettings.getJIRAUserApiToken())
         environmentVariables.setProperty('jira.project','DEMO')
 
         configuration = new SystemPropertiesJIRAConfiguration(environmentVariables)

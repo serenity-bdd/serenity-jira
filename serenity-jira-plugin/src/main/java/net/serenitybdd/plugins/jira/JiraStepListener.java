@@ -17,7 +17,6 @@ import net.thucydides.core.util.EnvironmentVariables;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,8 +38,6 @@ public class JiraStepListener implements StepListener {
     public JiraStepListener(IssueTracker issueTracker,
                             EnvironmentVariables environmentVariables,
                             WorkflowLoader loader, ZephyrClient zephyrClient) {
-//        this.resultTally = new TestResultTally<>();
-        //this.testSuiteIssues = new HashSet<>();
         jiraUpdater = new JiraUpdater(issueTracker,environmentVariables,loader);
         
         // For Zephyr
