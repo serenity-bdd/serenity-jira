@@ -37,7 +37,7 @@ subprojects {
 }
 
 ext {
-    serenityCoreVersion = "2.3.13-SNAPSHOT"
+    serenityCoreVersion = "2.3.13"
 
     // Bintray configuration
     bintrayBaseUrl = 'https://api.bintray.com/maven'
@@ -302,4 +302,8 @@ subprojects {
             into project.projectDir.path + "/lib"
         }
     }
+}
+
+wrapper {
+    gradleVersion = '3.2.1'
 }
